@@ -1,0 +1,103 @@
+---
+/**
+ * POLITIQUE DE CONFIDENTIALITE
+ * Décrit précisément ce que le site collecte, y compris les données
+ * d'attribution — parce qu'elles sont réellement collectées.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { site, nap, hasEmail, hasAddress, addressOneLine } from '@/config/site';
+import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Politique de confidentialité' }];
+---
+
+<BaseLayout
+  title="Politique de confidentialité — CZIR62"
+  description="Comment CZIR62 traite les données transmises via les formulaires de son site."
+  path="/politique-de-confidentialite/"
+  noindex
+  schema={[webPageSchema({ path: '/politique-de-confidentialite/', name: 'Politique de confidentialité', description: 'Traitement des données personnelles sur le site CZIR62.' }), breadcrumbSchema(crumbs)]}
+>
+  <section class="legal">
+    <div class="container container--text">
+      <Breadcrumbs items={crumbs} />
+      <h1>Politique de confidentialité</h1>
+
+      <div class="prose">
+        <p>
+          Cette page décrit les données collectées par le site de {site.legalName}, la raison
+          pour laquelle elles le sont, et ce que vous pouvez demander à leur sujet.
+        </p>
+
+        <h2>Qui est responsable du traitement</h2>
+        <p>
+          {site.legalName}{hasAddress() ? `, ${addressOneLine()}` : ''}.
+          {hasEmail() ? <> Pour toute question : <a href={`mailto:${nap.email}`}>{nap.email}</a>.</> : <> Contact : voir la page <a href="/contact/">contact</a>.</>}
+        </p>
+
+        <h2>Quelles données sont collectées</h2>
+        <p>Lorsque vous remplissez un formulaire ou un parcours guidé de ce site, sont enregistrés :</p>
+        <ul>
+          <li>les informations que vous saisissez : nom, téléphone, éventuellement e-mail, commune, prestation concernée, message et photos jointes ;</li>
+          <li>vos réponses aux questions du diagnostic, de l'estimateur ou de l'assistant infiltration ;</li>
+          <li>des informations sur la provenance de votre visite : page d'entrée sur le site, page depuis laquelle la demande a été envoyée, site référent, et le cas échéant les paramètres de campagne publicitaire (utm_source, utm_medium, utm_campaign, gclid) ;</li>
+          <li>des éléments techniques joints à la requête : date et heure, adresse IP, navigateur.</li>
+        </ul>
+        <p>
+          Un identifiant unique au format <code>CZIR-XXXXXX</code> est attribué à chaque demande.
+          Il sert de référence commune entre vous et nous.
+        </p>
+
+        <h2>Pourquoi ces données sont collectées</h2>
+        <ul>
+          <li><strong>Traiter votre demande</strong> : vous rappeler, préparer la visite, établir le devis. C'est la finalité principale, fondée sur votre demande explicite.</li>
+          <li><strong>Comprendre ce qui amène les clients vers nous</strong> : les données de provenance nous permettent de savoir quels canaux fonctionnent réellement. Elles sont utilisées de manière agrégée, dans notre intérêt légitime à mesurer notre activité.</li>
+        </ul>
+        <p>
+          Vos coordonnées ne sont ni vendues, ni louées, ni cédées à des tiers à des fins
+          commerciales.
+        </p>
+
+        <h2>Combien de temps elles sont conservées</h2>
+        <p>
+          Les demandes sans suite sont conservées le temps nécessaire au suivi commercial, puis
+          supprimées. Les données relatives à un chantier réalisé sont conservées conformément aux
+          obligations légales de conservation des documents liés aux travaux.
+        </p>
+
+        <h2>Qui y a accès</h2>
+        <p>
+          Les demandes sont transmises à {site.legalName} et, le cas échéant, aux outils qu'elle
+          utilise pour les traiter : service d'envoi d'e-mails, tableur, ou logiciel de gestion
+          commerciale. Ces prestataires n'exploitent pas ces données pour leur propre compte.
+        </p>
+
+        <h2>Mesure d’audience</h2>
+        <p>
+          Le site peut utiliser un outil de mesure d'audience afin de comprendre quelles pages
+          sont consultées et quelles actions génèrent des demandes. Les informations de provenance
+          décrites plus haut sont enregistrées dans le stockage local de votre navigateur — elles
+          ne sont pas transmises à des tiers publicitaires par ce site. Vous pouvez les effacer à
+          tout moment en vidant les données du site dans votre navigateur.
+        </p>
+
+        <h2>Vos droits</h2>
+        <p>
+          Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation et
+          d'opposition sur les données vous concernant. Pour l'exercer, contactez-nous
+          {hasEmail() ? <> à l'adresse <a href={`mailto:${nap.email}`}>{nap.email}</a></> : <> via la page <a href="/contact/">contact</a></>}.
+          Vous pouvez également introduire une réclamation auprès de la CNIL
+          (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal { padding-block: clamp(2rem, 5vw, 3.5rem) var(--sp-10); }
+  .legal h1 { margin-top: var(--sp-5); margin-bottom: var(--sp-6); }
+  .legal .prose { max-width: none; }
+  .legal code { background: var(--sand-100); padding: .1em .35em; border-radius: 4px; font-size: .9em; }
+</style>

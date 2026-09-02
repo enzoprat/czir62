@@ -1,0 +1,397 @@
+---
+/**
+ * PAGE ZINGUERIE & GOUTTIERES
+ * Intention : « zinguerie / gouttière Béthune ». Deux publics se croisent ici :
+ * celui qui a une gouttière qui déborde, et celui qui prépare une rénovation
+ * et découvre le poste zinguerie sur son devis.
+ *
+ * Structure propre : le vocabulaire du métier expliqué élément par élément,
+ * une section gouttières ancrée et développée, un comparatif de matériaux
+ * réellement utile, et une partie dimensionnement que personne n'explique.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('zinguerie');
+const tel = telHref();
+const realisations = await realisationsForService('zinguerie', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Zinguerie & gouttières' }];
+
+const elements = [
+  { t: 'Gouttière pendante', d: "Suspendue en bas de rampant par des crochets. C'est la solution la plus courante, et la plus simple à reprendre : on remplace un tronçon sans toucher à la couverture." },
+  { t: 'Chéneau', d: "Encaissé dans la toiture ou derrière un mur d'acrotère. L'eau y circule à l'intérieur du volume : une fuite se manifeste directement à l'intérieur du bâtiment, sans prévenir." },
+  { t: 'Descente (ou tuyau de descente)', d: "Conduit l'eau de la gouttière vers le sol ou le réseau. Son diamètre et son nombre conditionnent la capacité de tout le système." },
+  { t: 'Noue', d: "L'angle rentrant entre deux versants. Elle concentre l'eau de deux pans : c'est le point où le débit est le plus fort de toute la toiture." },
+  { t: 'Solin', d: "La bande qui assure l'étanchéité entre la couverture et un élément vertical : mur, souche de cheminée, pignon voisin. Point de fuite classique quand il vieillit." },
+  { t: 'Bavette et bande de rive', d: "Les habillages métalliques qui protègent les bords et les jonctions. Discrets, mais ce sont eux qui empêchent l'eau de contourner la couverture." },
+  { t: 'Habillage de planche de rive', d: "Protège le bois du débord de toit. Sans lui, la planche de rive prend l'eau, gonfle, puis lâche ses fixations." },
+  { t: 'Dauphin', d: "L'embout rigide en pied de descente. Il évite que le tuyau soit arraché et que l'eau soit rejetée contre la maçonnerie." },
+];
+
+const materiaux = [
+  {
+    nom: 'Zinc',
+    duree: 'Longue durée de service',
+    pour: 'Le matériau de référence en zinguerie. Se travaille et se soude, ce qui permet des reprises localisées propres et des formes sur mesure.',
+    contre: "Ne supporte pas le contact avec le cuivre ni les écoulements venant d'un élément en cuivre : la réaction électrochimique le perfore.",
+  },
+  {
+    nom: 'Cuivre',
+    duree: 'Très longue durée de service',
+    pour: "Excellente tenue dans le temps, patine naturelle. Retenu sur du bâti de caractère ou lorsqu'un aspect particulier est recherché.",
+    contre: 'Coût nettement supérieur, et incompatible avec tout élément en zinc situé en aval de son écoulement.',
+  },
+  {
+    nom: 'Aluminium laqué',
+    duree: 'Bonne durée de service',
+    pour: 'Léger, ne rouille pas, disponible en grandes longueurs et en nombreux coloris. Souvent posé sans joint sur de longs linéaires.',
+    contre: "Se répare mal : une reprise ponctuelle est plus délicate que sur du zinc, et la teinte laquée peut marquer.",
+  },
+  {
+    nom: 'PVC',
+    duree: 'Durée de service plus limitée',
+    pour: "Le plus économique, léger, facile à mettre en œuvre. Cohérent sur une dépendance ou un budget contraint.",
+    contre: "Se dilate fortement, devient cassant avec le temps et l'exposition. Les jonctions se disjoignent : c'est le désordre que nous reprenons le plus souvent sur les lotissements des années 1970-1980.",
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Ma gouttière déborde : faut-il tout remplacer ?',
+    a: "Rarement. Trois causes reviennent : une pente perdue parce que des crochets sont descendus, une jonction disjointe, ou une descente partiellement obstruée. Toutes se traitent sans dépose complète. Le remplacement intégral ne se justifie que si le matériau lui-même est en fin de vie — typiquement du PVC devenu cassant.",
+  },
+  {
+    q: 'Peut-on mélanger zinc et cuivre sur une même toiture ?',
+    a: "Non, et c'est un point technique que l'on découvre parfois trop tard. L'eau qui ruisselle sur du cuivre entraîne des ions qui attaquent le zinc situé en aval : la gouttière se perce en quelques années. Si une partie de l'installation est en cuivre, tout ce qui reçoit son écoulement doit être compatible.",
+  },
+  {
+    q: 'À quelle fréquence faut-il nettoyer les gouttières ?',
+    a: "Cela dépend surtout de l'environnement. Sous des arbres, deux passages par an — après la chute des feuilles et au printemps — sont raisonnables. En environnement dégagé, un contrôle annuel suffit généralement. Le bon indicateur reste le comportement : une gouttière qui déborde toujours au même endroit demande à être regardée, quelle que soit la date du dernier nettoyage.",
+  },
+  {
+    q: 'Combien de descentes faut-il pour ma maison ?',
+    a: "Cela se calcule à partir de la surface de toiture collectée, de la pluviométrie de la région et de la section de la gouttière. Concrètement, une longue gouttière avec une seule descente en extrémité débordera en son milieu lors des pluies fortes, même si elle est neuve et propre. C'est un défaut de conception que nous voyons régulièrement, et qu'il vaut mieux corriger à l'occasion d'un remplacement.",
+  },
+  {
+    q: 'Intervenez-vous uniquement sur les gouttières, sans autre chantier ?',
+    a: "Oui. Le remplacement d'un linéaire de gouttière, la reprise d'une descente ou d'un dauphin sont des interventions à part entière. C'est même souvent le meilleur rapport entre le coût et le désordre évité : une descente qui rejette au pied du mur finit par abîmer la maçonnerie.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/zinguerie-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Zinguerie & gouttières"
+    title="Zinguerie et gouttières à Béthune"
+    lede="La couverture arrête la pluie ; la zinguerie décide où elle va. Gouttières, descentes, chéneaux, noues et solins : tout ce qui conduit l'eau hors du bâtiment, et tout ce qui laisse entrer quand il vieillit."
+    photo="/images/services/zinguerie-czir62.jpg"
+    photoAlt="Couverture métallique à joint debout réalisée par CZIR62, avec fenêtre de toit et sortie de toiture"
+    photoNeed="Photo de zinguerie : gouttière zinc en cours de pose, soudure ou raccord de descente en gros plan."
+    photoRatio="3 / 2"
+    icon="gutter"
+    chips={['Gouttières et descentes', 'Noues, solins, habillages', 'Reprise ou remplacement']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=zinguerie" class="btn btn--lg" data-track="quote_start" data-track-label="hero-zinguerie">
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-zinguerie">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- =============================================== VOCABULAIRE ======== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Le vocabulaire</p>
+        <h2>Huit mots pour lire un devis de zinguerie</h2>
+        <p class="lede lede--wide">
+          Les termes du métier reviennent sur tous les devis sans jamais être expliqués.
+          Les voici, avec ce que chacun fait réellement.
+        </p>
+      </div>
+
+      <dl class="lex">
+        {elements.map((e) => (
+          <div class="lex__item reveal">
+            <dt>{e.t}</dt>
+            <dd>{e.d}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================================================= GOUTTIERES ======= -->
+  <section class="section section--alt" id="gouttieres">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow">Gouttières</p>
+          <h2>Remplacement et reprise de gouttières</h2>
+          <p class="lede">
+            C'est notre demande la plus fréquente en zinguerie, et celle où l'écart est le plus
+            grand entre ce que les gens imaginent et ce dont il s'agit réellement.
+          </p>
+
+          <div class="prose gt__prose">
+            <p>
+              Une gouttière qui déborde n'est presque jamais trop petite. Elle a perdu sa pente,
+              une jonction s'est disjointe, ou la descente est partiellement bouchée. La pente
+              d'écoulement est de l'ordre de quelques millimètres par mètre : il suffit que deux
+              ou trois crochets aient cédé pour créer un point bas où l'eau stagne et déborde.
+            </p>
+            <p>
+              Le bon diagnostic se fait <strong>pendant la pluie</strong>, ou en mettant la
+              gouttière en eau. Si l'eau déborde en un point précis, c'est la pente. Si elle
+              déborde sur toute la longueur, c'est la capacité ou la descente. Si elle passe
+              derrière la gouttière, c'est le raccord avec la couverture.
+            </p>
+          </div>
+
+          <div class="gt__signs">
+            <h3>Ce qui doit vous alerter</h3>
+            <ul class="list-signs">
+              <li>Une trace verte ou noire sur la façade, sous un point précis de la gouttière.</li>
+              <li>De la végétation qui pousse dans le chéneau — la terre s'y est accumulée.</li>
+              <li>Un crochet visiblement descendu, ou une gouttière qui n'est plus horizontale.</li>
+              <li>Une descente qui rejette au pied du mur, sans dauphin ni raccordement.</li>
+              <li>De l'eau qui ruisselle derrière la gouttière plutôt que dedans.</li>
+            </ul>
+          </div>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/zinguerie-rive-czir62.jpg"
+          alt="Couvreur CZIR62 manipulant une bande de zinc sur une toiture"
+          need="Idéalement : photo d'un remplacement de gouttière, crochets visibles."
+          ratio="4 / 5"
+          icon="gutter"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= MATERIAUX ======== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Matériaux</p>
+        <h2>Zinc, cuivre, aluminium ou PVC ?</h2>
+        <p class="lede lede--wide">
+          Le choix se fait sur trois critères : la durée de service attendue, la compatibilité
+          avec l'existant, et la possibilité de réparer plus tard sans tout déposer.
+        </p>
+      </div>
+
+      <div class="mat-grid">
+        {materiaux.map((m) => (
+          <article class="mat reveal">
+            <div class="mat__head">
+              <h3>{m.nom}</h3>
+              <span class="tag">{m.duree}</span>
+            </div>
+            <p class="mat__pour"><span>Ce qui plaide pour</span>{m.pour}</p>
+            <p class="mat__contre"><span>Ce qu’il faut savoir</span>{m.contre}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note mat-note">
+        <strong>Le point de compatibilité à ne pas manquer :</strong> zinc et cuivre ne cohabitent
+        pas. Si un élément en cuivre se trouve en amont d'un écoulement, tout ce qui reçoit cette
+        eau doit être compatible, sous peine de perforation en quelques années. C'est le genre de
+        détail qui ne se voit pas sur un devis, mais qui se paie ensuite.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== DIMENSIONNEMENT ===== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="dim">
+        <div class="dim__text">
+          <p class="eyebrow">Ce que personne n’explique</p>
+          <h2>Une gouttière neuve qui déborde, c’est un problème de conception</h2>
+          <p class="lede lede--wide">
+            Trois paramètres déterminent la capacité réelle d'une évacuation. Quand l'un d'eux
+            est négligé, le système déborde même neuf, propre et parfaitement posé.
+          </p>
+        </div>
+
+        <ol class="list-clean dim__list">
+          <li>
+            <span class="dim__n">01</span>
+            <h3>La surface collectée</h3>
+            <p>Ce n'est pas la longueur de la gouttière qui compte, mais la surface de toiture qui s'y déverse. Un grand versant sur une gouttière courte demande davantage de capacité.</p>
+          </li>
+          <li>
+            <span class="dim__n">02</span>
+            <h3>La pente d’écoulement</h3>
+            <p>De l'ordre de quelques millimètres par mètre. Trop faible, l'eau stagne et les dépôts s'installent. Inexistante, la gouttière déborde en son milieu.</p>
+          </li>
+          <li>
+            <span class="dim__n">03</span>
+            <h3>Le nombre et la position des descentes</h3>
+            <p>Une seule descente en bout de ligne oblige toute l'eau à parcourir le linéaire complet. Au-delà d'une certaine longueur, une seconde descente n'est pas un luxe.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Interventions en zinguerie dans le secteur"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur la zinguerie et les gouttières" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks
+        service="zinguerie"
+        text="Le remplacement de gouttières est l'une de nos interventions les plus régulières sur ces communes."
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="zinguerie"
+        title="La zinguerie ne travaille jamais seule"
+        intro="Elle prolonge la couverture et conditionne l'étanchéité de tous les points de raccord."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Zinguerie"
+    title="Faire vérifier vos gouttières"
+    text="Un débordement, une trace en façade, une descente qui rejette au pied du mur : ces désordres se traitent vite et évitent des dégâts de maçonnerie."
+    primaryLabel="Demander un devis"
+    service="zinguerie"
+    trackLabel="zinguerie-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------------ lexique */
+  .lex { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--sp-7); }
+  @media (max-width: 820px) { .lex { grid-template-columns: minmax(0, 1fr); } }
+
+  .lex__item { padding: var(--sp-5) 0; border-bottom: 1px solid var(--border); }
+  .lex__item dt {
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  .lex__item dd { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  /* --------------------------------------------------------- gouttieres */
+  .gt__prose { margin-top: var(--sp-5); }
+  .gt__signs {
+    margin-top: var(--sp-6);
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .gt__signs h3 {
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: var(--sp-4);
+  }
+
+  /* ---------------------------------------------------------- materiaux */
+  .mat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 1080px) { .mat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .mat-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .mat {
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  .mat__head { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-4); align-items: flex-start; }
+  .mat__head h3 { font-size: var(--fs-xl); }
+  .mat__pour, .mat__contre { font-size: var(--fs-sm); line-height: var(--lh-relaxed); color: var(--zinc-600); }
+  .mat__contre { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border); }
+  .mat__pour span, .mat__contre span {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .mat__pour span { color: var(--ok-ink); }
+  .mat__contre span { color: var(--clay-600); }
+  .mat-note { margin-top: var(--sp-6); }
+
+  /* ----------------------------------------------------- dimensionnement */
+  .dim { display: grid; gap: var(--sp-7); }
+  .dim__text { max-width: 52rem; }
+  .dim__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 880px) { .dim__list { grid-template-columns: minmax(0, 1fr); } }
+
+  .dim__list li { padding-top: var(--sp-4); border-top: 2px solid var(--clay-600); }
+  .dim__n {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--clay-300);
+    margin-bottom: var(--sp-3);
+  }
+  .dim__list h3 { color: #fff; font-size: var(--fs-lg); }
+  .dim__list p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+</style>

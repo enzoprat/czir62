@@ -1,0 +1,376 @@
+---
+/**
+ * PAGE POSE DE VELUX
+ * Intention : produit. Le visiteur sait ce qu'il veut — une fenêtre de toit —
+ * et cherche qui la pose correctement. Sa vraie question est presque toujours
+ * « est-ce possible chez moi ? », pas « qu'est-ce qu'un Velux ? ».
+ *
+ * Structure propre : trois situations distinctes, faisabilité, et surtout une
+ * section entière sur le raccord d'étanchéité — le point qui décide de tout et
+ * dont personne ne parle avant que ça fuie.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('pose-velux');
+const tel = telHref();
+const realisations = await realisationsForService('pose-velux', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Pose de Velux' }];
+
+const situations = [
+  {
+    t: 'Créer une ouverture',
+    icon: 'velux' as const,
+    d: "Sur des combles aveugles ou trop sombres. C'est l'intervention la plus lourde : elle demande d'ouvrir la couverture, de créer un chevêtre dans la charpente pour reprendre les efforts des chevrons coupés, puis de traiter l'étanchéité et les finitions intérieures.",
+    points: ['Chevêtre à réaliser', 'Reprise des finitions intérieures', 'Déclaration préalable en général nécessaire'],
+  },
+  {
+    t: 'Remplacer une fenêtre ancienne',
+    icon: 'renovation' as const,
+    d: "Une fenêtre de toit de vingt ou trente ans : bois qui travaille, joint qui ne comprime plus, condensation permanente, manœuvre difficile. Le remplacement se fait le plus souvent dans la même ouverture, avec un raccord neuf.",
+    points: ['Ouverture existante conservée', 'Raccord d’étanchéité systématiquement repris', 'Gain net en isolation'],
+  },
+  {
+    t: 'Réparer une infiltration',
+    icon: 'leak' as const,
+    d: "Une trace autour de l'encadrement ne signifie presque jamais que la fenêtre est morte. Dans la majorité des cas, c'est le raccord périphérique qui est en cause : il se dépose et se reprend sans toucher au dormant ni au vitrage.",
+    points: ['Diagnostic du raccord d’abord', 'Remplacement rarement nécessaire', 'Voir aussi la page fuite de toiture'],
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Peut-on poser une fenêtre de toit sur n’importe quelle toiture ?',
+    a: "Non. La pente est le premier critère : chaque modèle a une plage de pente d'emploi, et sous la pente minimale, l'eau ne s'évacue plus correctement autour du cadre. Le second critère est la charpente : l'ouverture doit s'insérer entre les éléments porteurs ou faire l'objet d'un chevêtre. Le troisième est l'emplacement, qui doit tenir compte des vues sur la propriété voisine. Ces trois points se vérifient sur place, et rapidement.",
+  },
+  {
+    q: 'Faut-il une autorisation d’urbanisme ?',
+    a: "La création d'une fenêtre de toit modifie l'aspect extérieur du bâtiment : une déclaration préalable de travaux est en principe nécessaire. Le remplacement à l'identique en est généralement dispensé. Aux abords d'un monument historique ou dans un secteur protégé, les règles sont plus strictes. Le service urbanisme de votre mairie reste l'interlocuteur qui fait foi.",
+  },
+  {
+    q: 'Mon voisin peut-il s’opposer à la pose ?',
+    a: "Il ne peut pas s'y opposer arbitrairement, mais le Code civil encadre les vues sur la propriété voisine : une distance minimale est exigée entre l'ouverture et la limite séparative, plus importante pour une vue droite que pour une vue oblique. C'est un point à vérifier avant de choisir l'emplacement, précisément pour éviter le litige.",
+  },
+  {
+    q: 'Ma fenêtre de toit fuit : faut-il la remplacer ?',
+    a: "Rarement. Commencez par identifier où apparaît la trace. En partie haute de l'encadrement, c'est le raccord amont. Sur les côtés, ce sont les bandes latérales ou l'engravement dans la couverture. De la condensation par temps froid et sec, sans pluie, n'est pas une infiltration mais un problème de ventilation de la pièce. Le remplacement complet ne se justifie que si le dormant ou le vitrage sont eux-mêmes en cause.",
+  },
+  {
+    q: 'Peut-on poser une fenêtre de toit dans des combles déjà aménagés ?',
+    a: "Oui, c'est courant. La difficulté n'est pas la pose elle-même mais les finitions : il faut ouvrir le doublage intérieur, reprendre l'isolation et le pare-vapeur autour de l'ouverture, puis refaire l'habillage. Ces reprises doivent figurer au devis — c'est souvent là que les mauvaises surprises apparaissent quand elles ont été passées sous silence.",
+  },
+  {
+    q: 'Rotation ou projection : quelle différence ?',
+    a: "Sur une ouverture par rotation, la fenêtre bascule autour d'un axe central : c'est le fonctionnement le plus répandu, et il permet de retourner le vantail pour nettoyer la face extérieure. Sur une ouverture par projection, le vantail s'ouvre par le bas et dégage complètement la vue : plus confortable quand la fenêtre est basse et qu'on veut se pencher, mais elle demande un dégagement extérieur.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/pose-velux-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Fenêtres de toit"
+    title="Pose de Velux à Béthune"
+    lede="Créer une ouverture, remplacer un modèle ancien ou reprendre un raccord qui laisse passer l'eau. Sur une fenêtre de toit, tout se joue à la jonction avec la couverture — c'est là que nous intervenons."
+    photo="/images/services/pose-velux-czir62.jpg"
+    photoAlt="Fenêtres de toit posées par CZIR62 sur un liteaunage neuf"
+    photoNeed="Photo d'une fenêtre de toit posée, vue extérieure, avec le raccord d'étanchéité visible dans la couverture."
+    icon="velux"
+    chips={['Création et remplacement', 'Raccord adapté à la couverture', 'Chevêtre si nécessaire']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=pose-velux" class="btn btn--lg" data-track="quote_start" data-track-label="hero-velux">
+        Étudier la faisabilité
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-velux">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== 3 SITUATIONS ======== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Trois demandes différentes</p>
+        <h2>Poser, remplacer ou réparer</h2>
+        <p class="lede lede--wide">
+          Ces trois interventions n'ont ni la même ampleur, ni le même coût, ni les mêmes
+          contraintes. Elles sont pourtant souvent confondues au moment du premier appel.
+        </p>
+      </div>
+
+      <div class="sit">
+        {situations.map((s) => (
+          <article class="sit__card reveal">
+            <span class="sit__ico"><Icon name={s.icon} size={22} /></span>
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+            <ul class="list-clean sit__points">
+              {s.points.map((p) => <li><Icon name="check" size={14} />{p}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== FAISABILITE ========= -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split">
+        <PhotoSlot
+          src="/images/services/pose-velux-chevetre-czir62.jpg"
+          alt="Chevêtre réalisé autour d'une fenêtre de toit avant la pose de la couverture"
+          need="Photo intérieure d'un chevêtre en cours de réalisation : chevrons coupés, pièces de reprise en place."
+          ratio="4 / 3"
+          icon="truss"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+        <div>
+          <p class="eyebrow">Faisabilité</p>
+          <h2>Quatre points à vérifier avant de choisir un modèle</h2>
+          <p class="lede">
+            Ils se contrôlent en une visite. Mieux vaut les traiter avant l'achat de la fenêtre
+            qu'après.
+          </p>
+
+          <ol class="list-clean fais">
+            <li>
+              <span class="fais__n">1</span>
+              <div>
+                <h3>La pente du versant</h3>
+                <p>Chaque modèle a une plage de pente d'emploi. Sous la pente minimale, l'eau ne s'évacue pas correctement autour du cadre, quel que soit le soin apporté à la pose.</p>
+              </div>
+            </li>
+            <li>
+              <span class="fais__n">2</span>
+              <div>
+                <h3>La charpente</h3>
+                <p>L'ouverture doit s'insérer entre deux chevrons, ou faire l'objet d'un chevêtre qui reprend les efforts des pièces coupées. Sur une charpente à fermettes, ce point demande une attention particulière.</p>
+              </div>
+            </li>
+            <li>
+              <span class="fais__n">3</span>
+              <div>
+                <h3>La hauteur de pose</h3>
+                <p>Elle détermine ce que vous verrez réellement, assis ou debout, et l'accessibilité de la poignée. Une fenêtre posée trop haut se manœuvre mal et n'apporte que de la lumière zénithale.</p>
+              </div>
+            </li>
+            <li>
+              <span class="fais__n">4</span>
+              <div>
+                <h3>Les vues sur le voisinage</h3>
+                <p>Le Code civil impose des distances minimales entre une ouverture et la limite de propriété, différentes selon qu'il s'agit d'une vue droite ou oblique. Cela se vérifie avant, pas après.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== LE RACCORD ========== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="racc">
+        <div class="racc__text">
+          <p class="eyebrow">Le point décisif</p>
+          <h2>Le raccord d’étanchéité, c’est tout le sujet</h2>
+          <p class="lede lede--wide">
+            Une fenêtre de toit qui fuit n'est presque jamais une fenêtre défectueuse.
+            C'est un raccord mal choisi, mal engravé, ou vieilli.
+          </p>
+
+          <div class="prose racc__prose">
+            <p>
+              Le raccord est l'ensemble des pièces métalliques qui font la jonction entre le
+              cadre de la fenêtre et la couverture environnante. Il conduit l'eau qui descend
+              du versant <strong>autour</strong> de la fenêtre, puis la restitue en aval.
+            </p>
+            <p>
+              Il n'existe pas de raccord universel : il se choisit selon le matériau et le
+              profil de la couverture. Un raccord prévu pour de la tuile à fort relief posé sur
+              de l'ardoise — ou l'inverse — ne plaque pas correctement et laisse un passage.
+              C'est l'erreur la plus fréquente que nous rencontrons sur les poses reprises.
+            </p>
+            <p>
+              La collerette d'étanchéité sur l'écran sous-toiture compte tout autant : elle
+              assure la continuité de la seconde barrière autour de l'ouverture. Quand elle est
+              oubliée, la fuite peut apparaître des années plus tard, par vent de pluie.
+            </p>
+          </div>
+        </div>
+
+        <ul class="list-clean racc__pts">
+          <li><strong>Raccord adapté au matériau</strong><span>Tuile plate, tuile à relief, ardoise, plaque : chaque profil a le sien.</span></li>
+          <li><strong>Engravement dans la couverture</strong><span>Les bandes latérales doivent passer sous les tuiles amont et sur les tuiles aval.</span></li>
+          <li><strong>Collerette sur l’écran sous-toiture</strong><span>Assure la continuité de la seconde barrière autour du cadre.</span></li>
+          <li><strong>Drainage en partie haute</strong><span>L'eau du versant supérieur doit être détournée avant d'atteindre le cadre.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== FINITIONS =========== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Ce que le devis doit contenir</p>
+        <h2>L’intérieur compte autant que l’extérieur</h2>
+        <p class="lede lede--wide">
+          Sur des combles déjà finis, la pose ne s'arrête pas quand la fenêtre est étanche.
+          Ces postes doivent figurer explicitement — c'est là que se logent les mauvaises surprises.
+        </p>
+      </div>
+
+      <div class="fin">
+        <article><h3>Reprise de l’isolation</h3><p>Autour du dormant, sans tassement ni pont thermique. Une isolation écrasée en périphérie provoque la condensation qu'on attribuera ensuite à la fenêtre.</p></article>
+        <article><h3>Continuité du pare-vapeur</h3><p>Il doit être raccordé au cadre, sans percement laissé ouvert. C'est ce qui empêche l'humidité intérieure de migrer dans l'isolant.</p></article>
+        <article><h3>Habillage du tableau</h3><p>Traditionnellement, tableau supérieur horizontal et tableau inférieur vertical : cela favorise la circulation d'air sur le vitrage et limite la condensation.</p></article>
+        <article><h3>Occultation</h3><p>Store intérieur, extérieur ou volet : à décider en même temps, car les fixations se prévoient à la pose plutôt qu'après coup.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Poses de fenêtres de toit réalisées"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur la pose de Velux" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks service="pose-velux" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="pose-velux"
+        title="Autour de la fenêtre de toit"
+        intro="Une pose touche à la couverture et à la charpente : ces prestations sont souvent concernées."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="soft"
+    eyebrow="Fenêtre de toit"
+    title="Vérifier ce qui est possible chez vous"
+    text="Pente, charpente, emplacement : ces trois points se contrôlent en une visite, avant tout choix de modèle."
+    primaryLabel="Étudier la faisabilité"
+    service="pose-velux"
+    trackLabel="velux-final"
+  />
+</BaseLayout>
+
+<style>
+  .sit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 900px) { .sit { grid-template-columns: minmax(0, 1fr); } }
+
+  .sit__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-xs);
+  }
+  .sit__ico {
+    display: grid; place-items: center;
+    width: 44px; height: 44px;
+    border-radius: var(--r-sm);
+    background: var(--clay-50);
+    border: 1px solid var(--clay-100);
+    color: var(--accent);
+    margin-bottom: var(--sp-4);
+  }
+  .sit__card h3 { font-size: var(--fs-xl); }
+  .sit__card > p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); flex: 1; }
+  .sit__points { display: grid; gap: var(--sp-2); margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border); }
+  .sit__points li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: var(--fs-sm); color: var(--zinc-600); }
+  .sit__points :global(svg) { color: var(--accent); flex: none; margin-top: 0.25rem; }
+
+  /* ---------------------------------------------------------- faisabilite */
+  .fais { display: grid; gap: var(--sp-5); margin-top: var(--sp-6); }
+  .fais li { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .fais__n {
+    display: grid; place-items: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: 50%;
+    background: var(--clay-500);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .fais h3 { font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .fais p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  /* -------------------------------------------------------------- raccord */
+  .racc {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .racc { grid-template-columns: minmax(0, 1fr); } }
+  .racc__prose { margin-top: var(--sp-5); }
+  .racc__prose p { color: var(--text-invert-muted); }
+  .racc__prose strong { color: #fff; }
+
+  .racc__pts { display: grid; gap: var(--sp-3); }
+  .racc__pts li {
+    padding: var(--sp-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--clay-400);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  }
+  .racc__pts strong { display: block; color: #fff; font-size: var(--fs-sm); }
+  .racc__pts span { display: block; margin-top: 0.3rem; font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: 1.55; }
+
+  /* ------------------------------------------------------------ finitions */
+  .fin { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .fin { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .fin { grid-template-columns: minmax(0, 1fr); } }
+  .fin article { padding-top: var(--sp-4); border-top: 2px solid var(--clay-300); }
+  .fin h3 { font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .fin p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+</style>

@@ -1,0 +1,390 @@
+---
+/**
+ * Estimateur de projet.
+ *
+ * Ce que cet outil ne fait PAS : annoncer un prix. Afficher « votre toiture :
+ * 12 400 € » a partir de quatre clics est une promesse qu'aucun couvreur
+ * serieux ne peut tenir — et le client le decouvre au premier devis reel.
+ *
+ * Ce qu'il fait : qualifier la demande, et surtout expliquer honnetement ce
+ * qui fera varier le prix dans SON cas. Le visiteur repart avec quelque chose
+ * d'utile ; l'entreprise recoit un lead deja documente.
+ */
+import Icon from '@/components/Icon.astro';
+import { villesByOrder, communesDesservies } from '@/data/villes';
+import { nap, telHref, hasPhone } from '@/config/site';
+
+interface Props { id?: string; }
+const { id = 'estimateur' } = Astro.props;
+
+const communes = [...villesByOrder.map((v) => v.name), ...communesDesservies.map((c) => c.name)];
+const tel = telHref();
+
+const projets = [
+  { v: 'renovation', l: 'Rénover ma toiture', i: 'renovation' as const },
+  { v: 'reparation', l: 'Réparer un désordre', i: 'repair' as const },
+  { v: 'extension', l: 'Agrandir / surélever', i: 'extension' as const },
+  { v: 'charpente', l: 'Reprendre la charpente', i: 'truss' as const },
+  { v: 'zinguerie', l: 'Zinguerie / gouttières', i: 'gutter' as const },
+  { v: 'bardage', l: 'Bardage ou ossature bois', i: 'cladding' as const },
+];
+
+const batiments = [
+  { v: 'maison', l: 'Maison individuelle' },
+  { v: 'mitoyenne', l: 'Maison de ville mitoyenne' },
+  { v: 'dependance', l: 'Dépendance ou annexe' },
+  { v: 'pro', l: 'Bâtiment professionnel' },
+];
+
+const surfaces = [
+  { v: '-60', l: 'Moins de 60 m²' },
+  { v: '60-100', l: '60 à 100 m²' },
+  { v: '100-150', l: '100 à 150 m²' },
+  { v: '150+', l: 'Plus de 150 m²' },
+  { v: 'inconnu', l: 'Je ne sais pas' },
+];
+
+const etats = [
+  { v: 'bon', l: 'Bon état général' },
+  { v: 'localise', l: 'Quelques désordres localisés' },
+  { v: 'degrade', l: 'Nettement dégradé' },
+  { v: 'infiltration', l: 'Infiltration en cours' },
+  { v: 'inconnu', l: 'Je ne sais pas' },
+];
+
+/** Ce qui fait vraiment varier le montant, par nature de projet */
+const facteurs: Record<string, { titre: string; points: string[] }> = {
+  renovation: {
+    titre: 'Ce qui fera varier le montant sur une rénovation',
+    points: [
+      "L'état de la charpente une fois la couverture déposée : c'est la seule inconnue qu'aucun devis ne peut lever avant ouverture.",
+      "La présence ou non d'un écran sous-toiture à poser, et le type de tuile retenu.",
+      "Le nombre de points singuliers : souches de cheminée, noues, lucarnes, fenêtres de toit.",
+      "L'accès et l'échafaudage, en particulier en centre-ville ou sur parcelle étroite.",
+    ],
+  },
+  reparation: {
+    titre: 'Ce qui fera varier le montant sur une réparation',
+    points: [
+      "L'étendue réelle du désordre, souvent plus large que ce qui se voit depuis le sol.",
+      "La disponibilité d'une tuile compatible avec le modèle existant.",
+      "La nécessité ou non d'un échafaudage, qui pèse davantage que la réparation elle-même sur un petit chantier.",
+      "L'urgence : une intervention de mise en sécurité peut précéder la réparation définitive.",
+    ],
+  },
+  extension: {
+    titre: "Ce qui fera varier le montant sur un projet d'agrandissement",
+    points: [
+      "Le raccordement à l'existant : c'est presque toujours le point le plus technique du chantier.",
+      "Les contraintes d'urbanisme de votre commune, à vérifier avant toute étude chiffrée.",
+      "La reprise éventuelle de la structure existante pour reprendre les nouvelles charges.",
+      "Le niveau de finition attendu : hors d'eau et hors d'air, ou livraison plus complète.",
+    ],
+  },
+  charpente: {
+    titre: 'Ce qui fera varier le montant sur une charpente',
+    points: [
+      "L'étendue des pièces à reprendre : une reprise partielle et un remplacement complet n'ont pas le même ordre de grandeur.",
+      "L'accessibilité des bois concernés, notamment en combles aménagés.",
+      "La nécessité de déposer une partie de la couverture pour intervenir.",
+      "Le type de charpente : traditionnelle ou fermettes industrielles, qui ne se modifient pas de la même façon.",
+    ],
+  },
+  zinguerie: {
+    titre: 'Ce qui fera varier le montant en zinguerie',
+    points: [
+      "Le linéaire concerné et le nombre de descentes à reprendre.",
+      "Le matériau retenu, et la compatibilité avec l'existant.",
+      "Les points singuliers : angles, jonctions, raccords contre un mur voisin.",
+      "L'accès : une gouttière en fond de cour ne se remplace pas comme une gouttière sur rue.",
+    ],
+  },
+  default: {
+    titre: 'Ce qui fera varier le montant',
+    points: [
+      "Les surfaces réellement concernées, mesurées sur place.",
+      "L'état du support et ce qu'il faut reprendre avant de poser.",
+      "Les points singuliers et les raccords avec l'existant.",
+      "Les conditions d'accès et le moyen d'élévation nécessaire.",
+    ],
+  },
+};
+---
+
+<section class="est" id={id} data-wz>
+  <div class="est__head">
+    <p class="eyebrow">Estimateur de projet</p>
+    <h2>Préparer votre projet en cinq questions</h2>
+    <p class="lede lede--wide">
+      Nous n'affichons pas de prix automatique : sur ce métier, un chiffre donné sans avoir vu
+      la toiture n'engage personne et induit en erreur. En revanche, ces quelques questions nous
+      permettent d'arriver préparés, et vous montrent ce qui pèsera réellement sur le montant.
+    </p>
+  </div>
+
+  <div class="est__box">
+    <div class="est__progress" data-wz-progress>
+      <div class="est__bar"><span data-wz-fill style="width:16.6%"></span></div>
+      <p class="est__step">Question <strong data-wz-num>1</strong>/<span data-wz-total>6</span></p>
+    </div>
+
+    <!-- 1 --------------------------------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="1">
+      <legend class="est__legend" data-wz-legend="projet">Quel est votre projet ?</legend>
+      <div class="choice-grid">
+        {projets.map((p) => (
+          <button type="button" class="choice" data-wz-choice data-name="projet" data-value={p.v} data-label={p.l} aria-pressed="false">
+            <Icon name={p.i} size={20} class="choice__ico" />
+            <span>{p.l}</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- 2 --------------------------------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="2" hidden>
+      <legend class="est__legend" data-wz-legend="batiment">De quel type de bâtiment s'agit-il ?</legend>
+      <div class="choice-grid">
+        {batiments.map((b) => (
+          <button type="button" class="choice" data-wz-choice data-name="batiment" data-value={b.v} data-label={b.l} aria-pressed="false">
+            <span>{b.l}</span>
+          </button>
+        ))}
+      </div>
+      <p class="est__hint" data-wz-hint="batiment:mitoyenne">
+        Sur une maison mitoyenne, la jonction avec la toiture voisine est le point que nous
+        examinons en premier : c'est là que se jouent la plupart des reprises.
+      </p>
+      <div class="est__nav"><button type="button" class="btn btn--ghost btn--sm" data-wz-back>Retour</button></div>
+    </fieldset>
+
+    <!-- 3 --------------------------------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="3" hidden>
+      <legend class="est__legend" data-wz-legend="surface">Quelle surface approximative ?</legend>
+      <div class="choice-grid">
+        {surfaces.map((s) => (
+          <button type="button" class="choice" data-wz-choice data-name="surface" data-value={s.v} data-label={s.l} aria-pressed="false">
+            <span>{s.l}</span>
+          </button>
+        ))}
+      </div>
+      <p class="est__hint" data-wz-hint="surface:inconnu">
+        Aucun problème : la surface se mesure sur place. Vous pouvez aussi utiliser
+        <a href="/outils/#surface">l'estimateur de surface</a> pour obtenir un ordre de grandeur.
+      </p>
+      <div class="est__nav"><button type="button" class="btn btn--ghost btn--sm" data-wz-back>Retour</button></div>
+    </fieldset>
+
+    <!-- 4 --------------------------------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="4" hidden>
+      <legend class="est__legend" data-wz-legend="etat">Dans quel état est la toiture aujourd'hui ?</legend>
+      <div class="choice-grid">
+        {etats.map((e) => (
+          <button type="button" class="choice" data-wz-choice data-name="etat" data-value={e.v} data-label={e.l} aria-pressed="false">
+            <span>{e.l}</span>
+          </button>
+        ))}
+      </div>
+      <p class="est__hint est__hint--warn" data-wz-hint="etat:infiltration">
+        Une infiltration en cours ne relève pas de l'estimation mais de l'intervention.
+        Terminez ce parcours si vous le souhaitez, mais un appel sera plus rapide.
+      </p>
+      <div class="est__nav"><button type="button" class="btn btn--ghost btn--sm" data-wz-back>Retour</button></div>
+    </fieldset>
+
+    <!-- 5 --------------------------------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="5" hidden>
+      <legend class="est__legend" data-wz-legend="commune">Dans quelle commune ?</legend>
+      <label class="label" for="est-commune">Commune du chantier</label>
+      <input class="input" id="est-commune" type="text" data-wz-input="commune" list="est-communes"
+             autocomplete="address-level2" placeholder="Béthune, Lillers, Nœux-les-Mines…" />
+      <datalist id="est-communes">{communes.map((c) => <option value={c}></option>)}</datalist>
+      <div class="est__nav">
+        <button type="button" class="btn btn--ghost btn--sm" data-wz-back>Retour</button>
+        <button type="button" class="btn" data-wz-next="6" data-requires="commune">Voir la synthèse</button>
+      </div>
+    </fieldset>
+
+    <!-- 6 : synthese + coordonnees ------------------------------------- -->
+    <fieldset class="est__step-fs" data-wz-step="6" hidden>
+      <legend class="est__legend">Votre projet nécessite une étude personnalisée</legend>
+
+      <p class="est__verdict">
+        C'est la réponse honnête : sur les éléments que vous venez d'indiquer, aucun professionnel
+        sérieux ne peut donner un montant fiable sans être passé voir la toiture. Voici en revanche
+        ce que nous regarderons en priorité chez vous.
+      </p>
+
+      {Object.entries(facteurs).map(([key, f]) => (
+        <div class="est__factors" data-wz-result-for={key} data-wz-result-key="projet" hidden>
+          <p class="est__factors-title">{f.titre}</p>
+          <ul class="list-check">{f.points.map((p) => <li>{p}</li>)}</ul>
+        </div>
+      ))}
+
+      <ul class="list-clean est__recap" data-wz-recap></ul>
+
+      <div class="est__contact">
+        <p class="est__contact-title">Recevoir une estimation</p>
+        <div class="est__row">
+          <div class="field">
+            <label class="label" for="est-nom">Votre nom <span class="req">*</span></label>
+            <input class="input" id="est-nom" type="text" data-wz-nom autocomplete="name" />
+          </div>
+          <div class="field">
+            <label class="label" for="est-tel">Téléphone <span class="req">*</span></label>
+            <input class="input" id="est-tel" type="tel" inputmode="tel" data-wz-tel autocomplete="tel" placeholder="06 12 34 56 78" />
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="est-hp">Ne pas remplir</label>
+          <input id="est-hp" type="text" data-wz-hp tabindex="-1" autocomplete="off" />
+        </div>
+
+        <p class="error-msg" data-wz-error hidden></p>
+
+        <div class="est__nav">
+          <button type="button" class="btn btn--ghost btn--sm" data-wz-back="5">Retour</button>
+          <button type="button" class="btn btn--lg" data-wz-submit>Recevoir une estimation</button>
+        </div>
+        <p class="est__legal">
+          Nous vous rappelons pour convenir d'un passage. Vos coordonnées ne servent qu'à cela.
+        </p>
+      </div>
+    </fieldset>
+
+    <!-- confirmation ----------------------------------------------------- -->
+    <div class="est__done" data-wz-done hidden>
+      <div class="est__done-ico"><Icon name="check" size={28} /></div>
+      <h3>Demande enregistrée</h3>
+      <p>
+        Nous avons vos réponses et vous rappelons pour convenir d'une visite.
+        Le passage sur place permet de chiffrer précisément — c'est la seule méthode qui engage.
+      </p>
+      <p class="est__ref">Référence <strong data-wz-id></strong></p>
+      {hasPhone() && tel && (
+        <p class="est__done-call">Une question d'ici là ? <a href={tel} data-track-zone="estimateur">{nap.phone}</a></p>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .est__head { max-width: 48rem; margin-bottom: var(--sp-6); }
+  .est__head .lede { margin-top: var(--sp-3); }
+
+  .est__box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: clamp(1.4rem, 3.5vw, 2.5rem);
+    box-shadow: var(--shadow-md);
+  }
+
+  .est__progress { display: flex; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-6); }
+  .est__progress[hidden] { display: none; }
+  .est__bar { flex: 1; height: 4px; background: var(--sand-200); border-radius: 4px; overflow: hidden; }
+  .est__bar span { display: block; height: 100%; background: var(--accent); transition: width var(--t-slow) var(--ease-out); }
+  .est__step { font-size: var(--fs-xs); font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+  .est__step strong { color: var(--accent-ink); }
+
+  .est__step-fs { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .est__step-fs[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .est__step-fs:not([hidden]) { animation: est-in 300ms var(--ease-out); }
+    @keyframes est-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+
+  .est__legend {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-strong);
+    margin-bottom: var(--sp-5);
+    padding: 0;
+  }
+
+  .est__hint {
+    margin-top: var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--clay-50);
+    border-left: 3px solid var(--clay-300);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    font-size: var(--fs-sm);
+    color: var(--clay-700);
+    line-height: var(--lh-relaxed);
+  }
+  .est__hint[hidden] { display: none; }
+  .est__hint--warn { background: var(--alert-bg); border-left-color: var(--alert-border); color: var(--alert-ink); }
+
+  .est__nav { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-5); align-items: center; }
+  .est__nav .btn:last-child:not(:first-child) { margin-left: auto; }
+  @media (max-width: 520px) {
+    .est__nav { flex-direction: column-reverse; align-items: stretch; }
+    .est__nav .btn { width: 100%; margin-left: 0 !important; }
+  }
+
+  .est__verdict { color: var(--zinc-600); line-height: var(--lh-relaxed); max-width: 62ch; }
+
+  .est__factors {
+    margin-top: var(--sp-5);
+    padding: var(--sp-5);
+    background: var(--surface-sunk);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .est__factors[hidden] { display: none; }
+  .est__factors-title { font-weight: 650; color: var(--text-strong); margin-bottom: var(--sp-4); }
+
+  .est__recap { display: grid; gap: 0.35rem; margin-top: var(--sp-5); }
+  .est__recap li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: var(--fs-sm);
+  }
+  .est__recap span { color: var(--text-muted); }
+  .est__recap strong { color: var(--text-strong); text-align: right; }
+
+  .est__contact { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--border); }
+  .est__contact-title { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; margin-bottom: var(--sp-4); }
+  .est__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  .est__row .field + .field { margin-top: 0; }
+  @media (max-width: 560px) { .est__row { grid-template-columns: minmax(0, 1fr); } }
+  .est__legal { margin-top: var(--sp-4); font-size: var(--fs-xs); color: var(--text-muted); }
+
+  .est__done { text-align: center; padding: var(--sp-5) 0; }
+  .est__done[hidden] { display: none; }
+  .est__done-ico {
+    display: grid; place-items: center;
+    width: 58px; height: 58px; margin: 0 auto var(--sp-4);
+    border-radius: 50%; background: var(--ok-bg); border: 1px solid var(--ok-border); color: var(--ok-ink);
+  }
+  .est__done p { max-width: 48ch; margin: var(--sp-3) auto 0; color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .est__ref {
+    display: inline-block;
+    margin-top: var(--sp-5) !important;
+    padding: 0.55rem 1rem;
+    background: var(--sand-100);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+  }
+  .est__ref strong { font-family: ui-monospace, Menlo, monospace; color: var(--accent-ink); }
+  .est__done-call { font-size: var(--fs-sm); }
+</style>
+
+<script>
+  import { initWizard } from '@/lib/client/wizard';
+
+  document.querySelectorAll<HTMLElement>('.est[data-wz]').forEach((root) =>
+    initWizard(root, {
+      origin: 'estimateur',
+      startEvent: 'estimator_start',
+      completeEvent: 'estimator_complete',
+    }),
+  );
+</script>

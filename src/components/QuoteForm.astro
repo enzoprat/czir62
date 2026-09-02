@@ -1,0 +1,573 @@
+---
+/**
+ * Formulaire de devis en 3 etapes.
+ *
+ * Objectif de conception : terminer en moins d'une minute sur telephone.
+ *  - etape 1 : un seul appui (la prestation), qui fait avancer automatiquement
+ *  - etape 2 : la commune, avec suggestion des communes desservies
+ *  - etape 3 : nom + telephone. Tout le reste est facultatif.
+ *
+ * Details qui comptent sur mobile :
+ *  - `type="tel"` + `inputmode="tel"` : clavier numerique
+ *  - `autocomplete` renseigne partout : remplissage automatique du navigateur
+ *  - taille de police 16px minimum : evite le zoom automatique iOS
+ *  - ajout de photos depuis la galerie ou l'appareil photo, tres utile pour
+ *    une fuite ou une tuile cassee
+ *  - aucune etape ne se valide toute seule sans retour visuel
+ */
+import Icon from '@/components/Icon.astro';
+import { servicesByOrder } from '@/data/services';
+import { villesByOrder, communesDesservies } from '@/data/villes';
+import { nap, telHref, hasPhone } from '@/config/site';
+
+interface Props {
+  /** Prestation pre-selectionnee — saute l'etape 1 */
+  service?: string;
+  title?: string;
+  intro?: string;
+  origin?: 'formulaire-devis' | 'contact' | 'rappel';
+  compact?: boolean;
+  id?: string;
+  /** Niveau de titre. La page /devis/ passe 'h1' : le formulaire y est le sujet principal. */
+  titleTag?: 'h1' | 'h2';
+}
+const {
+  service,
+  title = 'Demander un devis',
+  intro = "Trois étapes, moins d'une minute. Nous rappelons pour préciser la situation avant tout déplacement.",
+  origin = 'formulaire-devis',
+  compact = false,
+  id = 'devis',
+  titleTag = 'h2',
+} = Astro.props;
+
+const Titre = titleTag;
+
+const communes = [...villesByOrder.map((v) => v.name), ...communesDesservies.map((c) => c.name)];
+const tel = telHref();
+---
+
+<section class:list={['qf', compact && 'qf--compact']} id={id} data-default-service={service} data-origin={origin}>
+  <div class="qf__head">
+    <Titre class="qf__title">{title}</Titre>
+    <p class="qf__intro">{intro}</p>
+  </div>
+
+  <form class="qf__form" novalidate autocomplete="on">
+    <!-- Progression : discrete, jamais anxiogene -->
+    <div class="qf__progress" aria-hidden="true">
+      <div class="qf__bar"><span class="qf__bar-fill" style="width:33.33%"></span></div>
+      <p class="qf__step-label">Étape <strong class="qf__step-num">1</strong>/3</p>
+    </div>
+    <p class="visually-hidden" role="status" aria-live="polite" data-live></p>
+
+    <!-- ------------------------------------------------ ETAPE 1 : besoin -->
+    <fieldset class="qf__step" data-step="1">
+      <legend class="qf__legend">De quoi avez-vous besoin ?</legend>
+      <div class="choice-grid qf__services">
+        {servicesByOrder.map((s) => (
+          <button type="button" class="choice qf__choice" data-service={s.slug} data-label={s.name}>
+            <Icon name={s.icon} size={21} class="choice__ico" />
+            <span>{s.navLabel ?? s.name}</span>
+          </button>
+        ))}
+        <button type="button" class="choice qf__choice" data-service="" data-label="Je ne sais pas encore">
+          <Icon name="search" size={21} class="choice__ico" />
+          <span>Je ne sais pas encore</span>
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- ----------------------------------------------- ETAPE 2 : commune -->
+    <fieldset class="qf__step" data-step="2" hidden>
+      <legend class="qf__legend">Où se situe le chantier ?</legend>
+
+      <label class="label" for="qf-commune">Commune <span class="req">*</span></label>
+      <input
+        class="input" id="qf-commune" name="commune" type="text"
+        list="qf-communes" autocomplete="address-level2"
+        placeholder="Béthune, Beuvry, Bruay-la-Buissière…" required
+      />
+      <datalist id="qf-communes">
+        {communes.map((c) => <option value={c}></option>)}
+      </datalist>
+      <p class="hint">Nous intervenons depuis Béthune sur le bassin béthunois et les communes voisines.</p>
+
+      <div class="qf__nav">
+        <button type="button" class="btn btn--ghost qf__back">Retour</button>
+        <button type="button" class="btn qf__next" data-next="3">Continuer</button>
+      </div>
+    </fieldset>
+
+    <!-- ------------------------------------------- ETAPE 3 : coordonnees -->
+    <fieldset class="qf__step" data-step="3" hidden>
+      <legend class="qf__legend">Comment vous joindre ?</legend>
+
+      <div class="qf__row">
+        <div class="field">
+          <label class="label" for="qf-nom">Votre nom <span class="req">*</span></label>
+          <input class="input" id="qf-nom" name="nom" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label class="label" for="qf-tel">Téléphone <span class="req">*</span></label>
+          <input
+            class="input" id="qf-tel" name="telephone" type="tel"
+            inputmode="tel" autocomplete="tel" placeholder="06 12 34 56 78" required
+          />
+        </div>
+      </div>
+
+      <details class="qf__more">
+        <summary>Ajouter des précisions ou des photos <span>(facultatif)</span></summary>
+
+        <div class="field">
+          <label class="label" for="qf-email">E-mail</label>
+          <input class="input" id="qf-email" name="email" type="email" inputmode="email" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label class="label" for="qf-message">Décrivez la situation</label>
+          <textarea
+            class="textarea" id="qf-message" name="message" rows="3"
+            placeholder="Ex. : une auréole est apparue au plafond de la chambre après les pluies de la semaine dernière."
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <span class="label">Photos</span>
+          <label class="qf__upload" for="qf-photos">
+            <Icon name="camera" size={22} />
+            <span>
+              <strong>Ajouter des photos</strong>
+              <em>Depuis votre galerie ou l'appareil photo — 4 maximum</em>
+            </span>
+          </label>
+          <input id="qf-photos" name="photos" type="file" accept="image/*" multiple class="visually-hidden" />
+          <ul class="list-clean qf__thumbs" data-thumbs></ul>
+          <p class="hint">
+            Une photo du plafond taché ou du versant concerné nous fait gagner beaucoup de temps.
+          </p>
+        </div>
+      </details>
+
+      <!-- Champ piege : invisible pour l'utilisateur, rempli par les robots -->
+      <div class="hp" aria-hidden="true">
+        <label for="qf-site">Ne pas remplir</label>
+        <input id="qf-site" name="site" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <p class="qf__error error-msg" data-error hidden></p>
+
+      <div class="qf__nav">
+        <button type="button" class="btn btn--ghost qf__back">Retour</button>
+        <button type="submit" class="btn btn--lg qf__submit">
+          <span class="qf__submit-label">Envoyer ma demande</span>
+        </button>
+      </div>
+
+      <p class="qf__legal">
+        Vos coordonnées servent uniquement à traiter votre demande. Elles ne sont ni revendues,
+        ni utilisées à d'autres fins — voir la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+      </p>
+    </fieldset>
+  </form>
+
+  <!-- ------------------------------------------------------- confirmation -->
+  <div class="qf__done" hidden>
+    <div class="qf__done-ico"><Icon name="check" size={30} /></div>
+    <h2>Demande enregistrée</h2>
+    <p class="qf__done-text">
+      Nous avons bien reçu votre demande et vous rappelons pour préciser la situation.
+      Conservez votre référence, elle nous permet de retrouver votre dossier immédiatement.
+    </p>
+    <p class="qf__ref">Référence <strong data-lead-id></strong></p>
+    {hasPhone() && tel && (
+      <p class="qf__done-call">
+        Besoin d'une réponse tout de suite ?
+        <a href={tel} data-track-zone="confirmation-devis">{nap.phone}</a>
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  .qf {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: clamp(1.4rem, 3.5vw, 2.5rem);
+    box-shadow: var(--shadow-md);
+  }
+  .qf--compact { box-shadow: var(--shadow-sm); border-radius: var(--r-lg); }
+
+  .qf__head { margin-bottom: var(--sp-5); }
+  .qf__title { font-size: var(--fs-2xl); }
+  .qf__intro { margin-top: var(--sp-3); color: var(--zinc-600); line-height: var(--lh-relaxed); max-width: 52ch; }
+
+  /* --------------------------------------------------------- progression */
+  .qf__progress { display: flex; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-6); }
+  .qf__bar { flex: 1; height: 4px; background: var(--sand-200); border-radius: 4px; overflow: hidden; }
+  .qf__bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width var(--t-slow) var(--ease-out);
+  }
+  .qf__step-label { font-size: var(--fs-xs); font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+  .qf__step-label strong { color: var(--accent-ink); }
+
+  /* --------------------------------------------------------------- etapes */
+  .qf__step { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .qf__step[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .qf__step:not([hidden]) { animation: qf-in 300ms var(--ease-out); }
+    @keyframes qf-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+
+  .qf__legend {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-strong);
+    margin-bottom: var(--sp-5);
+    padding: 0;
+  }
+
+  .qf__services { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+  .qf__choice { font-size: var(--fs-sm); }
+
+  .qf__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  .qf__row .field + .field { margin-top: 0; }
+  @media (max-width: 560px) { .qf__row { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ------------------------------------------------------ champs annexes */
+  .qf__more { margin-top: var(--sp-5); border-top: 1px solid var(--border); padding-top: var(--sp-4); }
+  .qf__more > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--accent-ink);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .qf__more > summary::-webkit-details-marker { display: none; }
+  .qf__more > summary::before {
+    content: '+';
+    display: grid;
+    place-items: center;
+    width: 20px; height: 20px;
+    border: 1px solid var(--clay-200);
+    border-radius: 50%;
+    background: var(--clay-50);
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+  .qf__more[open] > summary::before { content: '−'; }
+  .qf__more > summary span { color: var(--text-muted); font-weight: 500; }
+  .qf__more > .field:first-of-type { margin-top: var(--sp-5); }
+
+  .qf__upload {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--surface-sunk);
+    cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .qf__upload:hover { border-color: var(--accent); background: var(--clay-50); }
+  .qf__upload :global(svg) { color: var(--accent); flex: none; }
+  .qf__upload strong { display: block; font-size: var(--fs-sm); color: var(--text-strong); }
+  .qf__upload em { display: block; font-style: normal; font-size: var(--fs-xs); color: var(--text-muted); margin-top: 0.1rem; }
+
+  .qf__thumbs { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3); }
+  .qf__thumbs li { position: relative; }
+  .qf__thumbs img {
+    width: 68px; height: 68px;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+  }
+  .qf__thumb-del {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 22px; height: 22px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--zinc-600);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* ------------------------------------------------------------ navigation */
+  .qf__nav { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }
+  .qf__nav .btn:last-child { margin-left: auto; }
+  @media (max-width: 560px) {
+    .qf__nav { flex-direction: column-reverse; }
+    .qf__nav .btn { width: 100%; margin-left: 0 !important; }
+  }
+
+  .qf__submit[aria-busy='true'] { opacity: 0.75; pointer-events: none; }
+
+  .qf__error {
+    margin-top: var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: #FCEFEE;
+    border: 1px solid #E7BDB9;
+    border-radius: var(--r-sm);
+  }
+  .qf__error[hidden] { display: none; }
+
+  .qf__legal {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ---------------------------------------------------------- confirmation */
+  .qf__done { text-align: center; padding: var(--sp-6) 0; }
+  .qf__done[hidden] { display: none; }
+  .qf__done-ico {
+    display: grid; place-items: center;
+    width: 62px; height: 62px;
+    margin: 0 auto var(--sp-5);
+    border-radius: 50%;
+    background: var(--ok-bg);
+    border: 1px solid var(--ok-border);
+    color: var(--ok-ink);
+  }
+  .qf__done h2 { font-size: var(--fs-2xl); }
+  .qf__done-text {
+    max-width: 46ch;
+    margin: var(--sp-4) auto 0;
+    color: var(--zinc-600);
+    line-height: var(--lh-relaxed);
+  }
+  .qf__ref {
+    display: inline-block;
+    margin-top: var(--sp-5);
+    padding: 0.6rem 1.1rem;
+    background: var(--sand-100);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+    color: var(--zinc-600);
+  }
+  .qf__ref strong { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent-ink); letter-spacing: 0.03em; }
+  .qf__done-call { margin-top: var(--sp-5); font-size: var(--fs-sm); color: var(--text-muted); }
+  .qf__done-call a { font-weight: 650; margin-left: 0.35rem; }
+</style>
+
+<script>
+  import { submitLead, validPhone, filterImages } from '@/lib/client/leadForm';
+  import { track } from '@/lib/client/tracking';
+
+  document.querySelectorAll<HTMLElement>('.qf').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('.qf__form')!;
+    const steps = Array.from(root.querySelectorAll<HTMLFieldSetElement>('.qf__step'));
+    const fill = root.querySelector<HTMLElement>('.qf__bar-fill')!;
+    const stepNum = root.querySelector<HTMLElement>('.qf__step-num')!;
+    const live = root.querySelector<HTMLElement>('[data-live]')!;
+    const errorBox = root.querySelector<HTMLElement>('[data-error]')!;
+    const done = root.querySelector<HTMLElement>('.qf__done')!;
+    const thumbs = root.querySelector<HTMLElement>('[data-thumbs]')!;
+    const fileInput = root.querySelector<HTMLInputElement>('#qf-photos');
+    const origin = (root.dataset.origin ?? 'formulaire-devis') as 'formulaire-devis' | 'contact' | 'rappel';
+
+    let current = 1;
+    let service = root.dataset.defaultService ?? '';
+    let serviceLabel = '';
+    let photos: File[] = [];
+    let started = false;
+    const startedAt = Date.now();
+
+    /* -------------------------------------------------------- navigation */
+    function show(step: number) {
+      current = step;
+      steps.forEach((s) => { s.hidden = Number(s.dataset.step) !== step; });
+      fill.style.width = `${(step / 3) * 100}%`;
+      stepNum.textContent = String(step);
+      live.textContent = `Étape ${step} sur 3`;
+
+      const first = steps[step - 1]?.querySelector<HTMLElement>('input, button.choice');
+      // Ne pas voler le focus au chargement initial ; uniquement lors d'un changement
+      if (started) first?.focus({ preventScroll: true });
+
+      track('quote_step', { etape: step, prestation: service, origine: origin });
+    }
+
+    function begin() {
+      if (started) return;
+      started = true;
+      track('quote_start', { prestation: service, origine: origin, page: location.pathname });
+    }
+
+    /* ------------------------------------------- etape 1 : choix du besoin */
+    root.querySelectorAll<HTMLButtonElement>('.qf__choice').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.qf__choice').forEach((b) => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+        service = btn.dataset.service ?? '';
+        serviceLabel = btn.dataset.label ?? '';
+        begin();
+        show(2);
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('.qf__back').forEach((btn) =>
+      btn.addEventListener('click', () => show(Math.max(1, current - 1))),
+    );
+
+    root.querySelectorAll<HTMLButtonElement>('.qf__next').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const commune = form.querySelector<HTMLInputElement>('#qf-commune')!;
+        if (!commune.value.trim()) {
+          commune.setAttribute('aria-invalid', 'true');
+          commune.focus();
+          return;
+        }
+        commune.removeAttribute('aria-invalid');
+        show(Number(btn.dataset.next));
+      }),
+    );
+
+    // Entree dans le champ commune = passer a l'etape suivante
+    form.querySelector('#qf-commune')?.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter') {
+        e.preventDefault();
+        root.querySelector<HTMLButtonElement>('.qf__next')?.click();
+      }
+    });
+
+    /* ------------------------------------------------------------ photos */
+    function renderThumbs() {
+      thumbs.replaceChildren();
+      photos.forEach((file, i) => {
+        const li = document.createElement('li');
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = `Photo ${i + 1} jointe à la demande`;
+        img.onload = () => URL.revokeObjectURL(img.src);
+
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'qf__thumb-del';
+        del.setAttribute('aria-label', `Retirer la photo ${i + 1}`);
+        del.textContent = '×';
+        del.onclick = () => { photos.splice(i, 1); renderThumbs(); };
+
+        li.append(img, del);
+        thumbs.append(li);
+      });
+    }
+
+    fileInput?.addEventListener('change', () => {
+      if (!fileInput.files?.length) return;
+      const { files, error } = filterImages([...photos, ...Array.from(fileInput.files)]);
+      photos = files;
+      renderThumbs();
+      if (error) { errorBox.textContent = error; errorBox.hidden = false; }
+      fileInput.value = '';
+    });
+
+    /* ------------------------------------------------------------ envoi */
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.hidden = true;
+
+      const get = (sel: string) => form.querySelector<HTMLInputElement | HTMLTextAreaElement>(sel)?.value.trim() ?? '';
+      const nom = get('#qf-nom');
+      const telephone = get('#qf-tel');
+
+      const nomInput = form.querySelector<HTMLInputElement>('#qf-nom')!;
+      const telInput = form.querySelector<HTMLInputElement>('#qf-tel')!;
+
+      if (nom.length < 2) {
+        nomInput.setAttribute('aria-invalid', 'true');
+        errorBox.textContent = 'Merci d’indiquer votre nom.';
+        errorBox.hidden = false;
+        nomInput.focus();
+        return;
+      }
+      nomInput.removeAttribute('aria-invalid');
+
+      if (!validPhone(telephone)) {
+        telInput.setAttribute('aria-invalid', 'true');
+        errorBox.textContent = 'Ce numéro ne semble pas valide. Exemple attendu : 06 12 34 56 78.';
+        errorBox.hidden = false;
+        telInput.focus();
+        return;
+      }
+      telInput.removeAttribute('aria-invalid');
+
+      const submit = form.querySelector<HTMLButtonElement>('.qf__submit')!;
+      const label = submit.querySelector<HTMLElement>('.qf__submit-label')!;
+      const original = label.textContent;
+      submit.setAttribute('aria-busy', 'true');
+      label.textContent = 'Envoi en cours…';
+
+      const result = await submitLead(
+        {
+          origin,
+          nom,
+          telephone,
+          email: get('#qf-email') || undefined,
+          commune: get('#qf-commune') || undefined,
+          prestation: service || undefined,
+          message: get('#qf-message') || undefined,
+          reponses: serviceLabel && !service ? { besoin: serviceLabel } : undefined,
+          startedAt,
+          hp: get('#qf-site'),
+        },
+        photos,
+      );
+
+      submit.removeAttribute('aria-busy');
+      label.textContent = original;
+
+      if (!result.ok) {
+        errorBox.textContent = result.error ?? 'Envoi impossible.';
+        errorBox.hidden = false;
+        return;
+      }
+
+      form.hidden = true;
+      root.querySelector<HTMLElement>('.qf__head')!.hidden = true;
+      const ref = done.querySelector<HTMLElement>('[data-lead-id]');
+      if (ref) ref.textContent = result.id ?? '';
+      done.hidden = false;
+      done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    /* --------------------------------- pre-selection depuis l'URL */
+    const params = new URLSearchParams(location.search);
+    const preset = params.get('prestation') ?? root.dataset.defaultService;
+    if (preset) {
+      const btn = root.querySelector<HTMLButtonElement>(`.qf__choice[data-service="${CSS.escape(preset)}"]`);
+      if (btn) {
+        btn.classList.add('is-selected');
+        service = preset;
+        serviceLabel = btn.dataset.label ?? '';
+        show(2);
+      }
+    }
+    const commune = params.get('commune');
+    if (commune) {
+      const input = form.querySelector<HTMLInputElement>('#qf-commune');
+      if (input) input.value = commune;
+    }
+
+    // Premiere interaction avec un champ = demarrage du parcours
+    form.addEventListener('focusin', begin, { once: true });
+  });
+</script>

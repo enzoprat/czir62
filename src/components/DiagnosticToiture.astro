@@ -1,0 +1,291 @@
+---
+/**
+ * Diagnostic rapide.
+ *
+ * Un seul choix, une reponse utile, un appel a l'action. C'est un outil
+ * d'orientation, pas un diagnostic : la formulation reste prudente et chaque
+ * reponse le rappelle. On oriente ensuite vers la page reellement pertinente,
+ * ce qui sert autant le visiteur que le maillage interne.
+ */
+import Icon from '@/components/Icon.astro';
+import type { IconName } from '@/lib/icons';
+
+interface Option {
+  key: string;
+  label: string;
+  icon: IconName;
+  /** Ce que l'on peut dire honnetement sans avoir vu la toiture */
+  reponse: string;
+  /** Ce que le visiteur peut verifier lui-meme, depuis le sol */
+  verifier: string;
+  href: string;
+  hrefLabel: string;
+  urgent?: boolean;
+}
+
+const options: Option[] = [
+  {
+    key: 'fuite',
+    label: 'Fuite ou infiltration',
+    icon: 'leak',
+    urgent: true,
+    reponse:
+      "Une infiltration n'arrive presque jamais à la verticale de son point d'entrée : l'eau circule le long d'un chevron ou d'une panne avant de tomber. C'est pourquoi on cherche l'origine en amont de la tache, et pas au-dessus d'elle.",
+    verifier:
+      "Photographiez la trace au plafond, et notez si elle apparaît systématiquement après la pluie ou seulement quand le vent vient d'une direction précise. Cette information oriente beaucoup la recherche.",
+    href: '/fuite-toiture/',
+    hrefLabel: 'Recherche et réparation de fuite',
+  },
+  {
+    key: 'tuiles',
+    label: 'Tuiles cassées ou déplacées',
+    icon: 'repair',
+    urgent: true,
+    reponse:
+      "Une tuile déplacée ne provoque pas forcément de fuite immédiate, surtout s'il existe un écran sous-toiture. Mais elle expose la zone au premier épisode de pluie battante avec vent, et c'est souvent là que le désordre se déclenche.",
+    verifier:
+      "Depuis le sol, regardez si d'autres tuiles ont bougé sur la même ligne : quand le vent a soulevé un rang, il en a souvent touché plusieurs.",
+    href: '/reparation-toiture/',
+    hrefLabel: 'Réparation de toiture',
+  },
+  {
+    key: 'ancienne',
+    label: 'Toiture ancienne',
+    icon: 'renovation',
+    reponse:
+      "L'âge seul ne dit pas grand-chose. Ce qui compte, c'est l'état réel des tuiles, la tenue des points singuliers (faîtage, rives, solins) et la présence ou non d'un écran sous-toiture. Une couverture de 50 ans encore saine peut ne demander qu'une reprise ciblée.",
+    verifier:
+      "Regardez si les tuiles s'effritent aux angles, si le faîtage se fissure, et si des traces d'humidité apparaissent sur les bois dans les combles.",
+    href: '/renovation-toiture/',
+    hrefLabel: 'Rénovation de toiture',
+  },
+  {
+    key: 'mousse',
+    label: 'Mousse ou salissures',
+    icon: 'tile',
+    reponse:
+      "La mousse retient l'humidité contre la tuile et accélère son vieillissement, surtout sur les versants nord. Elle est rarement urgente, mais son retrait doit être fait sans agresser la tuile — un nettoyage trop violent fait plus de dégâts que la mousse elle-même.",
+    verifier:
+      "Notez si la mousse se concentre sur un seul versant, et si les gouttières se remplissent de débris à chaque pluie.",
+    href: '/couverture/#entretien',
+    hrefLabel: 'Entretien de toiture',
+  },
+  {
+    key: 'gouttiere',
+    label: 'Gouttière ou évacuation',
+    icon: 'gutter',
+    reponse:
+      "Un débordement vient rarement d'un manque de capacité : le plus souvent, c'est une pente perdue à cause de crochets descendus, une jonction disjointe ou une descente partiellement obstruée. C'est réparable sans tout remplacer dans beaucoup de cas.",
+    verifier:
+      "Observez pendant une pluie soutenue : l'eau déborde-t-elle sur toute la longueur, ou toujours au même endroit ? La réponse change complètement le diagnostic.",
+    href: '/zinguerie/#gouttieres',
+    hrefLabel: 'Zinguerie et gouttières',
+  },
+  {
+    key: 'velux',
+    label: 'Fenêtre de toit / Velux',
+    icon: 'velux',
+    reponse:
+      "Les infiltrations autour d'une fenêtre de toit viennent le plus souvent du raccord d'étanchéité périphérique, pas de la fenêtre elle-même. Un raccord mal adapté au type de couverture, ou vieilli, laisse passer l'eau alors que le vitrage est intact.",
+    verifier:
+      "Regardez si la trace apparaît en haut de l'encadrement (raccord amont) ou sur les côtés, et si de la condensation se forme aussi par temps sec — ce n'est alors pas la même cause.",
+    href: '/pose-velux/',
+    hrefLabel: 'Pose et remplacement de Velux',
+  },
+  {
+    key: 'charpente',
+    label: 'Charpente',
+    icon: 'truss',
+    reponse:
+      "Une charpente qui travaille se lit à des signes précis : déformation d'une panne, fente qui s'ouvre dans une pièce, humidité localisée en pied de chevron. Ces signes demandent un examen sur place — c'est la structure qui porte tout le reste.",
+    verifier:
+      "Dans les combles, cherchez les zones sombres ou tachées sur les bois, et les points où le bois est tendre sous la pointe d'un tournevis.",
+    href: '/charpente/',
+    hrefLabel: 'Travaux de charpente',
+  },
+  {
+    key: 'projet',
+    label: 'Projet complet',
+    icon: 'extension',
+    reponse:
+      "Un projet d'ensemble se chiffre après une visite : l'accès, la complexité de la toiture, l'état de la charpente et le nombre de points singuliers pèsent davantage sur le coût que la surface elle-même.",
+    verifier:
+      "Rassemblez ce que vous savez du bâtiment : année de construction approximative, travaux déjà réalisés, éventuel projet d'isolation ou d'aménagement de combles.",
+    href: '/renovation-toiture/',
+    hrefLabel: 'Rénovation de toiture',
+  },
+  {
+    key: 'inconnu',
+    label: 'Je ne sais pas',
+    icon: 'search',
+    reponse:
+      "C'est fréquent, et ce n'est pas un problème. La plupart des gens constatent un symptôme — une tache, une gouttière qui déborde, une tuile au sol — sans savoir d'où il vient. Identifier l'origine fait partie de notre travail, pas du vôtre.",
+    verifier:
+      "Décrivez simplement ce que vous voyez et depuis quand. Une photo prise depuis le sol ou depuis les combles suffit souvent à orienter la visite.",
+    href: '/devis/',
+    hrefLabel: 'Décrire ma situation',
+  },
+];
+
+interface Props {
+  title?: string;
+  intro?: string;
+  id?: string;
+}
+const {
+  title = 'Quel problème rencontrez-vous ?',
+  intro = "Sélectionnez ce que vous constatez. Nous vous indiquons ce que cela signifie le plus souvent, et ce qu'il est utile de vérifier avant notre passage.",
+  id = 'diagnostic',
+} = Astro.props;
+---
+
+<section class="diag" id={id}>
+  <div class="diag__head">
+    <p class="eyebrow">Diagnostic rapide</p>
+    <h2>{title}</h2>
+    <p class="lede lede--wide">{intro}</p>
+  </div>
+
+  <div class="choice-grid diag__grid" role="group" aria-label="Nature du problème">
+    {options.map((o) => (
+      <button type="button" class="choice diag__opt" data-key={o.key} aria-pressed="false">
+        <Icon name={o.icon} size={21} class="choice__ico" />
+        <span>{o.label}</span>
+      </button>
+    ))}
+  </div>
+
+  <div class="diag__result" hidden aria-live="polite">
+    {options.map((o) => (
+      <article class="diag__panel" data-panel={o.key} hidden>
+        <div class="diag__panel-head">
+          <span class="diag__panel-ico"><Icon name={o.icon} size={24} /></span>
+          <div>
+            <h3>{o.label}</h3>
+            {o.urgent && <span class="tag tag--accent">À traiter sans attendre</span>}
+          </div>
+        </div>
+
+        <p class="diag__text">{o.reponse}</p>
+
+        <div class="diag__check">
+          <p class="diag__check-title">Ce que vous pouvez vérifier vous-même</p>
+          <p>{o.verifier}</p>
+        </div>
+
+        <p class="diag__disclaimer">
+          Cette orientation ne remplace pas un examen sur place : seule une visite permet
+          d'identifier la cause réelle et l'étendue des travaux.
+        </p>
+
+        <div class="btn-row diag__actions">
+          <a href="/devis/" class="btn" data-track="quote_start" data-track-label="diagnostic">
+            Faire vérifier ma toiture
+          </a>
+          <a href={o.href} class="btn btn--ghost">{o.hrefLabel}</a>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .diag__head { max-width: 46rem; margin-bottom: var(--sp-6); }
+  .diag__head .lede { margin-top: var(--sp-3); }
+
+  .diag__grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr)); }
+  .diag__opt { font-size: var(--fs-sm); }
+
+  .diag__result { margin-top: var(--sp-6); }
+  .diag__result[hidden] { display: none; }
+
+  .diag__panel {
+    padding: clamp(1.35rem, 3vw, 2rem);
+    background: var(--surface);
+    border: 1px solid var(--clay-200);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .diag__panel[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .diag__panel:not([hidden]) { animation: diag-in 280ms var(--ease-out); }
+    @keyframes diag-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  }
+
+  .diag__panel-head { display: flex; gap: var(--sp-4); align-items: center; margin-bottom: var(--sp-4); }
+  .diag__panel-ico {
+    display: grid; place-items: center;
+    width: 48px; height: 48px; flex: none;
+    border-radius: var(--r-md);
+    background: var(--clay-50);
+    border: 1px solid var(--clay-100);
+    color: var(--accent);
+  }
+  .diag__panel-head h3 { font-size: var(--fs-xl); }
+  .diag__panel-head .tag { margin-top: 0.4rem; }
+
+  .diag__text { color: var(--zinc-600); line-height: var(--lh-relaxed); max-width: 68ch; }
+
+  .diag__check {
+    margin-top: var(--sp-5);
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--surface-sunk);
+    border-left: 3px solid var(--clay-300);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+  .diag__check-title {
+    font-size: var(--fs-xs);
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--clay-700);
+    margin-bottom: var(--sp-2);
+  }
+  .diag__check p { font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .diag__disclaimer {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .diag__actions { margin-top: var(--sp-5); }
+</style>
+
+<script>
+  import { track } from '@/lib/client/tracking';
+
+  document.querySelectorAll<HTMLElement>('.diag').forEach((root) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.diag__opt'));
+    const result = root.querySelector<HTMLElement>('.diag__result')!;
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.diag__panel'));
+    let started = false;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.key!;
+
+        if (!started) {
+          started = true;
+          track('diagnostic_start', { page: location.pathname });
+        }
+
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        panels.forEach((p) => { p.hidden = p.dataset.panel !== key; });
+        result.hidden = false;
+
+        track('diagnostic_complete', {
+          probleme: key,
+          label: btn.textContent?.trim() ?? '',
+          page: location.pathname,
+        });
+
+        // Ne fait defiler que si le resultat n'est pas deja visible
+        const rect = result.getBoundingClientRect();
+        if (rect.top < 0 || rect.bottom > window.innerHeight) {
+          result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+  });
+</script>

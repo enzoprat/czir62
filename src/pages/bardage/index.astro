@@ -1,0 +1,286 @@
+---
+/**
+ * PAGE BARDAGE
+ * Intention : projet d'enveloppe. Le visiteur cherche autant un résultat
+ * esthétique qu'une protection. Il compare des matériaux et se demande
+ * comment cela vieillit.
+ *
+ * Structure propre : la coupe du complexe de bardage (ce qui se passe DERRIÈRE
+ * la lame visible, et que personne ne montre), comparatif de matériaux, sens
+ * de pose, et points singuliers — le pied de bardage en tête, parce que c'est
+ * là que les poses ratées se voient au bout de trois ans.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('bardage');
+const tel = telHref();
+const realisations = await realisationsForService('bardage', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Bardage' }];
+
+const raisons = [
+  { t: 'Protéger un mur exposé', d: "Un pignon plein ouest prend l'essentiel des pluies battantes. Le bardage l'écarte de la maçonnerie et la laisse sécher." },
+  { t: 'Reprendre une façade fatiguée', d: "Enduit fissuré, briques altérées : le bardage habille sans reprendre toute la maçonnerie, à condition que le support reste sain." },
+  { t: 'Terminer une extension', d: "C'est la finition la plus courante sur une ossature bois ou une surélévation, parce qu'elle est légère et rapide à mettre en œuvre." },
+  { t: 'Changer l’aspect', d: "Le bardage modifie radicalement la lecture d'un volume. C'est aussi une décision d'urbanisme : la teinte et le matériau sont encadrés par le PLU." },
+];
+
+const materiaux = [
+  { nom: 'Bois massif', pour: "Aspect chaleureux, matériau vivant, léger. Douglas, mélèze ou red cedar selon la durabilité naturelle recherchée.", contre: "Grise naturellement s'il n'est pas traité — ce n'est pas un défaut, mais il faut le savoir avant. Un entretien est nécessaire si l'on veut conserver la teinte d'origine." },
+  { nom: 'Composite', pour: "Stabilité dimensionnelle, teinte tenue dans le temps, entretien réduit à un nettoyage.", contre: "Rendu moins vivant que le bois, et coût d'achat supérieur. La dilatation doit être anticipée dans les fixations." },
+  { nom: 'Fibres-ciment', pour: "Bonne tenue au feu et à l'humidité, large choix de teintes, se pose en lames ou en panneaux.", contre: "Matériau lourd, découpe qui demande des précautions, et aspect plus industriel selon les finitions." },
+  { nom: 'Métal laqué', pour: "Lignes nettes, très bonne longévité, adapté aux volumes contemporains et aux bâtiments professionnels.", contre: "Marque les chocs et se raye ; la teinte laquée se retouche mal. Nécessite une pose soignée des angles." },
+];
+
+const faqItems = [
+  {
+    q: 'Le bardage isole-t-il la maison ?',
+    a: "Pas en lui-même. Un bardage seul est une protection et une finition. En revanche, il est le parement naturel d'une isolation par l'extérieur : dans ce cas, c'est l'isolant posé derrière lui qui apporte la performance, pas la lame visible. Il faut donc distinguer clairement les deux prestations, y compris sur le devis.",
+  },
+  {
+    q: 'Un bardage bois demande-t-il beaucoup d’entretien ?',
+    a: "Cela dépend de ce que vous attendez de lui. Laissé brut, un bois de classe adaptée grise naturellement et ne demande rien : c'est une patine, pas une dégradation. Si vous souhaitez conserver la teinte d'origine, il faut prévoir une reprise de finition périodique. La bonne question n'est pas « combien d'entretien », mais « accepterez-vous qu'il grise ».",
+  },
+  {
+    q: 'Peut-on barder par-dessus un mur en mauvais état ?',
+    a: "Le bardage n'est pas un pansement. Il se fixe sur le support par l'intermédiaire de son ossature : si la maçonnerie est décohésive ou humide en permanence, il faut traiter la cause avant de couvrir. Habiller un mur qui prend l'eau revient à masquer le problème tout en le mettant à l'abri du regard.",
+  },
+  {
+    q: 'Faut-il une autorisation d’urbanisme ?',
+    a: "Oui en général : un bardage modifie l'aspect extérieur du bâtiment, ce qui relève d'une déclaration préalable de travaux. Les PLU encadrent souvent les matériaux et les teintes admis, et les règles sont plus strictes en secteur protégé. Renseignez-vous en mairie avant d'arrêter votre choix esthétique — c'est l'ordre logique.",
+  },
+  {
+    q: 'Pose verticale ou horizontale, cela change-t-il quelque chose ?',
+    a: "Sur le plan visuel, beaucoup : la pose verticale allonge le volume, l'horizontale l'élargit. Sur le plan technique aussi, car le sens de pose des lames détermine celui de l'ossature qui les reçoit, et donc le sens de circulation de l'air dans la lame ventilée. Ce n'est pas seulement un choix de goût.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/bardage-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Bardage"
+    title="Pose de bardage à Béthune"
+    lede="Habiller un pignon, protéger une façade exposée, terminer une extension. Un bardage réussi se joue autant sur l'ossature et la ventilation qui le portent que sur la lame que l'on voit."
+    photo="/images/services/bardage-czir62.jpg"
+    photoAlt="Bardage métallique posé par CZIR62 sur un pignon, liteaunage et pare-pluie visibles"
+    photoNeed="Photo d'un bardage terminé, de préférence en lumière rasante pour faire ressortir le relief des lames."
+    icon="cladding"
+    chips={['Bois, composite, fibres-ciment, métal', 'Lame d’air ventilée', 'Pignon, façade, extension']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=bardage" class="btn btn--lg" data-track="quote_start" data-track-label="hero-bardage">
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-bardage">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Pourquoi barder</p>
+        <h2>Quatre motifs, rarement le même projet</h2>
+      </div>
+      <div class="rais">
+        {raisons.map((r) => (
+          <article class="rais__item reveal">
+            <h3>{r.t}</h3>
+            <p>{r.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ COUPE ============= -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="coupe">
+        <div class="coupe__text">
+          <p class="eyebrow">Ce qu’on ne voit pas</p>
+          <h2>Un bardage, c’est surtout ce qu’il y a derrière</h2>
+          <p class="lede">
+            La lame visible n'est que la dernière couche. Ce qui détermine la tenue dans le
+            temps se trouve entre elle et le mur.
+          </p>
+
+          <ol class="list-clean coupe__list">
+            <li><span>1</span><div><h3>Le support</h3><p>Maçonnerie ou ossature. Il doit être sain, plan et sec. Un support qui bouge fera bouger tout le reste.</p></div></li>
+            <li><span>2</span><div><h3>Le pare-pluie</h3><p>Une membrane qui arrête l'eau ayant pu passer derrière une lame, tout en laissant la vapeur s'échapper vers l'extérieur.</p></div></li>
+            <li><span>3</span><div><h3>L’ossature</h3><p>Les tasseaux qui reçoivent les lames. Leur sens dépend du sens de pose du parement, leur entraxe du matériau retenu.</p></div></li>
+            <li><span>4</span><div><h3>La lame d’air ventilée</h3><p>L'élément le plus important, et le plus souvent bâclé. Ouverte en bas et en haut, elle laisse l'air circuler et sécher la sous-face. Sans elle, l'humidité reste piégée et le bardage se dégrade par l'arrière — invisible jusqu'au jour où il tombe.</p></div></li>
+            <li><span>5</span><div><h3>Le parement</h3><p>La lame visible, fixée sur l'ossature avec le jeu de dilatation nécessaire au matériau.</p></div></li>
+          </ol>
+        </div>
+
+        <div class="coupe__draw">
+          <svg viewBox="0 0 300 380" role="img" aria-label="Coupe d'un bardage : support, pare-pluie, ossature, lame d'air ventilée, parement">
+            <rect x="24" y="30" width="46" height="320" fill="var(--sand-300)" stroke="var(--wood-400)" stroke-width="2"/>
+            <rect x="70" y="30" width="8" height="320" fill="var(--zinc-500)"/>
+            <g fill="var(--wood-400)">
+              <rect x="78" y="46" width="26" height="290" rx="2"/>
+            </g>
+            <g fill="var(--clay-500)" stroke="var(--clay-700)" stroke-width="1.5">
+              <rect x="126" y="40" width="30" height="300" rx="2"/>
+              <rect x="160" y="40" width="30" height="300" rx="2"/>
+              <rect x="194" y="40" width="30" height="300" rx="2"/>
+            </g>
+            <!-- flux d'air -->
+            <path d="M114 330 V70" stroke="#3E7CB1" stroke-width="2.5" stroke-dasharray="7 6"/>
+            <polygon points="114,58 109,72 119,72" fill="#3E7CB1"/>
+            <text x="240" y="196" class="cp-lbl" transform="rotate(-90 240 196)" text-anchor="middle">air ventilé</text>
+            <g class="cp-lbl">
+              <text x="47" y="22" text-anchor="middle">mur</text>
+              <text x="74" y="368" text-anchor="middle">pare-pluie</text>
+              <text x="91" y="22" text-anchor="middle">tasseau</text>
+              <text x="175" y="368" text-anchor="middle">parement</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Matériaux</p>
+        <h2>Ce que chaque matériau implique réellement</h2>
+        <p class="lede lede--wide">
+          Aucun n'est meilleur dans l'absolu. Le bon choix dépend de l'exposition, du budget,
+          de ce que le PLU autorise et de votre tolérance au vieillissement naturel.
+        </p>
+      </div>
+
+      <div class="bmat">
+        {materiaux.map((m) => (
+          <article class="bmat__card reveal">
+            <h3>{m.nom}</h3>
+            <p class="bmat__pour"><span>Atouts</span>{m.pour}</p>
+            <p class="bmat__contre"><span>À savoir</span>{m.contre}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Points singuliers</p>
+        <h2>Là où se jugent les poses</h2>
+        <p class="lede lede--wide">
+          Un bardage se regarde au bout de trois ans, pas le jour de la livraison.
+          Quatre détails font la différence.
+        </p>
+      </div>
+      <div class="sing">
+        <article><h3>Le pied de bardage</h3><p>Une garde suffisante au-dessus du sol, une grille anti-rongeurs, et une entrée d'air dégagée. Un bardage qui descend jusqu'au terrain absorbe l'humidité par capillarité et pourrit par le bas.</p></article>
+        <article><h3>Les encadrements</h3><p>Autour des fenêtres et des portes, l'eau doit être conduite vers l'extérieur, jamais renvoyée derrière le parement. Appuis et bavettes se traitent avant la pose des lames.</p></article>
+        <article><h3>Les angles</h3><p>Cornière rapportée ou coupe d'onglet : le choix se voit immédiatement. Il conditionne aussi l'étanchéité à l'eau ruisselante sur l'arête.</p></article>
+        <article><h3>La jonction avec la toiture</h3><p>En partie haute, la sortie d'air doit rester libre tout en étant protégée. C'est le point où bardage et couverture doivent être pensés ensemble — c'est aussi pourquoi les deux relèvent de la même entreprise chez nous.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock items={realisations} title="Bardages réalisés dans le secteur" moreHref="/realisations/" hideIfEmpty />
+      <Faq items={faqItems} title="Questions sur le bardage" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks service="bardage" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices service="bardage" title="Prestations associées" intro="Le bardage arrive souvent en finition d'un autre chantier, ou en même temps qu'une reprise de toiture." />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Bardage"
+    title="Étudier votre projet de bardage"
+    text="Nous regardons l'état du support, l'exposition et ce que permet le PLU de votre commune avant de vous proposer un matériau."
+    primaryLabel="Demander un devis"
+    service="bardage"
+    trackLabel="bardage-final"
+  />
+</BaseLayout>
+
+<style>
+  .rais { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .rais { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .rais { grid-template-columns: minmax(0, 1fr); } }
+  .rais__item { padding-top: var(--sp-4); border-top: 2px solid var(--clay-400); }
+  .rais__item h3 { font-size: var(--fs-lg); }
+  .rais__item p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .coupe { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  @media (max-width: 900px) { .coupe { grid-template-columns: minmax(0, 1fr); } }
+  .coupe__list { display: grid; gap: var(--sp-4); margin-top: var(--sp-6); }
+  .coupe__list li { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .coupe__list li > span {
+    display: grid; place-items: center;
+    width: 28px; height: 28px; flex: none;
+    border-radius: 50%; background: var(--clay-500); color: #fff;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+  }
+  .coupe__list h3 { font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .coupe__list p { margin-top: 0.25rem; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .coupe__draw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--sp-5); box-shadow: var(--shadow-xs); }
+  .coupe__draw svg { width: 100%; height: auto; max-height: 420px; }
+  .cp-lbl, .cp-lbl text { font-family: var(--font-sans); font-size: 12px; font-weight: 600; fill: var(--text-muted); }
+
+  .bmat { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 780px) { .bmat { grid-template-columns: minmax(0, 1fr); } }
+  .bmat__card { padding: var(--sp-6); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
+  .bmat__card h3 { font-size: var(--fs-xl); margin-bottom: var(--sp-4); }
+  .bmat__pour, .bmat__contre { font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .bmat__contre { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border); }
+  .bmat__pour span, .bmat__contre span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; margin-bottom: .3rem; }
+  .bmat__pour span { color: var(--ok-ink); }
+  .bmat__contre span { color: var(--clay-600); }
+
+  .sing { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .sing { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .sing { grid-template-columns: minmax(0, 1fr); } }
+  .sing article { padding-top: var(--sp-4); border-top: 2px solid var(--clay-600); }
+  .sing h3 { color: #fff; font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .sing p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+</style>

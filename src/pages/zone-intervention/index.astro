@@ -1,0 +1,268 @@
+---
+/**
+ * HUB ZONE D'INTERVENTION
+ * Raison d'être : donner une réponse claire à « intervenez-vous chez moi ? »,
+ * et servir de point de distribution vers les pages locales.
+ * On y assume une limite : au-delà d'une certaine distance, nous le disons.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import ZoneMap from '@/components/ZoneMap.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Faq from '@/components/Faq.astro';
+import { villesByOrder, communesDesservies, RAYON_KM } from '@/data/villes';
+import { nap, hasAddress, addressOneLine, telHref, hasPhone } from '@/config/site';
+import { breadcrumbSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: "Zone d'intervention" }];
+const tel = telHref();
+
+const faqItems = [
+  {
+    q: 'Intervenez-vous dans ma commune si elle n’est pas listée ?',
+    a: `Souvent oui. Notre zone couvre un rayon d'environ ${RAYON_KM} km autour de Béthune, jusqu'à la métropole lilloise — cela représente beaucoup plus de communes que celles listées ici. Appelez-nous : nous vous répondrons franchement. Si la distance ne nous permet pas d'assurer correctement le suivi d'un chantier, nous préférons vous le dire plutôt que d'accepter et de mal faire.`,
+  },
+  {
+    q: 'La distance change-t-elle le prix ?',
+    a: "Pour un chantier de plusieurs jours, la distance est marginale dans le coût total. Pour une petite intervention d'une heure, elle pèse davantage : le déplacement représente alors une part importante. C'est pourquoi nous privilégions les interventions courtes sur les communes les plus proches de Béthune.",
+  },
+  {
+    q: 'Le déplacement pour un devis est-il facturé ?',
+    a: "Non, sur l'ensemble de la zone présentée ici. Nous considérons que voir la toiture fait partie du travail d'établissement d'un devis, pas d'une prestation à part.",
+  },
+  {
+    q: 'Pourquoi une zone aussi resserrée ?',
+    a: `Un couvreur qui annonce couvrir toute la région revient rarement pour un ajustement six mois plus tard. Un rayon d'environ ${RAYON_KM} km nous laisse de la marge — jusqu'à Lille — tout en gardant un cœur de zone, le bassin béthunois, où nous pouvons repasser dans la journée. C'est un équilibre, pas une contrainte.`,
+  },
+];
+---
+
+<BaseLayout
+  title="Zone d'intervention — Couvreur autour de Béthune | CZIR62"
+  description="CZIR62 intervient dans un rayon de 40 km autour de son local de Béthune, jusqu'à Lille : Beuvry, Bruay-la-Buissière, Nœux-les-Mines, Lillers, Lens, Liévin."
+  path="/zone-intervention/"
+  schema={[
+    webPageSchema({
+      path: '/zone-intervention/',
+      name: "Zone d'intervention CZIR62",
+      description: "Communes desservies par CZIR62 autour de Béthune.",
+    }),
+    breadcrumbSchema(crumbs),
+    faqSchema(faqItems),
+  ]}
+>
+  <section class="hub-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Notre zone d'intervention</h1>
+      <p class="lede lede--wide">
+        Nous intervenons depuis notre local de Béthune dans un rayon d'environ {RAYON_KM} km,
+        jusqu'à la métropole lilloise. Le cœur de notre activité reste le bassin béthunois :
+        c'est là que nous repassons le plus vite, et c'est le bâti que nous connaissons le mieux.
+      </p>
+      {hasAddress() && (
+        <p class="hub-hero__nap">
+          <Icon name="storefront" size={17} /> Notre local : {addressOneLine()}
+        </p>
+      )}
+    </div>
+  </section>
+
+  <ZoneMap showList={false} />
+
+  <!-- ============================================== LES COMMUNES ======== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Pages locales</p>
+        <h2>Dix communes, dix pages</h2>
+        <p class="lede lede--wide">
+          Chaque page présente le bâti réellement rencontré sur la commune, les désordres qui y
+          reviennent le plus souvent et les prestations les plus demandées. Ce ne sont pas dix
+          fois le même texte avec un nom de ville différent.
+        </p>
+      </div>
+
+      <ul class="list-clean zvilles">
+        {villesByOrder.map((v) => (
+          <li class="reveal">
+            <a href={v.url} class="zville">
+              <div class="zville__head">
+                <h3>{v.name}</h3>
+                <span class="tag">{v.isBase ? 'Notre local' : `${v.distanceKm} km`}</span>
+              </div>
+              <p class="zville__cp">{v.postalCode}</p>
+              <p class="zville__txt">{v.intro}</p>
+              <span class="link-arrow">Couvreur à {v.name}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================ AUTRES COMMUNES ======= -->
+  <section class="section">
+    <div class="container">
+      <div class="autres">
+        <div>
+          <p class="eyebrow">Également desservi</p>
+          <h2>Les communes sans page dédiée</h2>
+          <p class="lede">
+            Nous y intervenons régulièrement. Elles n'ont pas de page propre parce que nous ne
+            créons une page que lorsqu'elle a réellement quelque chose à dire — pas pour
+            occuper le terrain.
+          </p>
+        </div>
+        <ul class="list-clean autres__list">
+          {communesDesservies.map((c) => (
+            <li><Icon name="pin" size={15} /> {c.name} <em>{c.postalCode}</em></li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- La question que se pose tout visiteur dont la commune n'est pas citée.
+           Elle méritait un vrai point de sortie, pas une note en bas de page. -->
+      <div class="verif">
+        <div class="verif__txt">
+          <p class="verif__eyebrow">Votre commune n'apparaît pas ?</p>
+          <h2>Vérifiez en trente secondes</h2>
+          <p>
+            Indiquez votre commune dans le formulaire : nous vous confirmons si nous nous
+            déplaçons, et sous quel délai. Selon la nature du chantier, nous allons souvent
+            un peu plus loin que la zone affichée — et si ce n'est pas raisonnable,
+            nous vous le disons franchement plutôt que de vous faire attendre.
+          </p>
+        </div>
+
+        <div class="verif__act">
+          <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="zone-verif-commune">
+            Vérifier ma commune
+          </a>
+          {hasPhone() && tel && (
+            <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="zone-verif-commune">
+              <Icon name="phone" size={18} /> {nap.phone}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <Faq items={faqItems} title="Questions sur notre zone d'intervention" />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Zone d'intervention"
+    title="Vérifier que nous intervenons chez vous"
+    text="Indiquez votre commune dans le formulaire : nous vous confirmons immédiatement si nous nous déplaçons, et sous quel délai."
+    primaryLabel="Demander un devis"
+    trackLabel="zone-final"
+  />
+</BaseLayout>
+
+<style>
+  .hub-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .hub-hero h1 { margin-top: var(--sp-5); }
+  .hub-hero .lede { margin-top: var(--sp-4); }
+  .hub-hero__nap {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: var(--sp-5);
+    font-size: var(--fs-sm); font-weight: 600; color: var(--zinc-600);
+  }
+  .hub-hero__nap :global(svg) { color: var(--accent); }
+
+  .zvilles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 980px) { .zvilles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .zvilles { grid-template-columns: minmax(0, 1fr); } }
+
+  .zville {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: var(--shadow-xs);
+    transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  }
+  .zville:hover { border-color: var(--clay-300); transform: translateY(-3px); box-shadow: var(--shadow-md); color: var(--text); }
+  .zville__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+  .zville__head h3 { font-size: var(--fs-xl); }
+  .zville__cp { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 0.2rem; }
+  .zville__txt {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-sm);
+    color: var(--zinc-600);
+    line-height: var(--lh-normal);
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .zville .link-arrow { margin-top: var(--sp-4); font-size: var(--fs-sm); }
+
+  .autres { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 880px) { .autres { grid-template-columns: minmax(0, 1fr); } }
+  .autres__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+  @media (max-width: 560px) { .autres__list { grid-template-columns: minmax(0, 1fr); } }
+  .autres__list li {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface-sunk);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+    font-weight: 550;
+    color: var(--zinc-600);
+  }
+  .autres__list :global(svg) { color: var(--clay-400); flex: none; }
+  .autres__list em { margin-left: auto; font-style: normal; font-size: var(--fs-xs); color: var(--text-muted); }
+  /* ------------------------------------------------------ vérifier commune */
+  .verif {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-top: var(--sp-8);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: linear-gradient(135deg, var(--clay-50), var(--sand-50));
+    border: 1px solid var(--clay-200);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 860px) { .verif { grid-template-columns: minmax(0, 1fr); } }
+
+  .verif__eyebrow {
+    font-size: var(--fs-xs);
+    font-weight: 640;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: var(--sp-2);
+  }
+  .verif h2 { font-size: var(--fs-2xl); }
+  .verif__txt p:last-child {
+    margin-top: var(--sp-3);
+    color: var(--clay-700);
+    line-height: var(--lh-relaxed);
+    max-width: 58ch;
+  }
+  .verif__act { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+  @media (max-width: 520px) {
+    .verif__act { flex-direction: column; }
+    .verif__act .btn { width: 100%; }
+  }
+</style>

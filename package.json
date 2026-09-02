@@ -1,0 +1,28 @@
+{
+  "name": "czir62",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "CZIR62 - Entreprise Generale de Couverture a Bethune",
+  "scripts": {
+    "dev": "astro dev --port ${PORT:-4321}",
+    "start": "astro dev --port ${PORT:-4321}",
+    "build": "astro check && astro build",
+    "build:fast": "astro build",
+    "preview": "astro preview",
+    "serve": "node ./dist/server/entry.mjs",
+    "check": "astro check",
+    "photos": "node scripts/photos-manquantes.mjs",
+    "assets": "node scripts/generate-assets.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.4.4",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.16.2",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.5",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,105 @@
+---
+/**
+ * « Interventions dans votre secteur ».
+ *
+ * Volontairement limite a 4 ou 5 communes CHOISIES pour la prestation, au lieu
+ * d'une enumeration de vingt noms de villes en bas de page. Une liste courte et
+ * pertinente est un meilleur signal qu'une liste longue et automatique — et
+ * c'est surtout la seule qui rende service au lecteur.
+ */
+import Icon from '@/components/Icon.astro';
+import { villesForService, getVilles } from '@/data/villes';
+import { getService } from '@/data/services';
+
+interface Props {
+  /** Prestation concernee — determine les communes affichees */
+  service?: string;
+  /** Ou liste explicite de slugs de communes */
+  villes?: string[];
+  title?: string;
+  text?: string;
+  limit?: number;
+}
+const { service, villes: explicit, title, text, limit = 5 } = Astro.props;
+
+const brut = explicit
+  ? getVilles(explicit)
+  : service
+    ? getVilles(getService(service).cities).slice(0, limit)
+    : villesForService('couverture', limit);
+
+/* Tri par eloignement du local : c'est le seul critere que nous puissions
+   verifier, et c'est aussi celui qui interesse le visiteur. */
+const list = [...brut].sort((a, b) => a.distanceKm - b.distanceKm);
+
+const label = service ? getService(service).name.toLowerCase() : 'nos interventions';
+const heading = title ?? 'Interventions dans votre secteur';
+const body =
+  text ??
+  `Nous intervenons en ${label} depuis notre local de Béthune. Quelques communes de la zone, de la plus proche à la plus éloignée — la carte les recense toutes.`;
+---
+
+<section class="cities">
+  <div class="cities__head">
+    <p class="eyebrow">Zone d'intervention</p>
+    <h2>{heading}</h2>
+    <p class="lede lede--wide">{body}</p>
+  </div>
+
+  <ul class="list-clean cities__list">
+    {list.map((v) => (
+      <li>
+        <a href={v.url} class="cities__link">
+          <Icon name="pin" size={17} />
+          <span>
+            <strong>{v.name}</strong>
+            <em>{v.isBase ? 'Notre local' : `à ${v.distanceKm} km`}</em>
+          </span>
+        </a>
+      </li>
+    ))}
+    <li>
+      <a href="/zone-intervention/" class="cities__link cities__link--all">
+        <span><strong>Toute la zone</strong><em>Voir la carte</em></span>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .cities__head { max-width: 46rem; margin-bottom: var(--sp-6); }
+  .cities__head h2 { font-size: var(--fs-2xl); }
+  .cities__head .lede { margin-top: var(--sp-3); }
+
+  .cities__list { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+
+  .cities__link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--text-strong);
+    box-shadow: var(--shadow-xs);
+    transition: border-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  }
+  .cities__link:hover {
+    border-color: var(--clay-300);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-strong);
+  }
+  .cities__link :global(svg) { color: var(--accent); flex: none; }
+  .cities__link strong { display: block; font-size: var(--fs-sm); font-weight: 620; }
+  .cities__link em {
+    display: block;
+    font-style: normal;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+  .cities__link--all { background: var(--clay-50); border-color: var(--clay-200); }
+  .cities__link--all strong { color: var(--accent-ink); }
+</style>

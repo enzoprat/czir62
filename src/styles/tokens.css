@@ -1,0 +1,237 @@
+/* ===========================================================================
+ * CZIR62 — Jetons de design
+ * ---------------------------------------------------------------------------
+ * DIRECTION ARTISTIQUE : « MATIÈRE ET PENTE »
+ *
+ * Le langage visuel vient du métier, pas d'un template.
+ *
+ *  1. DEUX FAMILLES DE MATIÈRE EN TENSION
+ *     La terre cuite (chaude, la tuile) contre l'ardoise-zinc (froide, le
+ *     métal). C'est le couple réel du métier : ce qui couvre, ce qui conduit
+ *     l'eau. Une palette uniquement chaude vire au beige de template ; le
+ *     bleu-gris froid fait exister la terre cuite par contraste et donne au
+ *     site ses sections « techniques ».
+ *
+ *  2. LA PENTE
+ *     Le rampant devient une grammaire : coutures diagonales entre certaines
+ *     sections, toujours au même angle. Un site de couvreur peut avoir une
+ *     ligne d'horizon qui n'est pas horizontale.
+ *
+ *  3. LES RANGS DE TUILES
+ *     Texture en quinconce, très basse opacité, sur les surfaces profondes.
+ *
+ *  4. LE CHIFFRE
+ *     Un métier qui mesure. Chiffres tabulaires, filets capillaires,
+ *     étiquettes gravées : la typographie de l'atelier, pas du dashboard.
+ *
+ * Angles arrondis volontairement resserrés (2 à 16 px) : le bâtiment a des
+ * arêtes. Le rayon 18-24 px généralisé est la signature du template SaaS.
+ * ========================================================================= */
+
+:root {
+  /* ═══════════════════════════ TERRE CUITE ═══════════════════════════════
+     La tuile. Couleur d'accent, et surface pleine sur les moments forts.   */
+  --clay-50:  #FCF4EF;
+  --clay-100: #F6E3D6;
+  --clay-200: #EBC6AE;
+  --clay-300: #DBA37F;
+  --clay-400: #C87F55;
+  --clay-500: #B25E31;   /* accent de reference */
+  --clay-600: #96481F;
+  --clay-700: #77381A;
+  --clay-800: #582A14;
+  --clay-900: #3D1D0E;
+
+  /* ═══════════════════════ ARDOISE / ZINC ════════════════════════════════
+     Le contrepoint froid. Sections techniques, texte, surfaces profondes.  */
+  --zinc-50:  #F1F4F6;
+  --zinc-100: #E1E7EB;
+  --zinc-200: #C6D0D8;
+  --zinc-300: #A2B1BC;
+  --zinc-400: #78899A;
+  --zinc-500: #57697C;
+  --zinc-600: #405265;
+  --zinc-700: #2E3D4C;
+  --zinc-800: #1F2C38;
+  --zinc-900: #16212B;
+  --zinc-950: #0E1720;
+
+  /* ═════════════════════════ CHAUX / SABLE ═══════════════════════════════ */
+  --paper:    #FFFFFF;
+  --bone:     #FAF7F3;
+  --sand-50:  #F6F1EA;
+  --sand-100: #EFE7DC;
+  --sand-200: #E3D8C9;
+  --sand-300: #D2C3AF;
+  --sand-400: #B8A588;
+
+  /* ═════════════════════ BOIS (charpente, ossature) ══════════════════════ */
+  --wood-300: #C9A47A;
+  --wood-400: #A8794C;
+  --wood-600: #7A5433;
+  --wood-800: #4A331F;
+
+  /* ══════════════════ VERDIGRIS (zinc oxydé) — état positif ══════════════ */
+  --verdi-100: #E4EEE9;
+  --verdi-300: #A9C8BC;
+  --verdi-500: #4F7F6E;
+  --verdi-700: #33564A;
+
+  /* ═══════════════════════════ ÉTATS ═════════════════════════════════════ */
+  --alert-bg:     #FDF2E3;
+  --alert-border: #E5B573;
+  --alert-ink:    #7C4A11;
+  --danger:       #A32E24;
+  --danger-bg:    #FBEDEC;
+
+  /* ═══════════════════════ JETONS SÉMANTIQUES ════════════════════════════ */
+  --bg:             var(--bone);
+  --surface:        var(--paper);
+  --surface-sand:   var(--sand-50);      /* chaleur : contenu éditorial     */
+  --surface-zinc:   var(--zinc-50);      /* froid : contenu technique       */
+  --surface-clay:   var(--clay-50);      /* accent doux : conversion        */
+  --deep:           var(--zinc-900);     /* profond froid — ardoise         */
+  --deep-warm:      #291A11;             /* profond chaud — terre brûlée    */
+
+  --text:           var(--zinc-800);
+  --text-strong:    var(--zinc-900);
+  --text-muted:     var(--zinc-500);
+  --text-invert:    #F3EFE9;
+  --text-invert-muted: var(--zinc-300);
+
+  --border:         #E7DFD4;             /* filet chaud                     */
+  --border-strong:  #D5C9B9;
+  --border-zinc:    var(--zinc-200);
+  --border-invert:  rgba(255, 255, 255, 0.13);
+
+  /* Alias de compatibilité : conservés pour ne pas éparpiller la couleur
+     dans trente fichiers. Le vert positif est désormais un vert-de-gris,
+     la patine du zinc — cohérent avec le métier. */
+  --surface-sunk:   var(--surface-sand);
+  --ok-bg:          var(--verdi-100);
+  --ok-border:      var(--verdi-300);
+  --ok-ink:         var(--verdi-700);
+
+  --accent:         var(--clay-500);
+  --accent-hover:   var(--clay-600);
+  --accent-soft:    var(--clay-50);
+  --accent-ink:     var(--clay-700);
+  --on-accent:      #FFFFFF;
+
+  /* ══════════════════════════ ARÊTES ═════════════════════════════════════
+     Resserrees : le bati a des angles. 16 px est le maximum, reserve aux
+     grandes surfaces.                                                      */
+  --r-xs: 2px;
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-pill: 999px;
+
+  /* ══════════════════════════ OMBRES ═════════════════════════════════════
+     Teintees chaud, jamais grises. Utilisees avec parcimonie : une ombre
+     sur chaque bloc est le reflexe qui aplatit une page.                   */
+  --shadow-xs: 0 1px 2px rgba(61, 29, 14, 0.05);
+  --shadow-sm: 0 2px 8px -2px rgba(61, 29, 14, 0.08);
+  --shadow-md: 0 12px 28px -14px rgba(61, 29, 14, 0.22);
+  --shadow-lg: 0 30px 60px -28px rgba(30, 18, 10, 0.34);
+  --shadow-plate: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 6px 18px -8px rgba(61, 29, 14, 0.28);
+
+  /* ═══════════════════════════ RYTHME ════════════════════════════════════ */
+  --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
+  --sp-4: 1rem;     --sp-5: 1.5rem;   --sp-6: 2rem;
+  --sp-7: 2.75rem;  --sp-8: 3.5rem;   --sp-9: 4.5rem;
+  --sp-10: 6rem;    --sp-11: 8rem;    --sp-12: 10rem;
+
+  --section-y:    clamp(3.5rem, 7vw, 7rem);
+  --section-y-lg: clamp(4.5rem, 9vw, 10rem);
+
+  /* Angle de pente : la constante geometrique du site.
+     Utilisee pour les coutures diagonales entre sections.                  */
+  --pitch: 2.4vw;
+
+  /* ═════════════════════════ TYPOGRAPHIE ═════════════════════════════════
+     SF Pro via la pile systeme. Aucune police telechargee.                 */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+  /* Echelle a fort contraste : les grands titres doivent etre grands.      */
+  --fs-xs:   0.8125rem;
+  --fs-sm:   0.875rem;
+  --fs-base: 1rem;
+  --fs-md:   1.0625rem;
+  --fs-lg:   clamp(1.125rem, 0.35vw + 1.05rem, 1.28rem);
+  --fs-xl:   clamp(1.3rem, 0.7vw + 1.12rem, 1.6rem);
+  --fs-2xl:  clamp(1.6rem, 1.3vw + 1.28rem, 2.3rem);
+  --fs-3xl:  clamp(2rem, 2.3vw + 1.4rem, 3.2rem);
+  --fs-4xl:  clamp(2.4rem, 3.6vw + 1.45rem, 4.4rem);
+  --fs-5xl:  clamp(2.9rem, 5.4vw + 1.35rem, 5.6rem);
+  --fs-6xl:  clamp(3.2rem, 7vw + 1.2rem, 7rem);
+
+  --lh-tight:   1.05;
+  --lh-snug:    1.22;
+  --lh-normal:  1.58;
+  --lh-relaxed: 1.7;
+
+  /* ═══════════════════════════ TRAMES ════════════════════════════════════ */
+  --container:       75rem;
+  --container-wide:  88rem;
+  --container-text:  42rem;
+  --gutter: clamp(1.15rem, 4vw, 2.75rem);
+
+  /* ══════════════════════════ MOUVEMENT ══════════════════════════════════ */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-fast: 130ms;
+  --t-base: 220ms;
+  --t-slow: 420ms;
+
+  --mobile-bar-h: 0px;
+  --header-h: 72px;
+
+  --z-header: 60;
+  --z-mobilebar: 70;
+  --z-modal: 100;
+}
+
+@media (max-width: 860px) {
+  :root { --mobile-bar-h: 64px; --header-h: 62px; --pitch: 4vw; }
+}
+
+/* ═════════════════════════ TEXTURES MATIÈRE ══════════════════════════════
+   Motifs SVG en ligne, quelques centaines d'octets, aucune requete reseau.
+   Ils portent l'identite : un fond de section qui evoque un rang de tuiles
+   ou une couverture zinc a joint debout, plutot qu'un aplat neutre.        */
+:root {
+  /*
+   * Rangs de tuiles mécaniques.
+   *
+   * Le motif précédent était un appareil de brique : joints décalés en
+   * quinconce. Sur un site de couvreur, c'est le mauvais matériau — et cela
+   * se voit.
+   *
+   * Une couverture se distingue d'un mur à deux détails :
+   *   - les joints verticaux sont ALIGNÉS d'un rang à l'autre, jamais décalés ;
+   *   - chaque rang laisse voir le nez de la tuile, une courbe et non un trait.
+   * Le joint n'est tracé que sur la partie exposée (le pureau) : le haut de
+   * la tuile est recouvert par le rang du dessus.
+   */
+  --tex-tuiles: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='30' viewBox='0 0 48 30'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M0 25.5q12 5.5 24 0q12 5.5 24 0' stroke-width='1.15'/%3E%3Cpath d='M.5 12v14M24.5 12v14M47.5 12v14' stroke-width='1' opacity='.55'/%3E%3C/g%3E%3C/svg%3E");
+  /* Joint debout zinc — bandes verticales fines */
+  --tex-zinc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='8' viewBox='0 0 34 8'%3E%3Cpath d='M.5 0v8' fill='none' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E");
+  /* Trame de plan technique — surfaces zinc claires */
+  --tex-plan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23405265' stroke-width='.5'%3E%3Cpath d='M0 .25h24M.25 0v24'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Les animations sont un confort, jamais une dependance. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

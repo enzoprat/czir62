@@ -1,0 +1,549 @@
+---
+/**
+ * PAGE COUVERTURE
+ * Intention : « couvreur Béthune » — le visiteur cherche un professionnel du
+ * métier, pas la solution à un problème précis. Il veut comprendre ce que
+ * recouvre le métier, ce qui compose une toiture, et à qui il a affaire.
+ *
+ * Structure propre à cette page : anatomie d'une toiture (section pédagogique
+ * illustrée qui n'existe nulle part ailleurs sur le site), matériaux, trois
+ * situations d'intervention, section entretien ancrée.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('couverture');
+const tel = telHref();
+const realisations = await realisationsForService('couverture', 3);
+
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Couverture' }];
+
+/* Anatomie d'une toiture — le coeur pédagogique de cette page */
+const couches = [
+  {
+    n: 1,
+    t: 'La couverture',
+    d: "Tuiles ou ardoises. C'est la peau visible : elle encaisse la pluie, le vent, le gel et le soleil. Elle n'est pas étanche au sens strict — elle est conçue pour évacuer l'eau vers le bas, rang après rang.",
+  },
+  {
+    n: 2,
+    t: 'Le liteaunage',
+    d: "Les liteaux, ces tasseaux horizontaux sur lesquels les tuiles s'accrochent. Leur espacement, le « pureau », détermine le recouvrement entre deux rangs. Un liteaunage mal calé et la couverture ne recouvre plus correctement.",
+  },
+  {
+    n: 3,
+    t: "L'écran sous-toiture",
+    d: "Un film posé sous les liteaux qui joue le rôle de seconde barrière : si une tuile se déplace ou si la pluie est poussée par le vent sous la couverture, l'eau est reconduite vers la gouttière. Beaucoup de toitures anciennes n'en ont pas.",
+  },
+  {
+    n: 4,
+    t: 'La charpente',
+    d: "La structure porteuse : pannes, chevrons, fermes. Elle supporte le poids de la couverture, la neige et la pression du vent. Une couverture neuve sur une charpente fatiguée n'est jamais une bonne affaire.",
+  },
+  {
+    n: 5,
+    t: 'Les points singuliers',
+    d: "Faîtage, rives, arêtiers, noues, solins, souches de cheminée, abords de fenêtres de toit. Ce sont les endroits où la couverture s'interrompt ou change de direction — et c'est là que se produisent la grande majorité des infiltrations.",
+  },
+  {
+    n: 6,
+    t: "L'évacuation",
+    d: "Gouttières, descentes, chéneaux. Ils conduisent hors du bâtiment l'eau que la couverture a rassemblée. Une évacuation sous-dimensionnée ou bouchée fait refouler l'eau vers la toiture.",
+  },
+];
+
+const faqItems = [
+      { q: "Quelle est la durée de vie d'une couverture en tuiles ?", a: "Cela dépend du matériau et de l'exposition. Une tuile terre cuite de qualité posée dans les règles tient plusieurs décennies ; une tuile béton vieillit généralement plus vite, en devenant poreuse et en se chargeant de mousse. Ce qui limite la durée de vie d'une toiture, ce sont plus souvent les points singuliers — faîtage, solins, rives — que les tuiles du champ courant." },
+      { q: "Faut-il un écran sous-toiture sur une toiture existante ?", a: "Il ne peut pas être ajouté sans déposer la couverture, puisqu'il se pose sous les liteaux. C'est donc une question qui se tranche au moment d'une rénovation, pas d'une réparation. Sur une toiture sans écran, une tuile déplacée expose directement l'intérieur : c'est un argument sérieux en faveur de l'écran lors d'une reprise complète." },
+      { q: "Peut-on marcher sur une toiture pour la vérifier soi-même ?", a: "Nous le déconseillons. Au-delà du risque de chute, on casse facilement des tuiles en marchant dessus, surtout sur de la tuile ancienne ou gelée, et on crée le problème qu'on cherchait à identifier. L'observation depuis le sol avec des jumelles, ou depuis les combles, donne déjà beaucoup d'informations." },
+      { q: "Quelle différence entre un couvreur et un charpentier ?", a: "Le charpentier réalise la structure porteuse en bois ; le couvreur pose ce qui la recouvre et assure l'écoulement de l'eau. Les deux métiers se rejoignent sur la plupart des chantiers de toiture, parce qu'on ne pose pas une couverture neuve sans avoir vérifié ce qui la porte. CZIR62 intervient sur les deux." },
+      { q: "Intervenez-vous sur les toitures de dépendances et de garages ?", a: "Oui. Ce sont souvent des volumes à faible pente ou en matériaux différents du bâtiment principal, ce qui change la solution technique retenue. Nous regardons la pente réelle avant de proposer un matériau : une tuile posée sous sa pente minimale finit toujours par laisser passer l'eau." },
+];
+
+const materiaux = [
+  {
+    nom: 'Tuile mécanique (à emboîtement)',
+    usage: "Le matériau le plus répandu sur le bâti du secteur béthunois.",
+    detail:
+      "Les tuiles s'emboîtent latéralement, ce qui limite le recouvrement nécessaire et allège la toiture. Existe en terre cuite et en béton. La terre cuite vieillit généralement mieux ; le béton se reconnaît à sa teinte qui passe et à sa surface qui devient poreuse.",
+  },
+  {
+    nom: 'Tuile plate',
+    usage: "Bâti ancien, secteurs à contraintes architecturales.",
+    detail:
+      "Petit format, posée avec un fort recouvrement, ce qui augmente nettement le nombre de tuiles au mètre carré et le poids sur la charpente. Elle demande une pente suffisante et un support en bon état.",
+  },
+  {
+    nom: 'Ardoise',
+    usage: "Bâti de caractère, toitures à forte pente.",
+    detail:
+      "Naturelle ou fibres-ciment. Le mode de fixation — crochets ou clous — et la qualité du support conditionnent la tenue dans le temps. Une ardoise qui glisse signale souvent une fixation corrodée plutôt qu'une ardoise défaillante.",
+  },
+  {
+    nom: 'Zinc',
+    usage: "Petites surfaces, faibles pentes, appentis, lucarnes.",
+    detail:
+      "Posé en joint debout ou à tasseaux, il permet de traiter des pentes où la tuile ne tient pas. Il relève autant de la zinguerie que de la couverture — voir notre page dédiée.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/couverture-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Couverture"
+    title="Travaux de couverture à Béthune"
+    lede="Poser, remplacer ou entretenir ce qui protège votre maison. Nous intervenons sur tuiles et ardoises, du versant complet au point singulier isolé, depuis notre local de Béthune."
+    photo="/images/services/couverture-czir62.jpg"
+    photoAlt="Deux couvreurs CZIR62 sur une toiture en tuiles terre cuite terminée"
+    photoNeed="Photo verticale ou 4/3 d'un couvreur au travail sur un rampant : tuiles en cours de pose, liteaunage visible."
+    icon="roof"
+    chips={['Tuiles et ardoises', 'Neuf, remplacement, entretien', 'Devis après visite']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=couverture" class="btn btn--lg" data-track="quote_start" data-track-label="hero-couverture">
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-couverture">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================ INTRO PEDAGOGIQUE ===== -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="intro-split">
+        <div>
+          <p class="eyebrow">De quoi parle-t-on</p>
+          <h2>La couverture, c'est ce qui sépare votre plafond du ciel</h2>
+        </div>
+        <div class="prose">
+          <p>
+            Le mot « couverture » désigne l'ensemble des matériaux posés sur la charpente pour
+            évacuer l'eau : les tuiles ou les ardoises, mais aussi tout ce qui les accompagne —
+            faîtage, rives, closoirs, écran sous-toiture. C'est un système, pas un simple
+            revêtement.
+          </p>
+          <p>
+            Une chose surprend souvent : une couverture en tuiles n'est pas étanche. Elle est
+            conçue pour <strong>conduire l'eau</strong> de rang en rang jusqu'à la gouttière. Tant
+            que chaque élément recouvre correctement le suivant et que les points de raccord sont
+            traités, l'eau descend sans jamais entrer. Dès qu'un rang ne recouvre plus, ou qu'un
+            raccord se dégrade, elle trouve son chemin.
+          </p>
+          <p>
+            C'est pourquoi une toiture se juge moins à l'aspect général de ses tuiles qu'à l'état
+            de ses points singuliers. Une toiture qui « fait encore propre » peut fuir ; une
+            toiture qui a mal vieilli en surface peut rester parfaitement fonctionnelle.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================== ANATOMIE =========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Anatomie</p>
+        <h2>Les six couches d'une toiture</h2>
+        <p class="lede lede--wide">
+          Comprendre comment une toiture est constituée aide à saisir pourquoi tel devis
+          comporte tel poste, et pourquoi une réparation n'est pas toujours possible.
+        </p>
+      </div>
+
+      <div class="anat">
+        <!-- Coupe schematique : dessinee pour cette page, pas un pictogramme generique -->
+        <!--
+          Écorché progressif : en partant du faîtage vers l'égout, chaque
+          couche apparaît l'une après l'autre. On voit donc simultanément la
+          charpente seule, puis l'écran, puis le liteaunage, puis la couverture
+          terminée. Les repères sont déportés hors du dessin avec un filet de
+          rappel : superposés, ils devenaient illisibles.
+        -->
+        <div class="anat__draw">
+          <svg viewBox="0 0 480 340" role="img"
+               aria-label="Coupe d'une toiture montrant, du faîtage vers l'égout, la charpente, l'écran sous-toiture, le liteaunage puis la couverture, avec le faîtage et la gouttière">
+
+            <!-- 4 · charpente : ferme et entrait -->
+            <path d="M75 250 L240 102 L405 250" fill="none" stroke="var(--wood-800)" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M96 250 H384" stroke="var(--wood-800)" stroke-width="7" stroke-linecap="round"/>
+            <path d="M240 108 V250" stroke="var(--wood-600)" stroke-width="6" stroke-linecap="round"/>
+
+            <!-- 3 · écran sous-toiture (versant droit, à partir du haut) -->
+            <path d="M266 113 L411 243" fill="none" stroke="var(--zinc-500)" stroke-width="3.5" stroke-dasharray="9 6" stroke-linecap="round"/>
+
+            <!-- 2 · liteaunage (versant droit, plus bas) -->
+            <g stroke="var(--sand-400)" stroke-width="7" stroke-linecap="round">
+              <path d="M318 155 L324 148"/>
+              <path d="M343 177 L349 170"/>
+              <path d="M367 199 L374 192"/>
+              <path d="M392 221 L398 214"/>
+            </g>
+
+            <!-- 1 · couverture : versant gauche entier, bas du versant droit -->
+            <g stroke="var(--clay-500)" stroke-width="13" stroke-linecap="round">
+              <path d="M55 228 L220 80"/>
+              <path d="M362 172 L425 228"/>
+            </g>
+            <g stroke="var(--bone)" stroke-width="2" opacity=".85">
+              <path d="M84 202 L94 213"/><path d="M113 176 L123 187"/>
+              <path d="M142 150 L152 161"/><path d="M171 124 L181 135"/>
+              <path d="M386 187 L376 198"/><path d="M409 208 L399 219"/>
+            </g>
+
+            <!-- 5 · faîtage -->
+            <path d="M212 76 q28-22 56 0 q-28 14-56 0z" fill="var(--clay-700)"/>
+
+            <!-- 6 · gouttière + descente -->
+            <path d="M30 232 h30 a10 10 0 0 1 0 20 H30z" fill="none" stroke="var(--zinc-600)" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M34 252 V300" stroke="var(--zinc-600)" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- filets de rappel -->
+            <g stroke="var(--border-strong)" stroke-width="1.5" fill="none">
+              <path d="M112 133 L140 152"/>
+              <path d="M368 133 L347 165"/>
+              <path d="M440 205 L399 217"/>
+              <path d="M240 292 L240 258"/>
+              <path d="M240 44 L240 68"/>
+              <path d="M28 296 L32 262"/>
+            </g>
+
+            <!-- repères -->
+            <g class="anat-badge">
+              <circle cx="100" cy="124" r="14" fill="var(--clay-500)"/><text x="100" y="129" text-anchor="middle">1</text>
+              <circle cx="378" cy="124" r="14" fill="var(--sand-400)"/><text x="378" y="129" text-anchor="middle" fill="var(--wood-800)">2</text>
+              <circle cx="450" cy="200" r="14" fill="var(--zinc-500)"/><text x="450" y="205" text-anchor="middle">3</text>
+              <circle cx="240" cy="304" r="14" fill="var(--wood-800)"/><text x="240" y="309" text-anchor="middle">4</text>
+              <circle cx="240" cy="32" r="14" fill="var(--clay-700)"/><text x="240" y="37" text-anchor="middle">5</text>
+              <circle cx="24" cy="308" r="14" fill="var(--zinc-600)"/><text x="24" y="313" text-anchor="middle">6</text>
+            </g>
+          </svg>
+
+          <p class="anat__legend">
+            De droite à gauche : la charpente seule, puis l'écran, le liteaunage,
+            et enfin la couverture terminée.
+          </p>
+        </div>
+
+        <ol class="list-clean anat__list">
+          {couches.map((c) => (
+            <li class="anat__item">
+              <span class="anat__num">{c.n}</span>
+              <div>
+                <h3>{c.t}</h3>
+                <p>{c.d}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== MATERIAUX =========== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Matériaux</p>
+        <h2>Ce que nous posons, et dans quel cas</h2>
+        <p class="lede lede--wide">
+          Le choix ne se fait pas au catalogue. Il dépend de la pente réelle du toit, de ce que
+          la charpente peut porter, de l'existant à raccorder et parfois des règles d'urbanisme
+          de la commune.
+        </p>
+      </div>
+
+      <div class="mats">
+        {materiaux.map((m) => (
+          <article class="mats__card reveal">
+            <h3>{m.nom}</h3>
+            <p class="mats__usage">{m.usage}</p>
+            <p class="mats__detail">{m.detail}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note mats__note">
+        <strong>Un point à vérifier avant tout choix :</strong> chaque matériau a une pente
+        minimale d'emploi. Une tuile posée sous cette pente finira par prendre l'eau, quelle que
+        soit la qualité de la pose. C'est la première chose que nous mesurons.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ TROIS SITUATIONS ====== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Interventions</p>
+        <h2>Trois situations, trois approches</h2>
+      </div>
+
+      <div class="cases">
+        <article class="cases__item">
+          <span class="cases__ico"><Icon name="roof" size={24} /></span>
+          <h3>Couverture neuve</h3>
+          <p>
+            Sur une construction, une extension ou une dépendance. Le support est sain,
+            tout se joue sur le choix du matériau, la ventilation de la sous-face et le
+            traitement des rives et du faîtage.
+          </p>
+          <a href="/devis/?prestation=couverture" class="link-arrow">Décrire le projet</a>
+        </article>
+
+        <article class="cases__item">
+          <span class="cases__ico"><Icon name="renovation" size={24} /></span>
+          <h3>Remplacement de couverture</h3>
+          <p>
+            La couverture existante a fait son temps. On dépose, on vérifie la charpente
+            à nu — c'est le seul moment où on la voit vraiment — puis on repose avec
+            écran sous-toiture.
+          </p>
+          <a href="/renovation-toiture/" class="link-arrow">Voir la rénovation de toiture</a>
+        </article>
+
+        <article class="cases__item">
+          <span class="cases__ico"><Icon name="repair" size={24} /></span>
+          <h3>Reprise ciblée</h3>
+          <p>
+            Quelques tuiles, un faîtage descellé, une rive à refaire. Traité tôt, c'est
+            une intervention courte. Laissé de côté, cela devient le point de départ
+            d'une infiltration.
+          </p>
+          <a href="/reparation-toiture/" class="link-arrow">Voir la réparation</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ ENTRETIEN ========= -->
+  <section class="section" id="entretien">
+    <div class="container">
+      <div class="entretien">
+        <div>
+          <p class="eyebrow">Entretien &amp; démoussage</p>
+          <h2>Entretenir une toiture qui va bien</h2>
+          <p class="lede">
+            L'entretien n'est pas un produit d'appel : c'est ce qui permet de traiter un
+            défaut à 200 € plutôt qu'à 2 000 €.
+          </p>
+          <div class="prose entretien__prose">
+            <p>
+              Sur les versants exposés au nord, la mousse s'installe et retient l'humidité contre
+              la tuile ; le gel fait ensuite éclater les surfaces poreuses. Le retrait se justifie
+              donc — mais seulement sur une couverture encore en état de le supporter, et jamais au
+              nettoyeur haute pression frontal, qui décape la surface et accélère exactement ce
+              qu'il prétend éviter.
+            </p>
+            <p>
+              Un contrôle périodique porte surtout sur les points singuliers : faîtage, solins,
+              rives, gouttières. C'est là que les choses bougent, pas au milieu du versant.
+            </p>
+          </div>
+
+          <ul class="list-check entretien__list">
+            <li>Retrait des mousses sur une couverture encore saine</li>
+            <li>Contrôle du faîtage, des rives et des solins</li>
+            <li>Nettoyage des gouttières et vérification de l'écoulement</li>
+            <li>Signalement des points à surveiller, avec photos</li>
+          </ul>
+
+          <p class="entretien__more">
+            <a href="/demoussage-toiture/" class="link-arrow">
+              Démoussage : quand il se justifie, et quand il ne se justifie pas
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ REALISATIONS ========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Dernières interventions en couverture autour de Béthune"
+        intro="Les chantiers réellement réalisés, avec ce qui a été constaté et ce qui a été fait."
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <CityLinks service="couverture" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <Faq
+        items={faqItems}
+        title="Questions sur la couverture"
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="couverture"
+        title="Ce qui accompagne souvent un chantier de couverture"
+        intro="Une couverture ne se traite jamais tout à fait seule : la zinguerie conduit son eau, la charpente la porte."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Couverture"
+    title="Faire le point sur votre toiture"
+    text="Nous passons voir, nous vous disons ce que nous constatons, et vous décidez ensuite. Le déplacement pour établir un devis n'est pas facturé."
+    primaryLabel="Demander un devis"
+    service="couverture"
+    trackLabel="couverture-final"
+  />
+</BaseLayout>
+
+<style>
+  .intro-split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 880px) { .intro-split { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); } }
+
+  /* ------------------------------------------------------------ anatomie */
+  .anat {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .anat { grid-template-columns: minmax(0, 1fr); } }
+
+  .anat__draw {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: var(--sp-5) var(--sp-4) var(--sp-4);
+    box-shadow: var(--shadow-xs);
+  }
+  .anat__draw svg { width: 100%; height: auto; }
+  .anat-badge text {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    fill: #fff;
+  }
+  .anat__legend {
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.55;
+    text-align: center;
+  }
+  @media (max-width: 900px) { .anat__draw { position: static; } }
+
+  .anat__list { display: grid; gap: var(--sp-5); }
+  .anat__item { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .anat__num {
+    display: grid; place-items: center;
+    width: 34px; height: 34px; flex: none;
+    border-radius: 50%;
+    background: var(--clay-500);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .anat__item h3 { font-size: var(--fs-lg); margin-bottom: var(--sp-2); }
+  .anat__item p { font-size: var(--fs-base); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  /* ----------------------------------------------------------- materiaux */
+  .mats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 780px) { .mats { grid-template-columns: minmax(0, 1fr); } }
+
+  .mats__card {
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--clay-400);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  }
+  .mats__card h3 { font-size: var(--fs-lg); }
+  .mats__usage { margin-top: var(--sp-2); font-size: var(--fs-sm); font-weight: 600; color: var(--accent-ink); }
+  .mats__detail { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .mats__note { margin-top: var(--sp-5); }
+
+  /* --------------------------------------------------------- situations */
+  .cases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 880px) { .cases { grid-template-columns: minmax(0, 1fr); } }
+
+  .cases__item {
+    padding: var(--sp-6);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-lg);
+  }
+  .cases__ico {
+    display: grid; place-items: center;
+    width: 48px; height: 48px;
+    border-radius: var(--r-md);
+    background: rgba(174, 90, 47, 0.24);
+    color: var(--clay-200);
+    margin-bottom: var(--sp-4);
+  }
+  .cases__item h3 { color: #fff; font-size: var(--fs-lg); }
+  .cases__item p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+  .cases__item .link-arrow { margin-top: var(--sp-4); color: var(--clay-200); font-size: var(--fs-sm); }
+
+  /* ---------------------------------------------------------- entretien */
+  .entretien {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .entretien { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+  .entretien__prose { margin-top: var(--sp-5); }
+  .entretien__more { margin-top: var(--sp-6); }
+  .entretien__list {
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border);
+  }
+</style>

@@ -1,0 +1,289 @@
+---
+/**
+ * Section « Avis Google ».
+ *
+ * TROIS ETATS, ET UN SEUL EST PUBLIC :
+ *
+ *  1. avis reels saisis        -> section complete (note, nombre, cartes,
+ *                                 attribution Google, liens fiche)
+ *  2. aucun avis, en DEV       -> apercu de developpement clairement identifie,
+ *                                 avec des libelles explicitement factices
+ *                                 (« Prénom N. », « Texte de l'avis réel »).
+ *                                 Sert uniquement a valider la mise en page.
+ *  3. aucun avis, en PRODUCTION-> repli honnete : invitation a consulter ou
+ *                                 laisser un avis, sans aucune note affichee.
+ *
+ * Aucune note moyenne, aucun nombre d'avis et aucun texte ne sont inventes.
+ * Voir src/data/avis.ts pour la procedure d'activation.
+ */
+import GoogleLogo from '@/components/GoogleLogo.astro';
+import Stars from '@/components/Stars.astro';
+import Icon from '@/components/Icon.astro';
+import { avis, avisSource, hasAvis, hasNoteVerifiee } from '@/data/avis';
+import { google } from '@/config/site';
+
+interface Props {
+  title?: string;
+  intro?: string;
+  variant?: 'light' | 'alt';
+}
+const {
+  title = 'Ce que disent nos clients',
+  intro,
+  variant = 'alt',
+} = Astro.props;
+
+const showReal = hasAvis();
+const showDevPreview = !showReal && import.meta.env.DEV;
+
+// Libelles volontairement non credibles : impossible de les prendre pour de vrais avis.
+const devPlaceholders = Array.from({ length: 4 }, (_, i) => ({
+  auteur: `Prénom N. ${i + 1}`,
+  note: 5 as const,
+  texte:
+    "[EMPLACEMENT] Texte de l'avis réel, repris mot pour mot depuis la fiche Google Business Profile. Aucun avis n'est rédigé ni reformulé.",
+  date: '[date]',
+  ville: '[commune]',
+}));
+
+const items = showReal ? avis.slice(0, 8) : devPlaceholders;
+const initiale = (n: string) => n.trim().charAt(0).toUpperCase();
+---
+
+<section class:list={['grv', variant === 'alt' && 'section--alt']}>
+  <div class="container">
+    {(showReal || showDevPreview) ? (
+      <>
+        {showDevPreview && (
+          <p class="grv__devbanner">
+            <Icon name="alert" size={16} />
+            <span>
+              <strong>Aperçu de développement — non publié.</strong>
+              Cette section n'apparaîtra en ligne qu'une fois les avis réels saisis dans
+              <code>src/data/avis.ts</code>. Aucune note fictive n'est envoyée à Google.
+            </span>
+          </p>
+        )}
+
+        <div class="grv__head">
+          <div>
+            <p class="eyebrow">Avis clients</p>
+            <h2>{title}</h2>
+            {intro && <p class="lede lede--wide">{intro}</p>}
+          </div>
+
+          <div class="grv__score">
+            <GoogleLogo size={26} />
+            <div class="grv__score-txt">
+              {hasNoteVerifiee() ? (
+                <>
+                  <span class="grv__note">{avisSource.note!.toString().replace('.', ',')}</span>
+                  <Stars note={avisSource.note!} size={17} />
+                  <span class="grv__count">{avisSource.total} avis Google</span>
+                </>
+              ) : (
+                <span class="grv__count">
+                  {showDevPreview ? 'Note et nombre d’avis : à renseigner' : 'Avis publiés sur Google'}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <ul class="list-clean grv__track" role="list">
+          {items.map((a) => (
+            <li class="grv__card">
+              <div class="grv__card-top">
+                <span class="grv__avatar" aria-hidden="true">{initiale(a.auteur)}</span>
+                <div>
+                  <p class="grv__author">{a.auteur}</p>
+                  <p class="grv__meta">{a.date}{'ville' in a && a.ville ? ` · ${a.ville}` : ''}</p>
+                </div>
+                <GoogleLogo size={17} class="grv__badge" />
+              </div>
+              <Stars note={a.note} size={15} />
+              <p class="grv__text">{a.texte}</p>
+              <p class="grv__src">Avis publié sur Google</p>
+            </li>
+          ))}
+        </ul>
+
+        <div class="grv__actions">
+          {google.reviewsUrl && (
+            <a href={google.reviewsUrl} class="btn btn--ghost" target="_blank" rel="noopener"
+               data-track="google_reviews_click" data-track-label="section-avis">
+              Voir tous nos avis Google
+            </a>
+          )}
+          {google.writeReviewUrl && (
+            <a href={google.writeReviewUrl} class="link-arrow" target="_blank" rel="noopener">
+              Laisser un avis
+            </a>
+          )}
+          {!google.reviewsUrl && (
+            <p class="grv__hint">
+              Lien vers la fiche Google à activer : renseigner <code>google.placeId</code> dans
+              <code>src/config/site.ts</code>.
+            </p>
+          )}
+        </div>
+      </>
+    ) : (
+      /* Repli public : aucune note, aucun avis inventé. */
+      <div class="grv__fallback">
+        <GoogleLogo size={30} />
+        <h2>Nos avis sur Google</h2>
+        <p class="lede mx-auto">
+          Les avis de nos clients sont publiés sur notre fiche Google Business Profile.
+          Vous y retrouverez les retours d'interventions réalisées dans le secteur de Béthune.
+        </p>
+        <div class="btn-row grv__fallback-btns">
+          {google.reviewsUrl && (
+            <a href={google.reviewsUrl} class="btn btn--ghost" target="_blank" rel="noopener"
+               data-track="google_reviews_click" data-track-label="repli">
+              Consulter les avis
+            </a>
+          )}
+          {google.writeReviewUrl && (
+            <a href={google.writeReviewUrl} class="btn btn--ghost" target="_blank" rel="noopener">
+              Laisser un avis
+            </a>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .grv { padding-block: var(--section-y); }
+
+  .grv__devbanner {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: var(--sp-4) var(--sp-5);
+    margin-bottom: var(--sp-7);
+    background: var(--alert-bg);
+    border-left: 2px dashed var(--alert-border);
+    color: var(--alert-ink);
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+  }
+  .grv__devbanner :global(svg) { flex: none; margin-top: 0.15rem; }
+  .grv__devbanner code { font-family: var(--font-mono); font-size: 0.85em; background: rgba(0,0,0,.05); padding: .05em .35em; }
+
+  /* En-tête : le titre à gauche, la note en plaque claire à droite */
+  .grv__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    margin-bottom: var(--sp-8);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--border);
+  }
+  .grv__head > div:first-child { max-width: 44rem; }
+  .grv__head h2 { font-size: clamp(1.8rem, 2vw + 1.3rem, 2.6rem); }
+  .grv__head .lede { margin-top: var(--sp-3); }
+
+  .grv__score {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    box-shadow: var(--shadow-sm);
+  }
+  .grv__score-txt { display: flex; flex-direction: column; gap: 0.25rem; }
+  .grv__note {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-strong);
+  }
+  .grv__count { font-size: var(--fs-xs); color: var(--text-muted); font-weight: 580; letter-spacing: 0.02em; }
+
+  /* Avis : citations éditoriales, pas cartes encadrées */
+  .grv__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(min(82vw, 21rem), 1fr);
+    gap: var(--sp-5);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: var(--sp-4);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+  }
+  .grv__card { scroll-snap-align: start; }
+  @media (min-width: 900px) {
+    .grv__track {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      padding-bottom: 0;
+      gap: var(--sp-5) clamp(1.5rem, 3vw, 2.75rem);
+    }
+  }
+
+  .grv__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding-top: var(--sp-5);
+    border-top: 2px solid var(--zinc-800);
+  }
+  .grv__text {
+    font-size: var(--fs-base);
+    line-height: var(--lh-relaxed);
+    color: var(--zinc-700);
+    flex: 1;
+    letter-spacing: -0.008em;
+  }
+  .grv__card-top { display: flex; align-items: center; gap: 0.7rem; margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border); }
+  .grv__avatar {
+    display: grid;
+    place-items: center;
+    width: 34px; height: 34px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--clay-100);
+    color: var(--clay-700);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .grv__author { font-weight: 650; font-size: var(--fs-sm); color: var(--text-strong); letter-spacing: -0.01em; }
+  .grv__meta { font-size: var(--fs-xs); color: var(--text-muted); }
+  .grv__badge { margin-left: auto; flex: none; }
+  .grv__card-top :global(.grv__badge) { margin-left: auto; flex: none; }
+  .grv__src { display: none; }
+
+  .grv__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-5); margin-top: var(--sp-8); }
+  .grv__hint { font-size: var(--fs-sm); color: var(--text-muted); }
+  .grv__hint code { font-family: var(--font-mono); background: var(--sand-100); padding: .1em .35em; }
+
+  /* Repli public : aucune note, aucun avis inventé */
+  .grv__fallback {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-4);
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .grv__fallback-btns { justify-content: center; }
+</style>

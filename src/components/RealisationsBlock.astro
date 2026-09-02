@@ -1,0 +1,108 @@
+---
+/**
+ * Bloc « dernieres interventions ».
+ *
+ * Le brief est explicite : afficher de vrais chantiers vaut mieux qu'aligner
+ * des noms de communes. Ce bloc est donc alimente exclusivement par la
+ * collection `realisations`.
+ *
+ * S'il n'y a aucun chantier enregistre pour le filtre demande, on n'invente
+ * rien : soit le bloc disparait (pages service et ville), soit il affiche un
+ * etat vide honnete (page /realisations/).
+ */
+import RealisationCard from '@/components/RealisationCard.astro';
+import type { Realisation } from '@/lib/realisations';
+
+interface Props {
+  items: Realisation[];
+  title?: string;
+  intro?: string;
+  /** Lien « tout voir » */
+  moreHref?: string;
+  moreLabel?: string;
+  /** Ne rien afficher si la liste est vide (pages service / ville) */
+  hideIfEmpty?: boolean;
+  /** Texte de l'etat vide, si l'on choisit de l'afficher */
+  emptyText?: string;
+  columns?: 2 | 3;
+}
+const {
+  items,
+  title = 'Dernières interventions',
+  intro,
+  moreHref,
+  moreLabel = 'Voir toutes les réalisations',
+  hideIfEmpty = false,
+  emptyText,
+  columns = 3,
+} = Astro.props;
+
+const empty = items.length === 0;
+const render = !(empty && hideIfEmpty);
+---
+
+{render && (
+  <section class="reals">
+    <div class="reals__head">
+      <div>
+        <h2>{title}</h2>
+        {intro && <p class="lede lede--wide">{intro}</p>}
+      </div>
+      {moreHref && !empty && <a href={moreHref} class="link-arrow">{moreLabel}</a>}
+    </div>
+
+    {empty ? (
+      <div class="reals__empty">
+        <p>
+          {emptyText ??
+            "Les chantiers réalisés sont publiés ici au fur et à mesure, avec les photos, le problème constaté et les travaux effectués. Cette page se remplit avec de vrais chantiers, pas avec des images de banque d'images."}
+        </p>
+        <a href="/devis/" class="btn btn--ghost">Parler de votre projet</a>
+      </div>
+    ) : (
+      <ul class:list={['list-clean', 'reals__grid', `reals__grid--${columns}`]}>
+        {items.map((entry) => (
+          <li class="reveal"><RealisationCard entry={entry} /></li>
+        ))}
+      </ul>
+    )}
+  </section>
+)}
+
+<style>
+  .reals__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-8);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--border);
+  }
+  .reals__head > div { max-width: 46rem; }
+  .reals__head h2 { font-size: clamp(1.8rem, 2vw + 1.3rem, 2.6rem); }
+  .reals__head .lede { margin-top: var(--sp-3); }
+  :global(.section--deep) .reals__head { border-color: var(--border-invert); }
+
+  .reals__grid { display: grid; gap: clamp(1.75rem, 3vw, 3rem); }
+  .reals__grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .reals__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reals__grid > li { display: flex; }
+  .reals__grid > li > :global(*) { width: 100%; }
+  @media (max-width: 980px) { .reals__grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 680px) { .reals__grid--3, .reals__grid--2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* État vide : assumé, expliqué, avec une sortie. Pas un bloc gris. */
+  .reals__empty {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    background: var(--surface-sand);
+    border-left: 2px solid var(--clay-400);
+  }
+  @media (max-width: 780px) { .reals__empty { grid-template-columns: minmax(0, 1fr); } }
+  .reals__empty p { color: var(--zinc-600); line-height: var(--lh-relaxed); max-width: 62ch; }
+</style>

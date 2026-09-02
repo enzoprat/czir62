@@ -1,0 +1,64 @@
+---
+/**
+ * Marque CZIR62.
+ *
+ * Le signe est une coupe de rampant : la pente, puis deux rangs de tuiles qui
+ * se raccourcissent vers l'égout. Il vient du métier plutôt que du catalogue
+ * de pictogrammes, et il fonctionne à 24 px comme à 200 px.
+ *
+ * REMPLACER PAR LE LOGO RÉEL dès qu'il est fourni : déposer
+ * public/images/logo-czir62.svg et substituer le bloc <svg> ci-dessous.
+ */
+interface Props {
+  variant?: 'default' | 'invert';
+  class?: string;
+  /** Masque la ligne descriptive (barres compactes) */
+  bare?: boolean;
+}
+const { variant = 'default', class: className, bare = false } = Astro.props;
+const ink = variant === 'invert' ? '#FFFFFF' : 'var(--zinc-900)';
+const accent = variant === 'invert' ? 'var(--clay-300)' : 'var(--clay-500)';
+const sub = variant === 'invert' ? 'rgba(255,255,255,.55)' : 'var(--text-muted)';
+---
+
+<span class:list={['logo', bare && 'logo--bare', className]} aria-label="CZIR62">
+  <svg class="logo__mark" width="30" height="28" viewBox="0 0 30 28" fill="none" aria-hidden="true">
+    <path d="M2 14.5 15 3l13 11.5" stroke={accent} stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M5.5 19.5h19" stroke={ink} stroke-width="2.6" stroke-linecap="square"/>
+    <path d="M9 24.5h12" stroke={ink} stroke-width="2.6" stroke-linecap="square" opacity=".45"/>
+  </svg>
+
+  <span class="logo__text">
+    <span class="logo__word">
+      <span class="logo__name" style={`color:${ink}`}>CZIR</span><span class="logo__num" style={`color:${accent}`}>62</span>
+    </span>
+    {!bare && <span class="logo__sub" style={`color:${sub}`}>Entreprise générale de couverture</span>}
+  </span>
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.62rem; text-decoration: none; line-height: 1; }
+  .logo__mark { flex: none; }
+  .logo__text { display: flex; flex-direction: column; gap: 0.24rem; }
+  .logo__word { display: block; white-space: nowrap; }
+  .logo__name, .logo__num {
+    font-family: var(--font-display);
+    font-size: 1.36rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+  .logo__sub {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.575rem;
+    font-weight: 640;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .logo--bare .logo__text { gap: 0; }
+  @media (max-width: 420px) {
+    .logo__sub { display: none; }
+    .logo__name, .logo__num { font-size: 1.26rem; }
+  }
+</style>

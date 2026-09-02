@@ -1,0 +1,49 @@
+---
+/**
+ * Etoiles d'une note. Affiche une valeur reelle, jamais une note par defaut.
+ * L'etat de chaque etoile est calcule ici, hors du gabarit : le compilateur
+ * Astro interprete « < » dans une expression de template comme une balise.
+ */
+interface Props { note: number; size?: number; label?: boolean }
+const { note, size = 16, label = false } = Astro.props;
+
+const FULL = '#F2A600';
+const EMPTY = '#DCD3C7';
+const uid = Math.round(note * 100);
+
+type State = 'full' | 'half' | 'empty';
+const stars: State[] = Array.from({ length: 5 }, (_, i) => {
+  const diff = note - i;
+  if (diff >= 0.75) return 'full';
+  if (diff >= 0.25) return 'half';
+  return 'empty';
+});
+
+const PATH = 'm12 3.3 2.65 5.37 5.93.86-4.29 4.18 1.01 5.9L12 16.83l-5.3 2.78 1.01-5.9L3.42 9.53l5.93-.86z';
+---
+
+<span class="stars" role="img" aria-label={`${note.toString().replace('.', ',')} sur 5`}>
+  {stars.map((state, i) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" class="stars__s">
+      {state === 'half' && (
+        <defs>
+          <linearGradient id={`half-${uid}-${i}`}>
+            <stop offset="50%" stop-color={FULL} />
+            <stop offset="50%" stop-color={EMPTY} />
+          </linearGradient>
+        </defs>
+      )}
+      <path
+        d={PATH}
+        fill={state === 'half' ? `url(#half-${uid}-${i})` : state === 'full' ? FULL : EMPTY}
+      />
+    </svg>
+  ))}
+  {label && <span class="stars__val">{note.toString().replace('.', ',')}</span>}
+</span>
+
+<style>
+  .stars { display: inline-flex; align-items: center; gap: 1px; }
+  .stars__s { flex: none; }
+  .stars__val { margin-left: 0.4rem; font-weight: 650; color: var(--text-strong); }
+</style>

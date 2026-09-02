@@ -1,0 +1,41 @@
+---
+/**
+ * Fil d'ariane visible.
+ * Le JSON-LD BreadcrumbList correspondant est fourni par la page a
+ * BaseLayout : les deux doivent toujours decrire le meme chemin.
+ */
+import type { Crumb } from '@/lib/schema';
+
+interface Props {
+  items: Crumb[];
+  variant?: 'default' | 'invert';
+}
+const { items, variant = 'default' } = Astro.props;
+---
+
+<nav class:list={['bc', variant === 'invert' && 'bc--invert']} aria-label="Fil d'ariane">
+  <ol class="bc__list">
+    <li class="bc__item"><a href="/">Accueil</a></li>
+    {items.map((item) => (
+      <li class="bc__item">
+        {item.url ? <a href={item.url}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .bc { font-size: var(--fs-xs); }
+  .bc__list { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; list-style: none; margin: 0; }
+  .bc__item { display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted); }
+  .bc__item + .bc__item::before { content: '/'; color: var(--border-strong); }
+  .bc__item a { color: var(--text-muted); text-decoration: none; }
+  .bc__item a:hover { color: var(--accent-ink); text-decoration: underline; }
+  .bc__item span { color: var(--zinc-700); font-weight: 550; }
+
+  .bc--invert .bc__item,
+  .bc--invert .bc__item a { color: rgba(255, 255, 255, 0.62); }
+  .bc--invert .bc__item + .bc__item::before { color: rgba(255, 255, 255, 0.28); }
+  .bc--invert .bc__item span { color: #fff; }
+  .bc--invert .bc__item a:hover { color: var(--clay-200); }
+</style>

@@ -1,0 +1,431 @@
+---
+/**
+ * PAGE ÉTANCHÉITÉ DE TOITURE-TERRASSE
+ *
+ * Intention : le visiteur a un toit plat — terrasse, garage, extension,
+ * immeuble — qui fuit ou qui arrive en fin de vie. Son vocabulaire n'est pas
+ * celui de la couverture en pente : ni tuile, ni faîtage, ni liteaunage.
+ *
+ * Structure propre à cette page : l'idée directrice est qu'une toiture-
+ * terrasse ne fonctionne PAS comme une toiture en pente — elle ne conduit
+ * pas l'eau, elle la contient. Tout le reste en découle : le complexe en
+ * couches, les relevés, les évacuations.
+ *
+ * Le schéma est une coupe empilée horizontale, volontairement différente de
+ * la coupe de rampant de la page couverture.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('etancheite-toiture-terrasse');
+const tel = telHref();
+const realisations = await realisationsForService('etancheite-toiture-terrasse', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Étanchéité de toiture-terrasse' }];
+
+/* Le complexe, de bas en haut. C'est l'ordre de mise en œuvre. */
+const couches = [
+  { n: '01', t: 'Le support', d: "Dalle béton, bac acier ou panneaux bois. Il donne la pente — quelques pourcents seulement, mais jamais zéro : une terrasse parfaitement horizontale retient l'eau." },
+  { n: '02', t: 'Le pare-vapeur', d: "Il bloque la vapeur d'eau produite à l'intérieur du bâtiment avant qu'elle n'atteigne l'isolant. Sans lui, l'isolant se charge en humidité par en dessous et perd sa performance." },
+  { n: '03', t: "L'isolant", d: "Panneaux rigides, capables de supporter la circulation lors de la mise en œuvre et le poids de la protection éventuelle. Son épaisseur conditionne le niveau des relevés." },
+  { n: '04', t: "L'étanchéité", d: "La membrane proprement dite. C'est la seule couche qui arrête l'eau : au-dessus, plus rien ne rattrape un défaut." },
+  { n: '05', t: 'La protection', d: "Gravillons, dalles sur plots, végétalisation — ou rien, sur une terrasse inaccessible autoprotégée. Elle protège la membrane des UV et des chocs." },
+];
+
+const points = [
+  { t: "Les relevés d'acrotère", d: "L'étanchéité doit remonter sur le muret périphérique, sur une hauteur suffisante pour que l'eau ne puisse pas la contourner, et être fermée en tête. C'est le premier endroit que nous regardons — et de loin le plus fréquemment en cause.", icon: 'alert' as const },
+  { t: 'Les évacuations', d: "Une terrasse évacue par un nombre limité de points. Une seule évacuation obstruée met la totalité de la surface en charge. Un trop-plein est là pour signaler le problème avant qu'il ne devienne un dégât.", icon: 'gutter' as const },
+  { t: 'Les traversées', d: "Chaque élément qui perce la membrane — sortie de ventilation, potence, garde-corps scellé, pied de machine — crée un point à traiter individuellement. Une platine posée après coup ne suffit pas.", icon: 'chimney' as const },
+  { t: 'Les jonctions et les angles', d: "Recouvrements entre lés, angles rentrants et sortants : ce sont des soudures ou des soudures à chaud, pas des collages d'appoint. Un angle mal traité se voit à l'intérieur au premier orage.", icon: 'ruler' as const },
+];
+
+const revetements = [
+  { nom: 'Bitume élastomère', pose: 'Soudé au chalumeau, en une ou deux couches', pour: "Solution la plus répandue, robuste, réparable localement par soudure. Bien adaptée aux terrasses avec protection lourde.", contre: "Mise en œuvre à la flamme, donc précautions renforcées sur support bois ou à proximité d'un bardage." },
+  { nom: 'Membrane synthétique', pose: 'Soudée à l’air chaud, monocouche', pour: "Légère, souple, sans flamme. Sa faible épaisseur limite la surcharge sur une structure existante.", contre: "Le support doit être plus soigné : la membrane suit les défauts au lieu de les masquer." },
+  { nom: 'Résine liquide', pose: 'Appliquée au rouleau, sans joint', pour: "Continue et sans recouvrement, elle épouse les formes complexes : nombreuses traversées, angles multiples, petites surfaces.", contre: "Sensible aux conditions d'application — support sec, températures compatibles. Coût au mètre carré plus élevé." },
+];
+
+const faqItems = [
+  {
+    q: "Ma terrasse fuit : faut-il tout refaire ?",
+    a: "Pas nécessairement. Une infiltration provient très souvent d'un relevé d'acrotère décollé, d'une évacuation obstruée ou d'une traversée mal traitée — trois désordres localisés qui se reprennent sans toucher au reste. La réfection complète se justifie quand la membrane elle-même est en fin de vie : elle devient cassante, se craquelle, se boursoufle. C'est ce que la visite permet de distinguer.",
+  },
+  {
+    q: "Une toiture-terrasse doit-elle avoir une pente ?",
+    a: "Oui, toujours. On parle de « toit plat » par commodité, mais une terrasse parfaitement horizontale retient l'eau, et l'eau stagnante finit par trouver le moindre défaut. Une pente de quelques pourcents suffit à diriger l'eau vers les évacuations. Une terrasse ancienne qui a perdu sa pente par tassement forme des flaques permanentes — c'est un signal à ne pas négliger.",
+  },
+  {
+    q: "Peut-on poser une nouvelle étanchéité par-dessus l'ancienne ?",
+    a: "Parfois, et c'est une vraie économie quand c'est possible : cela évite la dépose et l'évacuation. Mais cela suppose que l'ancien complexe soit sec, adhérent et compatible avec le nouveau revêtement. Si l'isolant a pris l'eau, recouvrir revient à emprisonner l'humidité — le nouveau revêtement se boursouflera. Le seul moyen de trancher est de faire des sondages.",
+  },
+  {
+    q: "Combien de temps dure une étanchéité ?",
+    a: "Cela dépend du revêtement, de l'exposition et surtout de l'entretien. Ce qui abrège une étanchéité, ce n'est presque jamais la membrane en plein champ : ce sont les points singuliers laissés sans surveillance et les évacuations qui se bouchent. Un contrôle périodique des relevés et un dégagement des entrées d'eau prolongent considérablement la durée de service.",
+  },
+  {
+    q: "Peut-on marcher sur une toiture-terrasse ?",
+    a: "Cela dépend de sa conception. Une terrasse dite inaccessible n'est prévue que pour l'entretien ; y installer du mobilier ou y circuler régulièrement abîme la membrane. Une terrasse accessible reçoit une protection prévue pour cela — dalles sur plots, par exemple. Si vous envisagez d'utiliser votre terrasse alors qu'elle ne l'était pas, c'est un point à traiter avant, pas après.",
+  },
+  {
+    q: "Intervenez-vous sur les garages et les petites annexes ?",
+    a: "Oui, et c'est fréquent : garage, extension de plain-pied, appentis, local technique. Sur ces petites surfaces, la difficulté n'est pas la surface courante mais la jonction avec le bâtiment principal — c'est presque toujours là que l'eau entre.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/etancheite-toiture-terrasse-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Étanchéité"
+    title="Étanchéité de toiture-terrasse à Béthune"
+    lede="Un toit plat ne conduit pas l'eau, il la contient. Tout repose donc sur une seule couche — et sur la façon dont elle est raccordée aux murets, aux évacuations et à tout ce qui la traverse."
+    photo="/images/services/etancheite-toiture-terrasse-czir62.jpg"
+    photoAlt="Deux couvreurs CZIR62 posant isolant et membrane sur une toiture-terrasse"
+    photoRatio="3 / 2"
+    icon="flat"
+    chips={['Bitume, synthétique, résine', "Relevés et évacuations", 'Reprise ou réfection']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=etancheite-toiture-terrasse" class="btn btn--lg" data-track="quote_start" data-track-label="hero-etancheite">
+        Faire diagnostiquer ma terrasse
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg num" data-track-zone="hero-etancheite">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ═══════════════ CE QUI CHANGE PAR RAPPORT À UNE PENTE ═════════════ -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="intro2">
+        <div>
+          <p class="eyebrow">Le principe</p>
+          <h2>Une terrasse ne fonctionne pas comme une toiture en pente</h2>
+        </div>
+        <div class="prose prose--lead">
+          <p>
+            Sur un rampant, chaque tuile recouvre la suivante. L'eau descend, et même
+            si un élément se déplace, la pente continue de travailler pour vous.
+          </p>
+          <p>
+            Sur un toit plat, il n'y a rien de tout cela. La pente est de quelques
+            pourcents, juste assez pour diriger l'eau vers les évacuations.
+            <strong>L'étanchéité est une couche unique et continue</strong> : c'est elle,
+            et elle seule, qui arrête l'eau. Il n'existe pas de seconde barrière.
+          </p>
+          <p>
+            C'est pourquoi le métier se joue moins sur la surface courante — une
+            membrane en plein champ dure longtemps — que sur les endroits où cette
+            couche s'interrompt : les murets, les entrées d'eau, les traversées.
+            Neuf fuites sur dix viennent de là.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ LE COMPLEXE, COUCHE PAR COUCHE ═════════════ -->
+  <section class="section section--zinc tex tex--plan">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Composition</p>
+          <h2>Le complexe,<br />de bas en haut</h2>
+        </div>
+        <p class="lede">
+          Cinq couches, dans cet ordre, chacune avec une fonction distincte.
+          C'est aussi l'ordre de mise en œuvre : aucune ne se rattrape une fois
+          la suivante posée.
+        </p>
+      </div>
+
+      <div class="cplx">
+        <!-- Coupe empilée : volontairement différente de la coupe de rampant
+             de la page couverture. Ici tout est horizontal, comme l'ouvrage. -->
+        <div class="cplx__draw">
+          <svg viewBox="0 0 360 260" role="img" aria-label="Coupe d'une toiture-terrasse : support, pare-vapeur, isolant, étanchéité, protection, avec le relevé sur l'acrotère">
+            <!-- acrotère -->
+            <rect x="18" y="36" width="26" height="188" fill="var(--zinc-200)" stroke="var(--zinc-400)" stroke-width="1.5"/>
+            <!-- support -->
+            <rect x="44" y="196" width="300" height="28" fill="var(--zinc-300)" stroke="var(--zinc-500)" stroke-width="1.5"/>
+            <!-- pare-vapeur -->
+            <path d="M44 192h300" stroke="var(--clay-600)" stroke-width="3.5" stroke-dasharray="10 5"/>
+            <!-- isolant -->
+            <rect x="44" y="160" width="300" height="30" fill="var(--sand-200)" stroke="var(--sand-400)" stroke-width="1.5"/>
+            <g stroke="var(--sand-400)" stroke-width="1"><path d="M104 160v30M164 160v30M224 160v30M284 160v30"/></g>
+            <!-- étanchéité + relevé -->
+            <path d="M22 44v112q0 6 8 6h314" fill="none" stroke="var(--clay-500)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- protection -->
+            <g fill="var(--zinc-400)">
+              <circle cx="70" cy="148" r="5"/><circle cx="92" cy="150" r="4"/><circle cx="116" cy="147" r="5.5"/>
+              <circle cx="142" cy="150" r="4.5"/><circle cx="168" cy="147" r="5"/><circle cx="196" cy="150" r="4"/>
+              <circle cx="222" cy="148" r="5.5"/><circle cx="250" cy="150" r="4.5"/><circle cx="278" cy="147" r="5"/>
+              <circle cx="306" cy="150" r="4"/><circle cx="330" cy="148" r="5"/>
+            </g>
+            <!-- évacuation -->
+            <path d="M300 162v34" stroke="var(--zinc-600)" stroke-width="4" stroke-linecap="round"/>
+            <g class="cx-lbl">
+              <text x="352" y="214" text-anchor="end">support</text>
+              <text x="352" y="186" text-anchor="end">pare-vapeur</text>
+              <text x="352" y="180" text-anchor="end" dy="-2"></text>
+              <text x="120" y="182" text-anchor="start">isolant</text>
+              <text x="200" y="176" text-anchor="start">étanchéité</text>
+              <text x="150" y="136" text-anchor="start">protection</text>
+              <text x="60" y="30" text-anchor="start">relevé d'acrotère</text>
+            </g>
+            <path d="M56 34 30 44" stroke="var(--border-strong)" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+
+        <ol class="list-clean registre cplx__list">
+          {couches.map((c) => (
+            <li>
+              <span class="registre__idx">{c.n}</span>
+              <div>
+                <h3>{c.t}</h3>
+                <p>{c.d}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ LES QUATRE POINTS ═════════════════════════ -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Points singuliers</p>
+          <h2>Là où l'eau entre<br />réellement</h2>
+        </div>
+        <p class="lede">
+          La surface courante ne fuit presque jamais. Ces quatre endroits, si.
+          Ce sont eux que nous examinons en premier, dans cet ordre.
+        </p>
+      </div>
+
+      <ol class="list-clean registre pts">
+        {points.map((p, i) => (
+          <li>
+            <span class="registre__idx">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3><Icon name={p.icon} size={18} /> {p.t}</h3>
+              <p>{p.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ REVÊTEMENTS ════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="split split--offset">
+        <div>
+          <p class="eyebrow">Revêtements</p>
+          <h2>Trois familles, trois logiques</h2>
+          <p class="lede">
+            Le choix dépend du support, de l'accès, de la présence ou non d'une
+            protection lourde, et du nombre de points singuliers à traiter.
+          </p>
+
+          <div class="rev">
+            {revetements.map((r) => (
+              <article class="rev__item">
+                <h3>{r.nom}</h3>
+                <p class="rev__pose">{r.pose}</p>
+                <p class="rev__pour">{r.pour}</p>
+                <p class="rev__contre"><span>À savoir</span>{r.contre}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/etancheite-toiture-terrasse-membrane-czir62.jpg"
+          alt="Membrane d'étanchéité posée sur une toiture-terrasse, relevé visible en périphérie"
+          ratio="3 / 4"
+          ratioMobile="4 / 3"
+          icon="flat"
+          zoom
+          sizes="(max-width: 900px) 100vw, 46vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ REPRENDRE OU REFAIRE ══════════════════════════ -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Arbitrage</p>
+        <h2>Reprendre un point, ou refaire le complexe ?</h2>
+        <p class="lede lede--wide">
+          La question se tranche sur l'état de l'isolant, pas sur celui de la membrane.
+        </p>
+      </div>
+
+      <div class="arb2">
+        <article class="card card--sunk">
+          <h3>La reprise ciblée suffit quand…</h3>
+          <ul class="list-check">
+            <li>l'infiltration est localisée et reproductible</li>
+            <li>la membrane reste souple et adhérente ailleurs</li>
+            <li>les sondages montrent un isolant sec</li>
+            <li>le désordre vient d'un relevé, d'une évacuation ou d'une traversée</li>
+          </ul>
+        </article>
+
+        <article class="card card--accent">
+          <h3>La réfection s'impose quand…</h3>
+          <ul class="list-check">
+            <li>la membrane se craquelle ou se boursoufle sur de larges zones</li>
+            <li>l'isolant est gorgé d'eau — recouvrir l'emprisonnerait</li>
+            <li>la pente a disparu et l'eau stagne en permanence</li>
+            <li>les reprises successives se sont accumulées</li>
+          </ul>
+        </article>
+      </div>
+
+      <p class="note arb2__note">
+        <strong>Le sondage, avant tout devis.</strong> On ne peut pas savoir si l'isolant a
+        pris l'eau en regardant la surface. Quelques carottages permettent de trancher —
+        et c'est ce qui sépare un devis fiable d'une estimation optimiste.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock items={realisations} title="Chantiers d'étanchéité réalisés" moreHref="/realisations/" hideIfEmpty />
+      <Faq items={faqItems} title="Questions sur l'étanchéité de toiture-terrasse" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container"><CityLinks service="etancheite-toiture-terrasse" /></div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices service="etancheite-toiture-terrasse" title="Prestations associées" intro="Une toiture-terrasse touche à l'évacuation des eaux et, souvent, à la couverture voisine." />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Toiture-terrasse"
+    title="Faire diagnostiquer votre terrasse"
+    text="Nous regardons les relevés, les évacuations et les traversées, et nous sondons l'isolant si nécessaire. C'est ce qui permet de dire s'il faut reprendre ou refaire."
+    primaryLabel="Demander un diagnostic"
+    service="etancheite-toiture-terrasse"
+    trackLabel="etancheite-final"
+  />
+</BaseLayout>
+
+<style>
+  .intro2 {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 880px) { .intro2 { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); } }
+
+  /* ─────────────────────────── complexe ──────────────────────────────── */
+  .cplx {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .cplx { grid-template-columns: minmax(0, 1fr); } }
+
+  .cplx__draw {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    background: var(--surface);
+    border: 1px solid var(--border-zinc);
+    border-radius: var(--r-md);
+    padding: var(--sp-5);
+  }
+  @media (max-width: 900px) { .cplx__draw { position: static; } }
+  .cplx__draw svg { width: 100%; height: auto; }
+  .cx-lbl text {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 620;
+    fill: var(--zinc-500);
+  }
+
+  /* ────────────────────────── points singuliers ──────────────────────── */
+  .pts h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pts h3 :global(svg) { color: var(--clay-300); flex: none; }
+  .pts { grid-template-columns: repeat(2, minmax(0, 1fr)); display: grid; gap: 0 clamp(2rem, 5vw, 4rem); }
+  @media (max-width: 820px) { .pts { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ──────────────────────────── revêtements ──────────────────────────── */
+  .rev { display: grid; gap: var(--sp-5); margin-top: var(--sp-6); }
+  .rev__item { padding-left: var(--sp-5); border-left: 2px solid var(--clay-300); }
+  .rev__item h3 { font-size: var(--fs-lg); }
+  .rev__pose {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 660;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .rev__pour { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .rev__contre { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .rev__contre span {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  /* ───────────────────────────── arbitrage ───────────────────────────── */
+  .arb2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 820px) { .arb2 { grid-template-columns: minmax(0, 1fr); } }
+  .arb2 h3 { font-size: var(--fs-lg); margin-bottom: var(--sp-4); }
+  .arb2__note { margin-top: var(--sp-6); }
+</style>

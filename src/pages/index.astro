@@ -1,0 +1,592 @@
+---
+/**
+ * PAGE D'ACCUEIL
+ *
+ * COMPOSITION — trois moments forts, le reste au service du parcours :
+ *   1. le hero « devanture » : ardoise texturée, plaque émaillée, repères
+ *      chiffrés intégrés, couture en pente vers la suite ;
+ *   2. l'implantation en pleine largeur, la photo débordant jusqu'au bord ;
+ *   3. la bande de conversion finale, terre cuite pleine.
+ *
+ * RYTHME DES SURFACES — aucune section ne reprend la précédente :
+ *   ardoise profonde → os → sable pleine largeur → zinc technique →
+ *   terre brûlée → os → sable → papier → os → terre cuite.
+ *
+ * ANTI-GRILLE — les prestations sont présentées en registre éditorial à
+ * deux colonnes, pas en grille de cartes : dix cartes identiques, c'est
+ * exactement la signature du site généré.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import DiagnosticToiture from '@/components/DiagnosticToiture.astro';
+import ZoneMap from '@/components/ZoneMap.astro';
+import GoogleReviews from '@/components/GoogleReviews.astro';
+import BrandsStrip from '@/components/BrandsStrip.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+import GalerieChantiers from '@/components/GalerieChantiers.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Faq from '@/components/Faq.astro';
+
+import { servicesByOrder } from '@/data/services';
+import { villes, communesDesservies, RAYON_KM } from '@/data/villes';
+import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { getRealisations } from '@/lib/realisations';
+import { webPageSchema, faqSchema, placeSchema } from '@/lib/schema';
+
+const tel = telHref();
+const realisations = (await getRealisations()).slice(0, 3);
+
+/* Repères tirés des données — aucun chiffre inventé, aucun à maintenir. */
+const nbCommunes = villes.length + communesDesservies.length;
+const rayonKm = RAYON_KM;
+
+const faqItems = [
+  {
+    q: 'Le déplacement pour un devis est-il payant ?',
+    a: "Non. Nous passons voir la toiture, nous vous disons ce que nous constatons, et le devis est établi ensuite. Chiffrer sans être monté ou sans avoir vu le bâtiment n'a pas de sens : les mauvaises surprises viennent presque toujours de là.",
+  },
+  {
+    q: 'Intervenez-vous pour une petite réparation, ou seulement pour de gros chantiers ?',
+    a: "Les deux. Une tuile déplacée après un coup de vent, un solin à reprendre, une gouttière qui déborde : ce sont des interventions courantes. Traiter un petit désordre au bon moment évite souvent une reprise beaucoup plus lourde ensuite.",
+  },
+  {
+    q: 'Comment savoir si ma toiture doit être refaite ou simplement réparée ?',
+    a: "Cela dépend de l'état réel des matériaux et des points singuliers, pas de l'âge. Une couverture ancienne mais saine peut ne demander qu'une reprise des faîtages et des rives. À l'inverse, une toiture plus récente peut poser problème si les raccords ont été mal traités. C'est ce que la visite permet de trancher.",
+  },
+  {
+    q: 'Dans quelles communes intervenez-vous ?',
+    a: "Depuis notre local de Béthune, nous couvrons le bassin béthunois : Beuvry, Bruay-la-Buissière, Nœux-les-Mines, Barlin, Lillers, Auchel, ainsi que Bully-les-Mines, Liévin et Lens. Si votre commune n'est pas dans la liste, appelez-nous : nous vous dirons franchement si nous pouvons intervenir.",
+  },
+];
+
+const etapes = [
+  { n: '01', t: 'Vous décrivez', d: "Par téléphone ou en ligne. Une photo du plafond taché ou du versant concerné fait souvent gagner un passage entier." },
+  { n: '02', t: 'Nous montons voir', d: "Rien ne remplace le fait de monter, ou au minimum de regarder depuis les combles. C'est là que se distingue un désordre localisé d'un problème d'ensemble." },
+  { n: '03', t: 'Le devis, poste par poste', d: "Avec les matériaux prévus et ce qui est exclu. Vous devez pouvoir comprendre ce que vous payez avant de vous engager." },
+  { n: '04', t: 'Le chantier', d: "Protection des abords, évacuation des gravats vers une filière adaptée, terrain rendu propre. Cela devrait aller de soi." },
+];
+---
+
+<BaseLayout
+  title="Couvreur à Béthune (62400) — CZIR62, devis gratuit"
+  description="Entreprise générale de couverture avec un local à Béthune : rénovation de toiture, réparation, fuite, zinguerie, charpente, démoussage. Devis gratuit."
+  path="/"
+  ogImage="/images/accueil/couvreur-bethune-czir62.jpg"
+  schema={[
+    webPageSchema({ path: '/', name: 'Couvreur à Béthune — CZIR62', description: "Entreprise générale de couverture installée à Béthune : couverture, rénovation de toiture, zinguerie, charpente." }),
+    placeSchema('/images/local/devanture-czir62-bethune.jpg'),
+    faqSchema(faqItems),
+  ]}
+>
+  <!-- ═══════════════════ 1 · HERO — LA DEVANTURE ═══════════════════════ -->
+  <section class="hero tex tex--tuiles">
+    <div class="container hero__in">
+      <div class="hero__text">
+        <p class="hero__kicker">
+          <span class="hero__dot" aria-hidden="true"></span>
+          Entreprise générale de couverture · Béthune (62)
+        </p>
+
+        <h1 class="hero__title">Couvreur <span class="hero__br">à Béthune</span></h1>
+
+        <p class="hero__lede">
+          Couverture, rénovation de toiture, zinguerie et charpente
+          à Béthune et dans les environs.
+        </p>
+
+        <div class="hero__cta">
+          <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="hero-accueil">
+            Demander mon devis
+          </a>
+          {hasPhone() && tel ? (
+            <a href={tel} class="btn btn--on-dark btn--lg num" data-track-zone="hero-accueil">
+              <Icon name="phone" size={18} /> Appeler CZIR62
+            </a>
+          ) : (
+            <a href="/contact/" class="btn btn--on-dark btn--lg">Nous contacter</a>
+          )}
+        </div>
+      </div>
+
+      <div class="hero__media">
+        <PhotoSlot
+          src="/images/accueil/couvreur-bethune-czir62.jpg"
+          alt="Couvreur CZIR62 sur un rampant liteauné, avant la pose de la couverture"
+          need="Photo verticale d'un chantier de couverture terminé."
+          ratio="4 / 5"
+          ratioMobile="3 / 2"
+          priority
+          icon="roof"
+          tone="dark"
+          sizes="(max-width: 900px) 100vw, 42vw"
+        />
+
+        <!-- La plaque : l'objet signature du site -->
+        <div class="hero__plaque plaque">
+          <p class="hero__plaque-k">Entreprise générale de couverture</p>
+          <p class="hero__plaque-n">CZIR<span>62</span></p>
+          <div class="hero__plaque-rule" aria-hidden="true"></div>
+          <p class="hero__plaque-a">
+            {hasAddress() ? addressOneLine() : 'Local avec devanture — Béthune (62)'}
+          </p>
+          {hasPhone() && tel && <a class="hero__plaque-t num" href={tel} data-track-zone="plaque-hero">{nap.phone}</a>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Repères, intégrés au hero plutôt qu'en bandeau séparé -->
+    <div class="container">
+      <ul class="list-clean hero__stats stats">
+        <li class="stat">
+          <span class="stat__v num">{servicesByOrder.length}</span>
+          <span class="stat__k">prestations, de la tuile au chantier complet</span>
+        </li>
+        <li class="stat">
+          <span class="stat__v num">{nbCommunes}</span>
+          <span class="stat__k">communes desservies</span>
+        </li>
+        <li class="stat">
+          <span class="stat__v num">{rayonKm}<em>km</em></span>
+          <span class="stat__k">de rayon, jusqu’à la métropole lilloise</span>
+        </li>
+        <li class="stat">
+          <span class="stat__v">Gratuit</span>
+          <span class="stat__k">le déplacement pour le devis</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 2 · PRESTATIONS — REGISTRE ÉDITORIAL ══════════════ -->
+  <section class="section svc seam-top--rev">
+    <div class="container svc__in">
+      <div class="svc__aside">
+        <p class="eyebrow">Prestations</p>
+        <h2 class="svc__h2">Ce que nous faisons,<br />concrètement</h2>
+        <p class="lede">
+          Une toiture pose rarement un seul problème à la fois : une infiltration
+          renvoie souvent à un solin, une rénovation à l'état de la charpente.
+        </p>
+        <p class="svc__aside-note">
+          Chaque prestation a sa page, avec ce qu'il faut savoir avant de décider —
+          pas une fiche produit.
+        </p>
+        <a href="/prestations/" class="btn btn--ghost svc__aside-btn">Voir les dix pages</a>
+      </div>
+
+      <ol class="list-clean svc__list">
+        {servicesByOrder.map((s, i) => (
+          <li class="svc__row">
+            <a href={s.url} class="svc__link">
+              <span class="svc__idx num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="svc__ico"><Icon name={s.icon} size={20} /></span>
+              <span class="svc__body">
+                <strong>{s.name}</strong>
+                <em>{s.cardText}</em>
+              </span>
+              <span class="svc__go" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════ 3 · IMPLANTATION — PLEINE LARGEUR, PHOTO À BORD ═══════ -->
+  <section class="impl">
+    <div class="impl__grid">
+      <div class="impl__media reveal reveal--mask">
+        <PhotoSlot
+          src="/images/local/devanture-czir62-bethune.jpg"
+          alt="Devanture du local CZIR62 à Béthune, entreprise générale de couverture"
+          need="LA photo importante : la devanture du local, prise de face, en journée, enseigne CZIR62 lisible."
+          ratio="4 / 3"
+          icon="storefront"
+          rounded={false}
+          zoom
+          sizes="(max-width: 900px) 100vw, 52vw"
+        />
+      </div>
+
+      <div class="impl__text">
+        <p class="eyebrow">Implantation</p>
+        <h2>Une adresse,<br />pas une boîte aux lettres</h2>
+
+        <div class="prose prose--lead impl__prose">
+          <p>
+            Dans le bâtiment, et particulièrement en couverture, beaucoup d'entreprises
+            se créent et disparaissent en l'espace d'une saison.
+          </p>
+          <p>
+            Un local avec une devanture n'est pas un argument commercial : c'est un fait
+            vérifiable. Vous pouvez situer l'entreprise, passer devant, et savoir où revenir
+            si quelque chose doit être repris six mois plus tard.
+          </p>
+        </div>
+
+        <ul class="list-clean impl__facts">
+          <li><Icon name="storefront" size={17} /><span>Une devanture au nom de CZIR62, à Béthune</span></li>
+          <li><Icon name="check" size={17} /><span>Les mêmes coordonnées ici, sur la fiche Google et sur les devis</span></li>
+          <li><Icon name="pin" size={17} /><span>Un secteur resserré, que nous connaissons réellement</span></li>
+        </ul>
+
+        <div class="btn-row impl__btns">
+          <a href="/entreprise/" class="btn btn--ghost">Découvrir l'entreprise</a>
+          {google.directionsUrl && (
+            <a href={google.directionsUrl} class="btn btn--ghost" target="_blank" rel="noopener"
+               data-track="directions_click" data-track-label="accueil-implantation">
+              <Icon name="route" size={17} /> Itinéraire
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 4 · DIAGNOSTIC — SURFACE TECHNIQUE ════════════════ -->
+  <section class="section section--zinc tex tex--plan">
+    <div class="container">
+      <DiagnosticToiture />
+    </div>
+  </section>
+
+  <!-- ═════════════ 5 · DÉROULEMENT — TERRE BRÛLÉE, FRISE ═══════════════ -->
+  <section class="section section--warm proc tex tex--tuiles">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Déroulement</p>
+          <h2>Comment se passe<br />une intervention</h2>
+        </div>
+        <p class="lede">
+          Quatre étapes, sans zone d'ombre. Vous devez savoir à chaque moment ce qui a
+          été constaté, ce qui est prévu, et pourquoi.
+        </p>
+      </div>
+
+      <ol class="list-clean frise">
+        {etapes.map((e) => (
+          <li class="frise__step reveal">
+            <span class="frise__n num">{e.n}</span>
+            <span class="frise__bullet" aria-hidden="true"></span>
+            <h3>{e.t}</h3>
+            <p>{e.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 6 · CHANTIERS EN IMAGES + RÉALISATIONS ════════════ -->
+  <section class="section">
+    <div class="container">
+      <GalerieChantiers
+        limit={8}
+        intro="Des photos prises sur nos chantiers : dépose, écran, liteaunage, couverture, zinguerie, étanchéité. Le travail tel qu'il se présente avant d'être recouvert."
+      />
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Chantiers documentés"
+        intro="Certains chantiers font l'objet d'une fiche complète : ce qui a été constaté au départ, les travaux réalisés, les matériaux mis en œuvre."
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+    </div>
+  </section>
+
+  <ZoneMap />
+
+  <GoogleReviews intro="Les avis publiés sur notre fiche Google Business Profile, sans sélection ni retouche." />
+
+  <BrandsStrip />
+
+  <!-- ══════════════════════════ 7 · FAQ ════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <Faq
+        items={faqItems}
+        title="Les questions qu'on nous pose le plus souvent"
+        intro="Chaque prestation a sa propre FAQ, plus détaillée, sur sa page dédiée."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Devis gratuit"
+    title="Parlons de votre toiture"
+    text="Décrivez la situation en quelques mots. Nous rappelons pour préciser, puis nous passons voir avant de chiffrer."
+    primaryLabel="Demander mon devis"
+    trackLabel="accueil-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ═══════════════════════════ 1 · HERO ════════════════════════════════ */
+  .hero {
+    position: relative;
+    background: var(--zinc-900);
+    color: var(--text-invert);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) 0;
+    /* La couture est portée par la section suivante : le hero reste net. */
+  }
+  .hero::after {
+    /* Halo terre cuite très bas, côté photo : la chaleur du matériau. */
+    content: '';
+    position: absolute;
+    inset: auto -10% -30% 45%;
+    height: 70%;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(178, 94, 49, 0.22), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero__in {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+  @media (max-width: 900px) {
+    .hero__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); }
+  }
+
+  .hero__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--clay-300);
+  }
+  .hero__dot { width: 6px; height: 6px; background: var(--clay-400); flex: none; }
+
+  .hero__title {
+    margin-top: var(--sp-5);
+    font-family: var(--font-display);
+    font-size: var(--fs-6xl);
+    font-weight: 700;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    color: #fff;
+  }
+  /* Remplace un <br /> : un lecteur d'ecran et les extracteurs de texte
+     collent les mots de part et d'autre d'un <br />, ce qui donnait
+     « Couvreurà Bethune ». Le saut de ligne reste purement visuel. */
+  .hero__br { display: block; }
+
+  .hero__lede {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-xl);
+    line-height: 1.45;
+    letter-spacing: -0.018em;
+    color: var(--zinc-300);
+    max-width: 26ch;
+    text-wrap: pretty;
+  }
+
+  .hero__cta { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-7); }
+  @media (max-width: 480px) {
+    .hero__cta { flex-direction: column; align-items: stretch; }
+    .hero__cta .btn { width: 100%; }
+  }
+
+  .hero__media { position: relative; }
+
+  /* La plaque, vissée sur le bord bas-gauche de la photo */
+  .hero__plaque {
+    position: absolute;
+    left: -2.5rem;
+    bottom: -2rem;
+    width: min(20rem, 82%);
+    padding: var(--sp-5) var(--sp-6);
+  }
+  .hero__plaque-k {
+    font-size: 0.6rem;
+    font-weight: 660;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--zinc-400);
+  }
+  .hero__plaque-n {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+    line-height: 1;
+  }
+  .hero__plaque-n span { color: var(--clay-400); }
+  .hero__plaque-rule { height: 1px; background: rgba(255, 255, 255, 0.16); margin: var(--sp-4) 0; }
+  .hero__plaque-a { font-size: 0.82rem; color: var(--zinc-300); line-height: 1.5; }
+  .hero__plaque-t {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .hero__plaque-t:hover { color: var(--clay-200); }
+  @media (max-width: 1100px) { .hero__plaque { left: -1.25rem; } }
+  @media (max-width: 620px) {
+    .hero__plaque { position: static; width: auto; margin-top: var(--sp-5); }
+  }
+
+  /* Repères */
+  .hero__stats {
+    border-top: 1px solid var(--border-invert);
+    padding-top: var(--sp-2);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .hero__stats .stat { padding-block: var(--sp-5); }
+  .hero__stats .stat__v { color: #fff; }
+  .hero__stats .stat__k { color: var(--zinc-400); max-width: 22ch; }
+  @media (max-width: 780px) {
+    .hero__stats .stat { border-top-color: var(--border-invert); }
+    .hero__stats > :nth-child(even) { border-left-color: var(--border-invert) !important; }
+  }
+
+  /* ═════════════════════ 2 · PRESTATIONS (registre) ════════════════════ */
+  .svc { background: var(--bg); }
+  .svc__in {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  @media (max-width: 940px) { .svc__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
+
+  .svc__aside { position: sticky; top: calc(var(--header-h) + 2.5rem); }
+  @media (max-width: 940px) { .svc__aside { position: static; } }
+  .svc__h2 { font-size: clamp(1.9rem, 2vw + 1.3rem, 2.7rem); }
+  .svc__aside .lede { margin-top: var(--sp-4); max-width: 34ch; }
+  .svc__aside-note {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: var(--lh-relaxed);
+    max-width: 34ch;
+  }
+  .svc__aside-btn { margin-top: var(--sp-6); }
+
+  .svc__list { border-top: 1px solid var(--border); }
+  .svc__row { border-bottom: 1px solid var(--border); }
+  .svc__link {
+    display: grid;
+    grid-template-columns: 2.4rem 2.1rem minmax(0, 1fr) 1.5rem;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-5) 0.4rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: background var(--t-fast), padding-left var(--t-base) var(--ease-out);
+  }
+  .svc__link:hover { background: var(--sand-50); padding-left: 1rem; color: var(--text); }
+  .svc__idx { font-family: var(--font-mono); font-size: 0.74rem; color: var(--zinc-300); transition: color var(--t-fast); }
+  .svc__link:hover .svc__idx { color: var(--accent); }
+  .svc__ico { color: var(--accent); }
+  .svc__body strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 660;
+    letter-spacing: -0.022em;
+    color: var(--text-strong);
+  }
+  .svc__body em {
+    display: block;
+    font-style: normal;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 0.15rem;
+  }
+  .svc__go { color: var(--zinc-200); transition: transform var(--t-base) var(--ease-out), color var(--t-base); text-align: right; }
+  .svc__link:hover .svc__go { transform: translateX(4px); color: var(--accent); }
+  @media (max-width: 560px) {
+    .svc__link { grid-template-columns: 1.9rem minmax(0, 1fr) 1.2rem; gap: var(--sp-3); }
+    .svc__ico { display: none; }
+    .svc__body em { display: none; }
+  }
+
+  /* ═══════════════ 3 · IMPLANTATION (photo à bord perdu) ═══════════════ */
+  .impl { background: var(--surface-sand); overflow: hidden; }
+  .impl__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .impl__grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .impl__media { position: relative; }
+  .impl__media :global(.ph__img), .impl__media :global(.ph__slot) { border-radius: 0; }
+
+  .impl__text {
+    padding: clamp(2.5rem, 6vw, 6rem) var(--gutter) clamp(2.5rem, 6vw, 6rem) clamp(2rem, 5vw, 4.5rem);
+    max-width: 42rem;
+  }
+  @media (max-width: 900px) { .impl__text { padding-inline: var(--gutter); } }
+
+  .impl__prose { margin-top: var(--sp-5); }
+  .impl__facts { display: grid; gap: var(--sp-3); margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--border-strong); }
+  .impl__facts li { display: flex; gap: 0.65rem; align-items: flex-start; font-size: var(--fs-sm); color: var(--zinc-600); line-height: 1.5; }
+  .impl__facts :global(svg) { color: var(--accent); flex: none; margin-top: 0.1rem; }
+  .impl__btns { margin-top: var(--sp-6); }
+
+  /* ═════════════════════ 5 · DÉROULEMENT (frise) ═══════════════════════ */
+  .proc { position: relative; }
+  .frise {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    position: relative;
+    padding-top: var(--sp-6);
+  }
+  /* Le fil qui relie les étapes */
+  .frise::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--sp-6) + 1.55rem);
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--border-invert);
+  }
+  @media (max-width: 900px) {
+    .frise { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .frise::before { display: none; }
+  }
+  @media (max-width: 560px) { .frise { grid-template-columns: minmax(0, 1fr); } }
+
+  .frise__step { position: relative; }
+  .frise__n {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--clay-300);
+  }
+  .frise__bullet {
+    display: block;
+    width: 9px; height: 9px;
+    background: var(--clay-400);
+    transform: rotate(45deg);
+    margin: 0.9rem 0 1.4rem;
+    position: relative;
+    z-index: 1;
+  }
+  .frise__step h3 { color: #fff; font-size: var(--fs-lg); }
+  .frise__step p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-300); line-height: var(--lh-relaxed); }
+</style>

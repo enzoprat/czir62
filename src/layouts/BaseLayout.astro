@@ -1,0 +1,171 @@
+---
+/**
+ * Gabarit racine.
+ * Centralise : <head>, donnees structurees, en-tete, pied de page, barre
+ * d'action mobile, et l'amorce du script de suivi.
+ *
+ * Chaque page fournit son titre, sa description, son chemin canonique et les
+ * noeuds JSON-LD qui la concernent. Aucune page ne redefinit le <head>.
+ */
+import '@/styles/tokens.css';
+import '@/styles/base.css';
+
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import MobileActionBar from '@/components/MobileActionBar.astro';
+import { site } from '@/config/site';
+import { organizationSchema, websiteSchema, buildGraph } from '@/lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Chemin canonique, slash final inclus. Ex. « /couverture/ » */
+  path: string;
+  /** Noeuds JSON-LD propres a la page (fil d'ariane, Service, FAQ...) */
+  schema?: Array<Record<string, unknown> | null | undefined>;
+  /** Image de partage — chemin sous /public */
+  ogImage?: string;
+  noindex?: boolean;
+  /** Evenement de vue de page (service_view, city_page_view...) */
+  pageEvent?: string;
+  pageSlug?: string;
+  pageLabel?: string;
+  bodyClass?: string;
+  /** Masque la barre d'action mobile (page de formulaire par exemple) */
+  hideMobileBar?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  schema = [],
+  ogImage = '/images/og-default.jpg',
+  noindex = false,
+  pageEvent,
+  pageSlug,
+  pageLabel,
+  bodyClass,
+  hideMobileBar = false,
+} = Astro.props;
+
+const canonical = new URL(path, site.url).href;
+const ogUrl = new URL(ogImage, site.url).href;
+
+// Le graphe global (entreprise + site) est present sur toutes les pages :
+// c'est ce qui permet a Google de rattacher chaque URL a la meme entite.
+const jsonld = buildGraph([organizationSchema(), websiteSchema(), ...schema]);
+
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+const ga4Id = import.meta.env.PUBLIC_GA4_ID;
+---
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <!-- Aucune police embarquee : SF Pro et ses equivalents systeme sont deja
+         presents sur l'appareil. Rien a precharger, rien a telecharger. -->
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#AE5A2F" />
+    <meta name="format-detection" content="telephone=yes" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!--
+      Exécuté avant le premier rendu, donc sans scintillement.
+      `reveal-ready` active l'état masqué des blocs animés. Le minuteur est un
+      filet de sécurité : si le module d'animation ne s'exécute jamais (JS
+      bloqué, erreur réseau, extension), la classe est retirée et tout le
+      contenu redevient visible. Une animation ne doit jamais pouvoir masquer
+      du contenu de façon permanente.
+    -->
+    <script is:inline>
+      var d = document.documentElement;
+      d.classList.remove('no-js');
+      d.classList.add('reveal-ready');
+      setTimeout(function () {
+        if (!window.__czirReveal) d.classList.remove('reveal-ready');
+      }, 2500);
+    </script>
+
+    <!--
+      `set:html` est une directive d'élément : elle doit être posée SUR la
+      balise <script>, pas sur un pseudo-élément. Écrit autrement, le graphe
+      ressort échappé et hors du <head> — donc totalement invisible pour Google.
+    -->
+    <script type="application/ld+json" is:inline set:html={jsonld}></script>
+
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || []; w[l].push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', gtmId);
+      </script>
+    )}
+    {!gtmId && ga4Id && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
+        <script is:inline define:vars={{ ga4Id }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', ga4Id);
+        </script>
+      </>
+    )}
+  </head>
+
+  <body
+    class={bodyClass}
+    data-page-event={pageEvent}
+    data-page-slug={pageSlug}
+    data-page-label={pageLabel}
+  >
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"
+        ></iframe>
+      </noscript>
+    )}
+
+    <Header />
+
+    <main id="contenu">
+      <slot />
+    </main>
+
+    <Footer />
+    {!hideMobileBar && <MobileActionBar />}
+
+    <script>
+      import '@/lib/client/tracking';
+      import '@/lib/client/reveal';
+    </script>
+  </body>
+</html>

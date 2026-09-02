@@ -1,0 +1,232 @@
+---
+/**
+ * Estimation de surface de toiture.
+ *
+ * Utilite reelle : beaucoup de gens raisonnent en surface au sol et sont
+ * surpris qu'une toiture developpe 15 a 30 % de plus. Donner ce repere evite
+ * un malentendu des le premier echange.
+ *
+ * Limites affichees clairement : le resultat est une surface DEVELOPPEE
+ * indicative, calculee sur un volume rectangulaire simple. Il ne constitue
+ * en aucun cas une base de devis.
+ */
+import Icon from '@/components/Icon.astro';
+
+interface Props { id?: string; title?: string; }
+const { id = 'surface', title = 'Estimer la surface de votre toiture' } = Astro.props;
+---
+
+<section class="surf" id={id}>
+  <div class="surf__grid">
+    <div class="surf__intro">
+      <p class="eyebrow">Repère de surface</p>
+      <h2>{title}</h2>
+      <p class="lede">
+        Une toiture développe toujours plus que l'emprise au sol de la maison : plus la pente
+        est forte, plus l'écart est important. Ce calcul donne l'ordre de grandeur.
+      </p>
+
+      <div class="note surf__note">
+        <strong>Ce que ce chiffre n'est pas.</strong> Une surface indicative ne remplace pas un
+        métré. Le coût d'un chantier dépend surtout de l'accès, de l'état de la charpente et du
+        nombre de points singuliers — souches, noues, lucarnes, fenêtres de toit.
+      </div>
+    </div>
+
+    <div class="surf__tool">
+      <div class="surf__fields">
+        <div class="field">
+          <label class="label" for="surf-l">Longueur au sol (m)</label>
+          <input class="input" id="surf-l" type="number" inputmode="decimal" min="1" max="80" step="0.1" value="10" />
+        </div>
+        <div class="field">
+          <label class="label" for="surf-w">Largeur au sol (m)</label>
+          <input class="input" id="surf-w" type="number" inputmode="decimal" min="1" max="40" step="0.1" value="8" />
+        </div>
+        <div class="field">
+          <label class="label" for="surf-p">Pente approximative</label>
+          <select class="select" id="surf-p">
+            <option value="20">Faible — 20 % (toit peu incliné)</option>
+            <option value="35">Assez faible — 35 %</option>
+            <option value="45" selected>Courante — 45 %</option>
+            <option value="60">Forte — 60 %</option>
+            <option value="80">Très forte — 80 %</option>
+            <option value="100">Très pentue — 100 % (45°)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="surf-d">Débord de toit (m)</label>
+          <input class="input" id="surf-d" type="number" inputmode="decimal" min="0" max="1.5" step="0.05" value="0.4" />
+        </div>
+        <div class="field surf__field-full">
+          <span class="label">Nombre de pans</span>
+          <div class="surf__pans" role="group" aria-label="Nombre de pans">
+            <button type="button" class="choice surf__pan is-selected" data-pans="2"><span>2 pans</span></button>
+            <button type="button" class="choice surf__pan" data-pans="1"><span>1 pan</span></button>
+            <button type="button" class="choice surf__pan" data-pans="4"><span>4 pans</span></button>
+          </div>
+        </div>
+      </div>
+
+      <output class="surf__out" for="surf-l surf-w surf-p surf-d" aria-live="polite">
+        <p class="surf__out-label">Surface développée indicative</p>
+        <p class="surf__value"><span data-surface>—</span> <em>m²</em></p>
+        <p class="surf__compare" data-compare></p>
+        <p class="surf__pans-note" data-pansnote></p>
+      </output>
+
+      <p class="surf__disclaimer">
+        <Icon name="alert" size={15} />
+        Estimation indicative, calculée sur un volume simple. Elle ne peut pas servir de base
+        contractuelle à un devis.
+      </p>
+
+      <a href="/devis/" class="btn btn--block surf__cta" data-track="quote_start" data-track-label="calculateur-surface">
+        Faire établir un métré précis
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .surf__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .surf__grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .surf__intro .lede { margin-top: var(--sp-4); }
+  .surf__note { margin-top: var(--sp-5); font-size: var(--fs-sm); line-height: var(--lh-relaxed); }
+
+  .surf__tool {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: clamp(1.35rem, 3vw, 2rem);
+    box-shadow: var(--shadow-md);
+  }
+
+  .surf__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  .surf__fields .field + .field { margin-top: 0; }
+  .surf__field-full { grid-column: 1 / -1; }
+  @media (max-width: 480px) { .surf__fields { grid-template-columns: minmax(0, 1fr); } }
+
+  .surf__pans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); }
+  .surf__pan { justify-content: center; min-height: 48px; font-size: var(--fs-sm); }
+
+  .surf__out {
+    display: block;
+    margin-top: var(--sp-5);
+    padding: var(--sp-5);
+    background: linear-gradient(140deg, var(--clay-50), var(--sand-50));
+    border: 1px solid var(--clay-200);
+    border-radius: var(--r-lg);
+    text-align: center;
+  }
+  .surf__out-label {
+    font-size: var(--fs-xs);
+    font-weight: 640;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--clay-600);
+  }
+  .surf__value {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--clay-700);
+    margin-top: var(--sp-2);
+  }
+  .surf__value em { font-style: normal; font-size: 0.42em; font-weight: 600; color: var(--clay-600); }
+  .surf__compare { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--clay-700); }
+  .surf__pans-note {
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--clay-200);
+    font-size: var(--fs-xs);
+    color: var(--clay-600);
+    line-height: 1.6;
+  }
+
+  .surf__disclaimer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    margin-top: var(--sp-4);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .surf__disclaimer :global(svg) { flex: none; margin-top: 0.1rem; color: var(--clay-400); }
+
+  .surf__cta { margin-top: var(--sp-5); }
+</style>
+
+<script>
+  import { track } from '@/lib/client/tracking';
+
+  document.querySelectorAll<HTMLElement>('.surf').forEach((root) => {
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const inputs = ['#surf-l', '#surf-w', '#surf-p', '#surf-d'].map((s) =>
+      $<HTMLInputElement | HTMLSelectElement>(s),
+    );
+    const out = $<HTMLElement>('[data-surface]');
+    const compare = $<HTMLElement>('[data-compare]');
+    const pansNote = $<HTMLElement>('[data-pansnote]');
+    const panBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('.surf__pan'));
+
+    let pans = 2;
+    let tracked = false;
+
+    const PAN_NOTES: Record<number, string> = {
+      1: "Un seul pan (appentis) : surface simple, mais toute l'eau est évacuée d'un même côté — le dimensionnement de la gouttière compte davantage.",
+      2: "Deux pans : la configuration la plus courante, avec un faîtage et deux rives. C'est aussi la plus simple à reprendre par tranches.",
+      4: "Quatre pans : à surface égale, le chantier est plus technique. Les arêtiers et les noues multiplient les points singuliers, qui sont les zones où l'eau se joue de la couverture.",
+    };
+
+    function compute() {
+      const L = Number((inputs[0] as HTMLInputElement).value) || 0;
+      const W = Number((inputs[1] as HTMLInputElement).value) || 0;
+      const pentePct = Number((inputs[2] as HTMLSelectElement).value) || 45;
+      const debord = Number((inputs[3] as HTMLInputElement).value) || 0;
+
+      if (L <= 0 || W <= 0) {
+        out.textContent = '—';
+        compare.textContent = '';
+        return;
+      }
+
+      const emprise = (L + 2 * debord) * (W + 2 * debord);
+      const angle = Math.atan(pentePct / 100);
+      const developpee = emprise / Math.cos(angle);
+      const surplus = Math.round(((developpee - emprise) / emprise) * 100);
+
+      out.textContent = String(Math.round(developpee));
+      compare.textContent = `Soit environ ${surplus} % de plus que l'emprise au sol (${Math.round(emprise)} m²), effet de la pente.`;
+      pansNote.textContent = PAN_NOTES[pans];
+
+      if (!tracked) {
+        tracked = true;
+        track('surface_estimate', { page: location.pathname });
+      }
+    }
+
+    inputs.forEach((el) => {
+      el.addEventListener('input', compute);
+      el.addEventListener('change', compute);
+    });
+
+    panBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        pans = Number(btn.dataset.pans);
+        panBtns.forEach((b) => b.classList.toggle('is-selected', b === btn));
+        compute();
+      }),
+    );
+
+    compute();
+  });
+</script>

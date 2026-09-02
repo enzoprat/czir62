@@ -1,0 +1,220 @@
+---
+/**
+ * Hero de page intérieure.
+ *
+ * Fournit la structure — fil d'ariane, étiquette, H1 d'affiche, chapeau,
+ * fiche technique, actions, média — mais laisse chaque page décider de son
+ * contenu et de son ton via les slots.
+ *
+ * Les points de réassurance sont présentés en fiche technique (filets
+ * verticaux, petites capitales) et non en pastilles à coche : c'est le
+ * vocabulaire d'un métier qui mesure, et cela évite la rangée de badges
+ * décoratifs qu'on retrouve sur toutes les landing pages.
+ *
+ * Le média est chargé en priorité : c'est presque toujours l'élément LCP.
+ */
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import type { Crumb } from '@/lib/schema';
+import type { IconName } from '@/lib/icons';
+
+interface Props {
+  crumbs: Crumb[];
+  eyebrow?: string;
+  title: string;
+  lede: string;
+  photo?: string;
+  /** Requis des qu'une photo est fournie ; sans photo le hero passe en composition « solo ». */
+  photoAlt?: string;
+  photoNeed?: string;
+  icon?: IconName;
+  variant?: 'light' | 'deep' | 'clay';
+  /** Cadrage du média. Toutes les photos de chantier ne sont pas au portrait :
+      recadrer un paysage en 4/5 ampute l'essentiel du sujet. */
+  photoRatio?: string;
+  photoRatioMobile?: string;
+  chips?: string[];
+}
+
+const {
+  crumbs, eyebrow, title, lede, photo, photoAlt, photoNeed,
+  icon = 'roof', variant = 'light', chips = [],
+  photoRatio = '4 / 5', photoRatioMobile = '3 / 2',
+} = Astro.props;
+
+const dark = variant !== 'light';
+/* Sans photo, le hero ne laisse pas une colonne vide : il passe en pleine
+   largeur et la fiche technique s'étale. Un emplacement en attente n'a de
+   sens que là où la photo est réellement attendue — la devanture. */
+const avecMedia = Boolean(photo);
+---
+
+<section class:list={['phero', `phero--${variant}`, !avecMedia && 'phero--solo', dark && 'tex tex--tuiles']}>
+  <div class="container phero__in">
+    <div class="phero__text">
+      <Breadcrumbs items={crumbs} variant={dark ? 'invert' : 'default'} />
+
+      {eyebrow && (
+        <p class="phero__eyebrow">
+          <Icon name={icon} size={16} />
+          {eyebrow}
+        </p>
+      )}
+
+      <h1 class="phero__title">{title}</h1>
+      <p class="phero__lede">{lede}</p>
+
+      <div class="phero__actions"><slot name="actions" /></div>
+
+      {chips.length > 0 && (
+        <ul class="list-clean phero__spec">
+          {chips.map((c) => <li>{c}</li>)}
+        </ul>
+      )}
+
+      <slot name="under" />
+    </div>
+
+    {avecMedia && (
+    <div class="phero__media">
+      <PhotoSlot
+        src={photo}
+        alt={photoAlt ?? ''}
+        need={photoNeed}
+        ratio={photoRatio}
+        ratioMobile={photoRatioMobile}
+        priority
+        icon={icon}
+        tone={dark ? 'dark' : 'light'}
+        zoom
+        sizes="(max-width: 900px) 100vw, 42vw"
+      />
+      <slot name="media-extra" />
+    </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    padding-block: clamp(1.5rem, 3vw, 2.5rem) clamp(2.75rem, 5vw, 4.5rem);
+  }
+  .phero--light { background: var(--surface-sand); border-bottom: 1px solid var(--border); }
+  .phero--deep  { background: var(--deep); color: var(--text-invert); }
+  .phero--clay  { background: var(--clay-700); color: #fff; }
+
+  .phero__in {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  /* Sans média, le hero devient une composition éditoriale : le titre tient
+     la colonne de gauche, le chapeau se cale à sa base à droite. La largeur
+     est occupée par du contenu, pas par une colonne vide. */
+  .phero--solo { padding-block: clamp(1.5rem, 3vw, 2.5rem) clamp(3rem, 6vw, 5rem); }
+  .phero--solo .phero__in { grid-template-columns: minmax(0, 1fr); }
+  .phero--solo .phero__text {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    column-gap: clamp(2rem, 6vw, 5rem);
+    align-items: end;
+  }
+  .phero--solo .phero__text > :global(.bc) { grid-column: 1 / -1; }
+  .phero--solo .phero__eyebrow { grid-column: 1 / -1; }
+  .phero--solo .phero__title { grid-column: 1; margin-bottom: 0; max-width: 14ch; }
+  .phero--solo .phero__lede {
+    grid-column: 2;
+    margin-top: 0;
+    padding-bottom: 0.35rem;
+    font-size: var(--fs-lg);
+    max-width: 42ch;
+  }
+  .phero--solo .phero__actions { grid-column: 1 / -1; }
+  .phero--solo .phero__spec { grid-column: 1 / -1; max-width: 62rem; }
+
+  @media (max-width: 900px) {
+    .phero--solo .phero__text { grid-template-columns: minmax(0, 1fr); }
+    .phero--solo .phero__title,
+    .phero--solo .phero__lede { grid-column: 1; max-width: 26ch; }
+    .phero--solo .phero__lede { margin-top: var(--sp-5); max-width: none; }
+  }
+  @media (max-width: 900px) {
+    .phero__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
+    .phero__media { order: -1; }
+  }
+
+  .phero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--sp-6);
+    font-size: 0.72rem;
+    font-weight: 660;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .phero--deep .phero__eyebrow, .phero--clay .phero__eyebrow { color: var(--clay-300); }
+
+  .phero__title {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-5xl);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    max-width: 16ch;
+  }
+  .phero--deep .phero__title, .phero--clay .phero__title { color: #fff; }
+
+  .phero__lede {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-relaxed);
+    letter-spacing: -0.012em;
+    color: var(--zinc-600);
+    max-width: 50ch;
+    text-wrap: pretty;
+  }
+  .phero--deep .phero__lede, .phero--clay .phero__lede { color: var(--zinc-300); }
+
+  .phero__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }
+  .phero__actions:empty { display: none; }
+  @media (max-width: 480px) {
+    .phero__actions { flex-direction: column; align-items: stretch; }
+    .phero__actions :global(.btn) { width: 100%; }
+  }
+
+  /* Fiche technique : grille à colonnes égales plutôt qu'un flux qui
+     retourne à la ligne — un séparateur orphelin en début de ligne se voit
+     immédiatement, et c'est exactement le genre de détail qui trahit. */
+  .phero__spec {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: var(--sp-7);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border-strong);
+  }
+  .phero--deep .phero__spec, .phero--clay .phero__spec { border-top-color: var(--border-invert); }
+  .phero__spec li {
+    padding-inline: var(--sp-5);
+    font-size: 0.72rem;
+    font-weight: 640;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    line-height: 1.55;
+    border-left: 1px solid var(--border-strong);
+  }
+  .phero__spec li:first-child { padding-left: 0; border-left: 0; }
+  .phero--deep .phero__spec li, .phero--clay .phero__spec li { color: var(--zinc-400); border-left-color: var(--border-invert); }
+  @media (max-width: 620px) {
+    .phero__spec { grid-template-columns: minmax(0, 1fr); gap: var(--sp-3); }
+    .phero__spec li { padding: 0; border-left: 0; }
+  }
+
+  .phero__media { position: relative; }
+</style>

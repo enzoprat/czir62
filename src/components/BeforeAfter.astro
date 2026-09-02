@@ -1,0 +1,156 @@
+---
+/**
+ * Comparateur avant / après.
+ *
+ * Le curseur est un <input type="range"> natif : accessible au clavier, au
+ * lecteur d'écran et au tactile sans code supplémentaire. Le seul rôle du
+ * JavaScript est de reporter la valeur dans une variable CSS.
+ * Sans JavaScript, les deux photos restent visibles côte à côte.
+ */
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import type { IconName } from '@/lib/icons';
+
+interface Props {
+  avant: { src?: string; alt: string; need?: string };
+  apres: { src?: string; alt: string; need?: string };
+  ratio?: string;
+  icon?: IconName;
+  caption?: string;
+  labelAvant?: string;
+  labelApres?: string;
+}
+const {
+  avant,
+  apres,
+  ratio = '3 / 2',
+  icon = 'renovation',
+  caption,
+  labelAvant = 'Avant',
+  labelApres = 'Après',
+} = Astro.props;
+---
+
+<figure class="ba" style={`--ba-ratio:${ratio}`}>
+  <div class="ba__stage">
+    <div class="ba__layer ba__layer--apres">
+      <PhotoSlot src={apres.src} alt={apres.alt} need={apres.need} ratio={ratio} icon={icon} rounded={false} sizes="(max-width: 900px) 100vw, 60vw" />
+      <span class="ba__tag ba__tag--apres">{labelApres}</span>
+    </div>
+
+    <div class="ba__layer ba__layer--avant">
+      <PhotoSlot src={avant.src} alt={avant.alt} need={avant.need} ratio={ratio} icon={icon} rounded={false} sizes="(max-width: 900px) 100vw, 60vw" />
+      <span class="ba__tag ba__tag--avant">{labelAvant}</span>
+    </div>
+
+    <span class="ba__handle" aria-hidden="true"><span class="ba__grip"></span></span>
+
+    <input
+      class="ba__range"
+      type="range" min="0" max="100" value="50" step="1"
+      aria-label={`Comparer avant et après : ${labelAvant} à gauche, ${labelApres} à droite`}
+    />
+  </div>
+  {caption && <figcaption class="ba__cap">{caption}</figcaption>}
+</figure>
+
+<style>
+  .ba { margin: 0; --ba-pos: 50%; }
+
+  .ba__stage {
+    position: relative;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: var(--sand-100);
+    aspect-ratio: var(--ba-ratio);
+  }
+
+  .ba__layer { position: absolute; inset: 0; }
+  .ba__layer :global(.ph),
+  .ba__layer :global(.ph__img),
+  .ba__layer :global(.ph__slot) { height: 100%; width: 100%; }
+  .ba__layer :global(.ph__img) { object-fit: cover; }
+
+  /* La couche « avant » est rognée par la position du curseur */
+  .ba__layer--avant { clip-path: inset(0 calc(100% - var(--ba-pos)) 0 0); }
+
+  .ba__tag {
+    position: absolute;
+    top: var(--sp-3);
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--r-pill);
+    font-size: var(--fs-xs);
+    font-weight: 680;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+  .ba__tag--avant { left: var(--sp-3); background: rgba(20, 26, 33, 0.82); color: #fff; }
+  .ba__tag--apres { right: var(--sp-3); background: rgba(174, 90, 47, 0.92); color: #fff; }
+
+  .ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--ba-pos);
+    width: 2px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(20, 26, 33, 0.25);
+    transform: translateX(-1px);
+    pointer-events: none;
+  }
+  .ba__grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 42px;
+    height: 42px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-md);
+    display: grid;
+    place-items: center;
+  }
+  .ba__grip::before {
+    content: '⟷';
+    font-size: 1.1rem;
+    color: var(--clay-600);
+    line-height: 1;
+  }
+
+  /* Le curseur natif couvre toute la zone, invisible mais pleinement utilisable */
+  .ba__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+  }
+  .ba__range::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 100%; }
+  .ba__range::-moz-range-thumb { width: 44px; height: 100%; border: 0; background: transparent; }
+  .ba__range:focus-visible { outline: none; }
+  .ba__range:focus-visible ~ .ba__handle .ba__grip {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .ba__cap { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.5; }
+
+  /* Sans JavaScript, on affiche les deux photos entières côte à côte */
+  .no-js .ba__layer--avant { clip-path: inset(0 50% 0 0); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.ba').forEach((root) => {
+    const range = root.querySelector<HTMLInputElement>('.ba__range')!;
+    const apply = () => root.style.setProperty('--ba-pos', `${range.value}%`);
+    range.addEventListener('input', apply);
+    apply();
+  });
+</script>

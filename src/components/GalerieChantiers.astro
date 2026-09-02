@@ -1,0 +1,220 @@
+---
+/**
+ * Galerie de chantiers, triable par prestation.
+ *
+ * Le tri vient d'une demande explicite : un visiteur venu pour la zinguerie
+ * n'a pas à faire défiler trente photos de couverture. Les libellés des
+ * filtres sont repris du registre des prestations — renommer une prestation
+ * renomme son filtre, sans intervention ici.
+ *
+ * Le filtrage porte sur des éléments DÉJÀ présents dans le HTML : rien n'est
+ * rendu par JavaScript, tout reste indexable, et sans script la galerie
+ * s'affiche simplement en entier.
+ *
+ * Mise en colonnes plutôt qu'en grille : chaque photo conserve ses
+ * proportions. Recadrer trente photos de chantier au même format produirait
+ * l'effet « banque d'images » que le reste du site évite.
+ */
+import { chantiers } from '@/data/chantiers';
+import { services } from '@/data/services';
+
+interface Props {
+  title?: string;
+  intro?: string;
+  limit?: number;
+  /** Affiche les filtres par prestation */
+  filtres?: boolean;
+  /**
+   * Decalage dans la serie. Sert aux pages villes : chacune montre une tranche
+   * differente de la meme galerie, ce qui evite dix pages illustrees a
+   * l'identique sans pour autant dupliquer les fichiers.
+   */
+  offset?: number;
+}
+const {
+  title = 'Nos chantiers en images',
+  intro = "Des photos prises sur nos chantiers : dépose, support, écran, liteaunage, couverture, zinguerie, étanchéité. Le travail tel qu'il se présente avant d'être recouvert.",
+  limit,
+  filtres = false,
+  offset = 0,
+} = Astro.props;
+
+const roue = offset ? [...chantiers.slice(offset % chantiers.length), ...chantiers.slice(0, offset % chantiers.length)] : chantiers;
+const photos = limit ? roue.slice(0, limit) : roue;
+
+/** Libellé d'une catégorie : nom de la prestation, ou libellé propre */
+const libelle = (cat: string) =>
+  cat === 'entreprise' ? "L'entreprise" : (services.find((s) => s.slug === cat)?.name ?? cat);
+
+/* Ordre des filtres : celui du registre des prestations, puis le reste.
+   Les catégories sans photo n'apparaissent pas. */
+const compte = new Map<string, number>();
+for (const p of photos) compte.set(p.categorie, (compte.get(p.categorie) ?? 0) + 1);
+
+const ordre = [...services].sort((a, b) => a.order - b.order).map((s) => s.slug);
+const cats = [...compte.keys()].sort((a, b) => {
+  const ia = ordre.indexOf(a), ib = ordre.indexOf(b);
+  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+});
+import { dimensions } from '@/lib/dimensions';
+---
+
+<section class="gal" data-galerie>
+  {/* La galerie s'insere parfois sous un titre porte par la page hote
+      (pages villes) : dans ce cas on ne genere pas un h2 vide. */}
+  {(title || intro) && (
+    <div class="head-split">
+      <div>
+        {title && <p class="eyebrow">En images</p>}
+        {title && <h2>{title}</h2>}
+      </div>
+      {intro && <p class="lede">{intro}</p>}
+    </div>
+  )}
+
+  {filtres && cats.length > 1 && (
+    <div class="gal__filtres" role="group" aria-label="Filtrer les photos par prestation">
+      <button type="button" class="gal__chip is-on" data-cat="all" aria-pressed="true">
+        Tout <span class="gal__n num">{photos.length}</span>
+      </button>
+      {cats.map((c) => (
+        <button type="button" class="gal__chip" data-cat={c} aria-pressed="false">
+          {libelle(c)} <span class="gal__n num">{compte.get(c)}</span>
+        </button>
+      ))}
+    </div>
+  )}
+
+  <div class="gal__cols" data-grille>
+    {photos.map((p, i) => (
+      <figure class="gal__item reveal" data-cat={p.categorie} data-reveal-delay={(i % 4) * 60}>
+        <div class="gal__frame">
+          <picture>
+            <source srcset={p.src.replace(/\.jpg$/, '.webp')} type="image/webp" />
+            <img src={p.src} alt={p.alt} loading="lazy" decoding="async"
+                 width={dimensions(p.src)?.width} height={dimensions(p.src)?.height}
+                 sizes="(max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" />
+          </picture>
+        </div>
+        <figcaption>{p.legende}</figcaption>
+      </figure>
+    ))}
+  </div>
+
+  <p class="gal__vide" data-vide hidden>Aucune photo dans cette catégorie pour le moment.</p>
+  <p class="visually-hidden" role="status" aria-live="polite" data-annonce></p>
+</section>
+
+<style>
+  /* ───────────────────────────── filtres ─────────────────────────────── */
+  .gal__filtres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-6);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--border);
+  }
+  .gal__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.48rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-xs);
+    background: transparent;
+    color: var(--zinc-600);
+    font-size: var(--fs-sm);
+    font-weight: 570;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+  }
+  .gal__chip:hover { border-color: var(--clay-300); color: var(--accent-ink); }
+  .gal__chip.is-on { background: var(--zinc-900); border-color: var(--zinc-900); color: #fff; }
+  .gal__n { font-size: 0.72rem; opacity: 0.6; }
+  .gal__chip.is-on .gal__n { opacity: 0.75; }
+
+  /* ───────────────────────────── colonnes ────────────────────────────── */
+  .gal__cols { columns: 4; column-gap: clamp(0.75rem, 1.6vw, 1.25rem); }
+  @media (max-width: 1100px) { .gal__cols { columns: 3; } }
+  @media (max-width: 760px)  { .gal__cols { columns: 2; } }
+
+  .gal__item {
+    break-inside: avoid;
+    margin: 0 0 clamp(0.75rem, 1.6vw, 1.25rem);
+    display: inline-block;
+    width: 100%;
+  }
+  .gal__item[hidden] { display: none; }
+
+  .gal__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-sm);
+    background: var(--sand-100);
+  }
+  .gal__frame picture { display: block; }
+  .gal__frame img { width: 100%; height: auto; display: block; transition: transform 900ms var(--ease-out); }
+  .gal__item:hover .gal__frame img { transform: scale(1.045); }
+
+  /* Voile terre cuite au survol : la matière réagit sans masquer la photo. */
+  .gal__frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--clay-800);
+    opacity: 0;
+    transition: opacity var(--t-base) var(--ease-out);
+    pointer-events: none;
+  }
+  .gal__item:hover .gal__frame::after { opacity: 0.08; }
+
+  figcaption {
+    margin-top: var(--sp-2);
+    font-size: 0.72rem;
+    font-weight: 620;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  :global(.section--deep) figcaption { color: var(--zinc-400); }
+
+  .gal__vide { margin-top: var(--sp-5); color: var(--text-muted); }
+  .gal__vide[hidden] { display: none; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-galerie]').forEach((root) => {
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('.gal__chip'));
+    if (!chips.length) return;
+
+    const items = Array.from(root.querySelectorAll<HTMLElement>('.gal__item'));
+    const vide = root.querySelector<HTMLElement>('[data-vide]');
+    const annonce = root.querySelector<HTMLElement>('[data-annonce]');
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const cat = chip.dataset.cat!;
+        chips.forEach((c) => {
+          const actif = c === chip;
+          c.classList.toggle('is-on', actif);
+          c.setAttribute('aria-pressed', String(actif));
+        });
+
+        let visibles = 0;
+        items.forEach((el) => {
+          const ok = cat === 'all' || el.dataset.cat === cat;
+          el.hidden = !ok;
+          if (ok) visibles++;
+        });
+
+        if (vide) vide.hidden = visibles > 0;
+        if (annonce) {
+          const nom = chip.textContent?.replace(/\s+\d+\s*$/, '').trim() ?? '';
+          annonce.textContent = `${visibles} photo${visibles > 1 ? 's' : ''} — ${nom}`;
+        }
+      });
+    });
+  });
+</script>

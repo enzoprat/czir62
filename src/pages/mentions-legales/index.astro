@@ -1,0 +1,110 @@
+---
+/**
+ * MENTIONS LEGALES
+ * Les informations légales obligatoires proviennent de src/config/site.ts.
+ * Celles qui ne sont pas encore renseignées sont signalées explicitement
+ * plutôt que remplies avec des valeurs inventées.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { site, nap, hasAddress, hasPhone, hasEmail, addressOneLine } from '@/config/site';
+import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Mentions légales' }];
+const Todo = 'À COMPLÉTER';
+---
+
+<BaseLayout
+  title="Mentions légales — CZIR62"
+  description="Mentions légales du site de CZIR62, entreprise générale de couverture à Béthune."
+  path="/mentions-legales/"
+  noindex
+  schema={[webPageSchema({ path: '/mentions-legales/', name: 'Mentions légales', description: 'Mentions légales du site CZIR62.' }), breadcrumbSchema(crumbs)]}
+>
+  <section class="legal">
+    <div class="container container--text">
+      <Breadcrumbs items={crumbs} />
+      <h1>Mentions légales</h1>
+
+      <div class="prose">
+        <h2>Éditeur du site</h2>
+        <p>
+          <strong>{site.legalName}</strong><br />
+          {hasAddress() ? addressOneLine() : <em class="todo">Adresse : {Todo}</em>}<br />
+          {hasPhone() ? `Téléphone : ${nap.phone}` : <em class="todo">Téléphone : {Todo}</em>}<br />
+          {hasEmail() ? `E-mail : ${nap.email}` : <em class="todo">E-mail : {Todo}</em>}
+        </p>
+        <p>
+          {nap.siret ? `SIRET : ${nap.siret}` : <em class="todo">SIRET : {Todo}</em>}<br />
+          <em class="todo">Forme juridique et capital social : {Todo}</em><br />
+          <em class="todo">Numéro de TVA intracommunautaire : {Todo}</em><br />
+          <em class="todo">Directeur de la publication : {Todo}</em>
+        </p>
+
+        <h2>Assurance professionnelle</h2>
+        <p>
+          <em class="todo">
+            Nom et adresse de l'assureur, numéro de police, couverture géographique : {Todo}.
+            Cette mention est obligatoire pour les professionnels du bâtiment soumis à
+            l'assurance décennale.
+          </em>
+        </p>
+
+        <h2>Hébergement</h2>
+        <p><em class="todo">Nom, raison sociale, adresse et téléphone de l'hébergeur : {Todo}</em></p>
+
+        <h2>Propriété intellectuelle</h2>
+        <p>
+          L'ensemble des contenus de ce site — textes, photographies, illustrations, schémas
+          techniques et éléments graphiques — est la propriété de {site.legalName}, sauf mention
+          contraire. Toute reproduction ou représentation, totale ou partielle, sans autorisation
+          écrite préalable est interdite.
+        </p>
+        <p>
+          Les marques et logos de fabricants et distributeurs cités sur ce site appartiennent à
+          leurs titulaires respectifs. Ils sont mentionnés à titre informatif, pour indiquer la
+          provenance des matériaux mis en œuvre, et ne constituent en aucun cas la revendication
+          d'un partenariat, d'un agrément ou d'une certification.
+        </p>
+
+        <h2>Liens vers des sites tiers</h2>
+        <p>
+          Ce site comporte des liens vers des services tiers, notamment Google Business Profile.
+          {site.legalName} n'exerce aucun contrôle sur ces sites et décline toute responsabilité
+          quant à leur contenu.
+        </p>
+
+        <h2>Médiation de la consommation</h2>
+        <p>
+          <em class="todo">
+            Nom et coordonnées du médiateur de la consommation auquel l'entreprise adhère : {Todo}.
+            Cette information est obligatoire pour les professionnels intervenant auprès de
+            consommateurs.
+          </em>
+        </p>
+
+        <h2>Données personnelles</h2>
+        <p>
+          Le traitement des données transmises via les formulaires de ce site est décrit dans la
+          <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal { padding-block: clamp(2rem, 5vw, 3.5rem) var(--sp-10); }
+  .legal h1 { margin-top: var(--sp-5); margin-bottom: var(--sp-6); }
+  .legal .prose { max-width: none; }
+  .todo {
+    display: inline-block;
+    font-style: normal;
+    background: var(--alert-bg);
+    border: 1px dashed var(--alert-border);
+    color: var(--alert-ink);
+    padding: 0.15em 0.5em;
+    border-radius: var(--r-xs);
+    font-size: 0.92em;
+  }
+</style>

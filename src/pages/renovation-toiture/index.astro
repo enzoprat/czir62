@@ -1,0 +1,538 @@
+---
+/**
+ * PAGE RENOVATION DE TOITURE
+ * Intention : « rénovation toiture Béthune » — projet important, budget
+ * conséquent, décision qui se prépare. Le visiteur hésite souvent entre
+ * réparer et refaire, et cherche à comprendre ce qu'il paie.
+ *
+ * Structure propre : signaux de décision, avant/après en pleine largeur,
+ * décomposition poste par poste d'un chantier, arbitrage partiel/complet,
+ * et une section « points de vigilance » qui traite frontalement les devis
+ * anormalement bas et le démarchage après tempête.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import BeforeAfter from '@/components/BeforeAfter.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('renovation-toiture');
+const tel = telHref();
+const realisations = await realisationsForService('renovation-toiture', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Rénovation de toiture' }];
+
+const signaux = [
+  {
+    t: 'Les tuiles s’effritent ou se cassent au moindre choc',
+    d: "Une tuile gélive absorbe l'eau, gèle, et éclate par plaques. Quand le phénomène touche plusieurs versants, remplacer au coup par coup revient à courir derrière le problème.",
+  },
+  {
+    t: 'Plusieurs infiltrations à des endroits sans rapport',
+    d: "Une fuite isolée se répare. Trois fuites indépendantes en deux ans indiquent que ce n'est plus un incident mais l'état général de la couverture qui est en cause.",
+  },
+  {
+    t: 'Le faîtage se fissure sur toute sa longueur',
+    d: "Un faîtage scellé au mortier finit par se fendre sous l'effet des cycles de gel et de dilatation. Quand la fissure court d'un bout à l'autre, la reprise ponctuelle ne tient pas.",
+  },
+  {
+    t: 'La charpente porte des traces d’humidité récurrentes',
+    d: "Des auréoles qui reviennent sur les mêmes chevrons après chaque épisode pluvieux signalent un passage d'eau permanent, même sans dégât visible depuis les pièces de vie.",
+  },
+  {
+    t: 'La toiture a déjà été reprise par morceaux',
+    d: "Chaque reprise successive laisse une jonction entre deux époques et deux modèles de tuiles. À force, ce sont les jonctions qui font la toiture — et elles sont toutes des points faibles.",
+  },
+  {
+    t: 'Vous prévoyez d’isoler ou d’aménager les combles',
+    d: "Isoler sous une couverture en fin de vie revient à emprisonner le problème. Si les deux chantiers doivent se faire, l'ordre logique commence par le toit.",
+  },
+];
+
+const postes = [
+  { n: '01', t: 'Installation et protection', d: "Échafaudage, protection des abords, des plantations et des accès. Sur une maison de ville, c'est aussi l'autorisation d'occupation du domaine public à anticiper." },
+  { n: '02', t: 'Dépose de l’ancienne couverture', d: "Tuiles, liteaux, éventuel ancien écran. Les gravats sont évacués vers une filière adaptée, pas laissés sur place." },
+  { n: '03', t: 'Contrôle de la charpente à nu', d: "Le seul moment où la structure est réellement visible. On repère les pieds de chevrons abîmés, les pannes déformées, les zones humides. S'il y a une mauvaise surprise, c'est ici qu'elle apparaît." },
+  { n: '04', t: 'Écran sous-toiture', d: "Une seconde barrière contre l'eau poussée par le vent, qui n'existe pas sur la plupart des toitures anciennes du secteur. C'est l'un des vrais apports d'une rénovation complète." },
+  { n: '05', t: 'Contre-lattage et liteaunage', d: "Le contre-lattage crée la lame d'air qui laisse la sous-face respirer. Le liteaunage neuf est calé au pureau du modèle de tuile retenu." },
+  { n: '06', t: 'Pose de la couverture', d: "Rang par rang, du bas vers le haut, avec fixation des tuiles exposées : rives, faîtage, bas de pente, zones ventées." },
+  { n: '07', t: 'Points singuliers', d: "Faîtage en pose à sec ventilée, rives, arêtiers, solins contre souches et murs, noues. C'est le poste qui distingue une rénovation durable d'une couverture simplement neuve." },
+  { n: '08', t: 'Zinguerie et évacuation', d: "Reprise ou remplacement des gouttières, descentes et habillages. Une couverture neuve qui rejette son eau dans une gouttière fatiguée n'a pas fini le travail." },
+  { n: '09', t: 'Nettoyage et repli', d: "Le chantier se termine quand le terrain est rendu propre. Cela paraît évident ; ce n'est malheureusement pas systématique." },
+];
+
+const vigilance = [
+  {
+    t: 'Un devis nettement moins cher que les autres',
+    d: "Comparez ligne à ligne plutôt que le total. Ce qui disparaît en premier des devis bas : l'écran sous-toiture, la pose à sec du faîtage, l'évacuation des gravats, l'échafaudage, le traitement des points singuliers. Le montant final n'est pas plus bas — il est simplement incomplet.",
+    icon: 'alert' as const,
+  },
+  {
+    t: 'Le démarchage après un épisode de vent',
+    d: "Une proposition faite depuis le trottoir, avec signature immédiate et acompte en liquide, est un motif de méfiance. Sachez qu'un contrat signé à votre domicile ouvre un droit de rétractation de 14 jours : personne ne peut vous demander d'y renoncer.",
+    icon: 'shield' as const,
+  },
+  {
+    t: 'Un chiffrage donné sans être monté',
+    d: "Un montant annoncé au téléphone ou d'après une photo satellite ne peut pas tenir compte de l'état de la charpente, de la pente réelle ou des points singuliers. Il sera révisé — la question est seulement de savoir quand.",
+    icon: 'search' as const,
+  },
+  {
+    t: 'Un devis qui ne détaille pas les postes',
+    d: "« Rénovation de toiture — forfait » ne vous dit rien. Vous devez pouvoir lire le matériau retenu, la surface, le traitement du faîtage, la zinguerie prévue et ce qui est exclu.",
+    icon: 'ruler' as const,
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Quand faut-il refaire une toiture ?',
+    a: "Quand les désordres cessent d'être des incidents isolés pour devenir un état général : tuiles gélives sur plusieurs versants, infiltrations multiples et sans rapport entre elles, points singuliers tous en fin de vie. L'âge seul ne décide de rien — nous avons vu des couvertures de soixante ans en meilleur état que des toitures de trente ans mal posées.",
+  },
+  {
+    q: 'Peut-on remplacer uniquement une partie de la couverture ?',
+    a: "Oui, c'est fréquent, notamment quand un seul versant est exposé ou dégradé. Deux conditions : que le modèle de tuile existe encore ou puisse être approché sans que la différence saute aux yeux, et que la jonction entre la partie neuve et l'ancienne soit traitée pour rester étanche. Le gain financier est réel, mais la toiture reste hétérogène — c'est un arbitrage que nous exposons avant de chiffrer.",
+  },
+  {
+    q: 'Comment savoir si la charpente doit également être reprise ?',
+    a: "Avec certitude, seulement une fois la couverture déposée : c'est le seul moment où la structure est visible sur toute sa surface. Avant, on procède par indices — déformation d'une panne, humidité en pied de chevron, bois tendre sous la pointe d'un outil, fentes ouvertes dans un assemblage. C'est pourquoi un devis sérieux mentionne ce point comme une réserve, plutôt que de faire comme si l'inconnue n'existait pas.",
+  },
+  {
+    q: 'Faut-il une autorisation d’urbanisme pour rénover une toiture ?',
+    a: "Le remplacement d'une couverture modifie l'aspect extérieur du bâtiment : une déclaration préalable de travaux est généralement nécessaire, et l'est d'autant plus si le matériau ou la teinte changent. Les règles varient selon le PLU de la commune, et davantage encore aux abords d'un monument. Le service urbanisme de votre mairie est l'interlocuteur qui fait foi ; nous vous indiquons ce que le dossier doit contenir côté technique.",
+  },
+  {
+    q: 'Peut-on rénover une toiture en hiver ?',
+    a: "Oui, en dehors des périodes de gel prononcé, de neige et de vent fort — conditions dans lesquelles nous ne montons pas, pour des raisons de sécurité comme de qualité de pose. Un chantier d'hiver demande simplement d'organiser la mise hors d'eau à chaque fin de journée, ce qui suppose de découvrir des surfaces plus mesurées.",
+  },
+  {
+    q: 'Que devient l’ancienne couverture ?',
+    a: "Elle est déposée, chargée et évacuée vers une filière de traitement adaptée. C'est un poste réel du devis : il représente du volume, de la manutention et un coût de dépôt. Un devis où ce poste n'apparaît nulle part mérite une question — c'est l'un des sept postes qui expliquent le plus les écarts entre deux chiffrages.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/renovation-toiture-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Rénovation de toiture"
+    title="Rénovation de toiture à Béthune"
+    lede="Refaire une toiture, c'est déposer, vérifier ce qu'il y a dessous et reposer un ensemble cohérent. Nous vous montrons ce que nous constatons avant de chiffrer, et nous détaillons chaque poste."
+    photo="/images/services/renovation-toiture-czir62.jpg"
+    photoAlt="Grande demeure sous échafaudage, toiture en cours de rénovation par CZIR62"
+    photoNeed="Photo d'un chantier de rénovation en cours : échafaudage monté, versant partiellement déposé, charpente visible."
+    icon="renovation"
+    chips={['Rénovation complète ou partielle', 'Écran sous-toiture', 'Charpente vérifiée à nu']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=renovation-toiture" class="btn btn--lg" data-track="quote_start" data-track-label="hero-renovation">
+        Faire évaluer ma toiture
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-renovation">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ================================================ QUAND ============= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Le bon moment</p>
+        <h2>Six signaux qui font pencher vers la rénovation</h2>
+        <p class="lede lede--wide">
+          Aucun de ces signaux ne suffit à lui seul. C'est leur accumulation qui fait basculer
+          d'une logique de réparation vers une logique de reprise d'ensemble.
+        </p>
+      </div>
+
+      <ol class="list-clean signaux">
+        {signaux.map((s, i) => (
+          <li class="signaux__item reveal">
+            <span class="signaux__idx">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="note signaux__note">
+        <strong>À l'inverse, rien ne presse si :</strong> les tuiles sont saines, le faîtage tient,
+        aucune trace n'apparaît dans les combles après une forte pluie. Une toiture ancienne mais
+        en bon état n'a pas besoin d'être refaite parce qu'elle est ancienne. Nous vous le dirons.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== AVANT / APRES ======= -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow eyebrow--center">Avant / après</p>
+        <h2>Ce que change une rénovation</h2>
+        <p class="lede mx-auto">
+          Déplacez le curseur. Au-delà de l'aspect, ce sont l'écran sous-toiture,
+          le faîtage repris à sec et les points singuliers refaits qui font la différence
+          dans le temps.
+        </p>
+      </div>
+
+      <div class="ba-wrap">
+        <BeforeAfter
+          avant={{
+            src: '/images/realisations/renovation-toiture-avant-czir62.jpg',
+            alt: "Maison en cours de chantier : couverture entièrement déposée, charpente apparente",
+            need: 'Photo avant travaux.',
+          }}
+          apres={{
+            src: '/images/realisations/renovation-toiture-apres-czir62.jpg',
+            alt: "La même maison une fois la couverture neuve posée",
+            need: 'Photo après travaux.',
+          }}
+          ratio="4 / 5"
+          caption="Chantier réel : la couverture déposée, puis la toiture neuve. Les deux photos sont prises depuis le même point, sans retouche."
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= POSTES =========== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Déroulé</p>
+        <h2>Ce qu’une rénovation comprend réellement</h2>
+        <p class="lede lede--wide">
+          Neuf postes, toujours dans cet ordre. Quand un devis en fait disparaître deux ou trois,
+          l'écart de prix s'explique tout seul.
+        </p>
+      </div>
+
+      <ol class="list-clean postes">
+        {postes.map((p) => (
+          <li class="postes__item reveal">
+            <span class="postes__n">{p.n}</span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========================================== PARTIEL OU COMPLET ====== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Arbitrage</p>
+        <h2>Rénovation partielle ou complète ?</h2>
+        <p class="lede lede--wide">
+          La réponse dépend de l'état réel des versants, de la disponibilité du modèle de tuile
+          et de ce que vous acceptez visuellement.
+        </p>
+      </div>
+
+      <div class="arb">
+        <article class="arb__card">
+          <h3>Reprise partielle</h3>
+          <p class="arb__when">Quand un seul versant est concerné et que le reste est sain.</p>
+          <ul class="list-check">
+            <li>Investissement nettement plus mesuré</li>
+            <li>Chantier plus court, moins d'emprise</li>
+            <li>Pertinent sur une exposition dégradée isolée</li>
+          </ul>
+          <p class="arb__limit">
+            <strong>La limite :</strong> une jonction est créée entre neuf et ancien. Elle se
+            traite proprement, mais elle existe — et la toiture reste hétérogène en aspect
+            comme en âge.
+          </p>
+        </article>
+
+        <article class="arb__card arb__card--reco">
+          <h3>Rénovation complète</h3>
+          <p class="arb__when">Quand les désordres touchent plusieurs versants ou que la couverture arrive globalement en fin de vie.</p>
+          <ul class="list-check">
+            <li>Écran sous-toiture sur l'ensemble</li>
+            <li>Charpente contrôlée sur toute sa surface</li>
+            <li>Tous les points singuliers repris en une fois</li>
+            <li>Aspect homogène, même échéance de vieillissement</li>
+          </ul>
+          <p class="arb__limit">
+            <strong>La contrepartie :</strong> un budget et une durée de chantier supérieurs,
+            et un échafaudage sur l'ensemble du bâtiment.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= CE QUI S'AJOUTE ====== -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <PhotoSlot
+          src="/images/services/renovation-toiture-charpente-czir62.jpg"
+          alt="Support de couverture mis à nu, structure visible après dépose"
+          need="Photo de charpente mise à nu après dépose : chevrons et pannes visibles."
+          ratio="4 / 3"
+          icon="truss"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+        <div>
+          <p class="eyebrow">Ce qui s’ajoute parfois</p>
+          <h2>Les trois sujets qui apparaissent en cours de chantier</h2>
+
+          <div class="adds">
+            <article class="adds__item">
+              <h3><Icon name="truss" size={19} /> La charpente</h3>
+              <p>
+                Une fois la couverture déposée, la structure est visible. Un pied de chevron
+                pourri en about de toiture, une panne qui a pris de la flèche : ces reprises
+                se décident à ce moment-là, avec vous et devant le constat.
+                <a href="/charpente/">Voir la page charpente</a>.
+              </p>
+            </article>
+
+            <article class="adds__item">
+              <h3><Icon name="gutter" size={19} /> La zinguerie</h3>
+              <p>
+                Gouttières, descentes, solins et noues sont accessibles pendant que
+                l'échafaudage est monté. Les reprendre à ce moment coûte beaucoup moins
+                cher que de remonter un échafaudage deux ans plus tard.
+                <a href="/zinguerie/">Voir la zinguerie</a>.
+              </p>
+            </article>
+
+            <article class="adds__item">
+              <h3><Icon name="frame" size={19} /> L’isolation</h3>
+              <p>
+                Si vous envisagez d'isoler ou d'aménager les combles, la rénovation de toiture
+                est le bon moment pour y penser — ne serait-ce que pour prévoir la ventilation
+                et l'écran adaptés. Nous vous disons ce que la configuration permet.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== VIGILANCE =========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Points de vigilance</p>
+        <h2>Quatre choses à regarder avant de signer</h2>
+        <p class="lede lede--wide">
+          Y compris si vous ne travaillez pas avec nous. Une rénovation de toiture est un
+          engagement lourd : autant savoir ce qu'on compare.
+        </p>
+      </div>
+
+      <div class="vig">
+        {vigilance.map((v) => (
+          <article class="vig__card reveal">
+            <span class="vig__ico"><Icon name={v.icon} size={20} /></span>
+            <h3>{v.t}</h3>
+            <p>{v.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Rénovations réalisées dans le secteur"
+        intro="Chaque chantier est documenté avec l'état constaté au départ et les travaux effectués."
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <CityLinks
+        service="renovation-toiture"
+        text="Les rénovations de toiture nous conduisent régulièrement dans ces communes, à partir de notre local de Béthune."
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <Faq items={faqItems} title="Questions sur la rénovation de toiture" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="renovation-toiture"
+        title="Les prestations associées à une rénovation"
+        intro="Une rénovation de toiture entraîne presque toujours au moins l'une de ces interventions."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Évaluation gratuite"
+    title="Faire évaluer ma toiture"
+    text="Nous passons voir l'état réel de la couverture et des points singuliers, puis nous vous disons franchement si une rénovation se justifie — ou si elle peut attendre."
+    primaryLabel="Faire évaluer ma toiture"
+    service="renovation-toiture"
+    trackLabel="renovation-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------------- signaux */
+  .signaux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5) var(--sp-6); }
+  @media (max-width: 820px) { .signaux { grid-template-columns: minmax(0, 1fr); } }
+
+  .signaux__item { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .signaux__idx {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--clay-300);
+    line-height: 1.2;
+    flex: none;
+    padding-top: 0.05em;
+  }
+  .signaux__item h3 { font-size: var(--fs-lg); }
+  .signaux__item p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .signaux__note { margin-top: var(--sp-7); }
+
+  /* ------------------------------------------------------- avant / apres */
+  .ba-wrap { max-width: 62rem; margin-inline: auto; }
+
+  /* ── postes ──────────────────────────────────────────────────────────
+     Neuf cartes identiques ne se lisent pas : elles se comptent. En
+     registre à deux colonnes, l'oeil suit l'ordre du chantier, qui est
+     précisément l'information à transmettre. */
+  .postes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 820px) { .postes { grid-template-columns: minmax(0, 1fr); } }
+
+  .postes__item {
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    gap: var(--sp-4);
+    align-items: start;
+    padding: var(--sp-5) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .postes__n {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    padding-top: 0.3em;
+  }
+  .postes__item h3 {
+    grid-column: 2;
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 650;
+    letter-spacing: -0.022em;
+    color: var(--text-strong);
+  }
+  .postes__item p {
+    grid-column: 2;
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--zinc-600);
+    line-height: var(--lh-relaxed);
+  }
+
+  /* ----------------------------------------------------------- arbitrage */
+  .arb { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 820px) { .arb { grid-template-columns: minmax(0, 1fr); } }
+
+  .arb__card {
+    padding: var(--sp-6);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-lg);
+  }
+  .arb__card--reco { border-color: var(--clay-500); background: rgba(174, 90, 47, 0.13); }
+  .arb__card h3 { color: #fff; font-size: var(--fs-xl); }
+  .arb__when { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--clay-200); font-weight: 550; }
+  .arb__card .list-check { margin-top: var(--sp-4); }
+  .arb__limit {
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--border-invert);
+    font-size: var(--fs-sm);
+    color: var(--text-invert-muted);
+    line-height: var(--lh-relaxed);
+  }
+  .arb__limit strong { color: #fff; }
+
+  /* ---------------------------------------------------------- ce qui s'ajoute */
+  .adds { display: grid; gap: var(--sp-5); margin-top: var(--sp-5); }
+  .adds__item h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    font-weight: 650;
+  }
+  .adds__item h3 :global(svg) { color: var(--accent); }
+  .adds__item p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .adds__item a { font-weight: 550; }
+
+  /* ------------------------------------------------------------ vigilance */
+  .vig { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 820px) { .vig { grid-template-columns: minmax(0, 1fr); } }
+
+  .vig__card {
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  .vig__ico {
+    display: grid; place-items: center;
+    width: 40px; height: 40px;
+    border-radius: var(--r-sm);
+    background: var(--alert-bg);
+    border: 1px solid var(--alert-border);
+    color: var(--alert-ink);
+    margin-bottom: var(--sp-4);
+  }
+  .vig__card h3 { font-size: var(--fs-lg); }
+  .vig__card p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+</style>

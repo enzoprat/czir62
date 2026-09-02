@@ -1,0 +1,122 @@
+---
+/**
+ * Bande « Matériaux et fournisseurs ».
+ *
+ * Les logos officiels sont affichés en couleur, en permanence : ce sont des
+ * repères de confiance immédiats, et un logo qu'il faut survoler pour voir
+ * n'en est plus un.
+ *
+ * Deux précautions de mise en page :
+ *  - hauteur commune + correction optique par marque (`scale`), sinon un pavé
+ *    plein comme VELUX écrase un logotype filaire comme Seigneurie ;
+ *  - largeur maximale, pour que les logos très allongés (Zolpan, fischer) ne
+ *    dominent pas la bande.
+ *
+ * Si une marque n'a pas de fichier logo, son libellé typographique prend
+ * automatiquement la place, sans casser l'alignement.
+ */
+import { fournisseurs, fournisseursIntro } from '@/data/fournisseurs';
+
+interface Props {
+  title?: string;
+  compact?: boolean;
+}
+const { title = 'Des matériaux et fournisseurs reconnus', compact = false } = Astro.props;
+---
+
+<section class:list={['brands', compact && 'brands--compact']}>
+  <div class="container">
+    <div class="brands__head">
+      <h2 class="brands__title">{title}</h2>
+      <p class="brands__intro">{fournisseursIntro}</p>
+    </div>
+
+    <ul class="list-clean brands__row">
+      {fournisseurs.map((f) => (
+        <li class="brands__item" title={f.type}>
+          {f.logo ? (
+            <img
+              src={f.logo}
+              alt={f.name}
+              class="brands__logo"
+              style={`--s:${f.scale ?? 1}`}
+              loading="lazy"
+              decoding="async"
+              width="160"
+              height="40"
+            />
+          ) : (
+            <span class="brands__word">{f.name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .brands {
+    background: var(--paper);
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-block: 1px solid var(--border);
+    /* Boîte de référence dans laquelle chaque logo s'inscrit */
+    --logo-w: 152px;
+    --logo-h: 50px;
+  }
+  .brands--compact { padding-block: var(--sp-7); --logo-w: 124px; --logo-h: 40px; }
+
+  .brands__head { text-align: center; max-width: 44rem; margin: 0 auto var(--sp-7); }
+  .brands__title {
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .brands__intro {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-base);
+    color: var(--zinc-600);
+    line-height: var(--lh-relaxed);
+  }
+
+  .brands__row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: clamp(1.75rem, 4vw, 2.75rem) clamp(1rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 860px) { .brands__row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .brands__row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .brands__item { display: grid; place-items: center; width: 100%; min-width: 0; }
+
+  /*
+   * Chaque logo s'inscrit dans une boîte identique et la remplit au maximum
+   * (object-fit: contain). C'est ce qui égalise réellement les présences :
+   * une normalisation par la seule hauteur écrasait les logotypes larges
+   * (Seigneurie, Fernagut) face aux pavés compacts (VELUX, CEDEO).
+   * `--s` reste disponible pour corriger un poids visuel au cas par cas.
+   */
+  .brands__logo {
+    width: 100%;
+    max-width: calc(var(--logo-w) * var(--s, 1));
+    height: calc(var(--logo-h) * var(--s, 1));
+    object-fit: contain;
+    object-position: center;
+    transition: transform var(--t-base) var(--ease-out);
+  }
+  .brands__item:hover .brands__logo { transform: scale(1.04); }
+
+  /* Repli si un logo n'est pas fourni */
+  .brands__word {
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    font-weight: 640;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--zinc-500);
+  }
+</style>

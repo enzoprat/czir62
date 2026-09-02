@@ -1,0 +1,339 @@
+---
+/**
+ * PAGE DEMOUSSAGE & ENTRETIEN DE TOITURE
+ * Intention : « demoussage toiture bethune », « nettoyage toiture », « enlever
+ * mousse toiture ». C'est la requete d'entree de gamme la plus recherchee du
+ * metier, et celle sur laquelle le marche local raconte le plus n'importe quoi.
+ *
+ * PARTI PRIS EDITORIAL — la page ne vend pas le demoussage, elle l'arbitre.
+ * Un demoussage sur une couverture en fin de vie est de l'argent perdu ; le
+ * dire coute une prestation et gagne une renovation. Deux sections que
+ * personne ne publie localement : l'arbitrage utile / inutile, et le
+ * demarchage (faits juridiques verifiables, loi Pinel et loi 2020-901).
+ *
+ * Pas de photo de hero : aucun cliche de demoussage dans les lots fournis, et
+ * la consigne est de ne plus afficher d'emplacement en attente. La page prend
+ * donc la composition editoriale « solo » du PageHero.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('demoussage-toiture');
+const tel = telHref();
+const realisations = await realisationsForService('demoussage-toiture', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Démoussage & entretien' }];
+
+/* Les quatre mecanismes reels. Aucun ne dit « la mousse perce la tuile » :
+   c'est faux, et c'est l'argument de vente de la moitie du marche. */
+const mecanismes = [
+  {
+    t: "Elle garde l'eau contre la tuile",
+    d: "Une tuile mouille et sèche. C'est le séchage qui la protège. Un tapis de mousse maintient l'humidité contre le matériau plusieurs jours après la pluie : le cycle normal ne se fait plus, et la tuile reste saturée.",
+  },
+  {
+    t: 'Elle transforme le gel en levier',
+    d: "L'eau retenue dans la mousse et dans les pores de la tuile augmente de volume en gelant. Sur une tuile déjà fatiguée, ce sont ces cycles gel-dégel répétés qui font éclater la surface, pas la mousse elle-même.",
+  },
+  {
+    t: 'Elle finit dans les gouttières',
+    d: "Ce qui se détache des versants descend. Les amas de mousse séchée bouchent les crapaudines, les coudes et les descentes. Une gouttière qui déborde à chaque orage a très souvent son explication trois mètres plus haut.",
+  },
+  {
+    t: 'Elle cache ce qu\'il faudrait voir',
+    d: "Une tuile fendue, un solin qui a bougé, une bande de rive décollée : sous 3 cm de mousse, rien de tout cela ne se voit depuis le sol. C'est la vraie raison de monter régulièrement.",
+  },
+];
+
+/* L'arbitrage. C'est la section qui fait la difference avec le reste du marche. */
+const utile = [
+  "La couverture est saine : les tuiles sonnent clair, ne s'effritent pas, la surface est encore fermée.",
+  "Les versants nord ou ombragés sont chargés alors que le reste de la toiture est propre.",
+  'Les gouttières se bouchent plusieurs fois par an sans cause apparente au sol.',
+  "Vous préparez la vente du bien et la toiture donne une mauvaise impression alors qu'elle est en bon état.",
+  "Personne n'est monté depuis longtemps et vous voulez savoir où en est réellement la couverture.",
+];
+const inutile = [
+  "Les tuiles s'effritent, se délitent au toucher ou sonnent creux : le brossage en cassera plus qu'il n'en nettoiera.",
+  "La toiture est en fin de vie et une rénovation est déjà envisagée à court terme : c'est une dépense qui sera déposée avec le reste.",
+  "Il y a une fuite active. Un démoussage ne rebouche rien — il faut d'abord trouver le point d'entrée.",
+  "La mousse n'est présente que sur une petite zone bien identifiée : le problème est souvent local (un arbre, un débordement, un défaut de pente) et c'est lui qu'il faut traiter.",
+];
+
+const etapes = [
+  { n: '01', t: 'Un état des lieux avant de sortir la brosse', d: "On regarde d'abord si la couverture supporte l'intervention. Une tuile béton qui a perdu sa peau de surface et une terre cuite fatiguée ne se brossent pas de la même manière — et parfois, elles ne se brossent pas du tout." },
+  { n: '02', t: 'Retrait mécanique, versant par versant', d: "Brossage et retrait manuel des amas, du faîtage vers l'égout, en travaillant depuis des points d'appui qui ne font pas porter le poids sur les tuiles elles-mêmes." },
+  { n: '03', t: 'Rinçage maîtrisé, jamais en force', d: "Le rinçage se fait à faible pression et toujours dans le sens de l'écoulement. Une lance haute pression dirigée vers le haut passe sous le recouvrement des tuiles et envoie l'eau directement dans les combles." },
+  { n: '04', t: 'Descente des résidus et nettoyage des évacuations', d: "Ce qui a été décollé doit sortir du circuit : gouttières, chéneaux, crapaudines et descentes sont vidés, sinon le démoussage se contente de déplacer le problème." },
+  { n: '05', t: 'Compte rendu de ce qui a été vu', d: "Tuiles fendues repérées, solins fatigués, faîtage qui bouge, scellement à reprendre. Vous ressortez de l'intervention en sachant où en est la toiture, pas seulement avec un versant plus propre." },
+];
+
+const faqItems = [
+  {
+    q: 'Le démoussage empêche-t-il les fuites ?',
+    a: "Non, et il faut le dire clairement. Une toiture ne fuit pas parce qu'elle a de la mousse : elle fuit parce qu'un élément a bougé, s'est fendu ou s'est descellé. Le démoussage retarde le vieillissement de la couverture et libère les évacuations ; il ne remplace ni une réparation ni une reprise d'étanchéité. Si vous avez déjà une trace au plafond, c'est une recherche de fuite qu'il faut, pas un nettoyage.",
+  },
+  {
+    q: 'Faut-il un nettoyeur haute pression ?',
+    a: "C'est ce qui se fait le plus, et c'est ce qui abîme le plus. Sur une tuile béton, la haute pression arrache la couche de surface qui la protège : le versant ressort propre, puis se recharge plus vite qu'avant parce que le matériau est devenu poreux. Sur une terre cuite, elle attaque l'engobe. Et dans tous les cas, un jet dirigé vers le haut passe sous le recouvrement. Le retrait mécanique à faible pression est plus lent, mais il ne se paie pas deux ans plus tard.",
+  },
+  {
+    q: 'Faut-il appliquer un traitement hydrofuge ensuite ?',
+    a: "Un hydrofuge limite l'absorption d'eau par la tuile et ralentit la réinstallation des mousses. Ce n'est utile que sur une couverture encore saine : appliqué sur une tuile qui se délite, il fige un état dégradé sans le corriger. Ce que nous proposons ici est le retrait mécanique des mousses et le contrôle de la couverture ; si un traitement complémentaire se justifie sur votre toiture, nous en parlons sur place plutôt que de le vendre par principe.",
+  },
+  {
+    q: 'À quelle fréquence faut-il démousser ?',
+    a: "Il n'y a pas de règle universelle, et se méfier de qui en annonce une. La vitesse de réinstallation dépend de l'exposition du versant, de la présence d'arbres au-dessus, du type de tuile et de sa porosité. Un versant sud dégagé peut rester propre très longtemps ; un versant nord sous des grands arbres se recharge en quelques saisons. Le bon repère n'est pas un calendrier, c'est l'état constaté lors du dernier passage.",
+  },
+  {
+    q: 'Peut-on le faire soi-même ?',
+    a: "Techniquement, brosser n'est pas compliqué. Le problème n'est pas le geste, c'est le support : une toiture ne se marche pas au hasard, une tuile fatiguée casse sous un appui mal placé, et une échelle posée sur une gouttière la déforme. À cela s'ajoute que l'intérêt principal du passage — repérer ce qui ne va pas — suppose de savoir quoi regarder. Si vous montez quand même, ne le faites jamais seul et jamais sur une couverture humide.",
+  },
+  {
+    q: 'Un démoussage donne-t-il droit à une aide ou à la TVA réduite ?',
+    a: "Il n'ouvre droit à aucune aide à la rénovation énergétique : ce n'est pas un travail d'isolation. En revanche c'est un travail d'entretien sur un logement d'habitation, ce qui relève de la TVA à 10 % dès lors que le logement est achevé depuis plus de deux ans. Le taux est appliqué directement sur le devis, sans démarche de votre côté. Le détail est sur notre page consacrée aux prix.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Démoussage & entretien"
+    title="Démoussage de toiture à Béthune"
+    lede="La mousse n'est pas ce qui fait fuir une toiture. C'est ce qui l'empêche de sécher, ce qui bouche ses évacuations, et ce qui cache les défauts qu'il faudrait voir. Un démoussage utile commence donc par une question simple : votre couverture est-elle en état de le supporter ?"
+    icon="sparkle"
+    chips={['Retrait mécanique', 'Contrôle de la couverture', 'Évacuations dégagées']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=demoussage-toiture" class="btn btn--lg" data-track="quote_start" data-track-label="hero-demoussage">
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-demoussage">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== MECANISMES ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Ce qui se passe réellement</p>
+          <h2>La mousse ne perce pas une tuile</h2>
+        </div>
+        <p class="lede">
+          C'est l'argument le plus vendu et le moins exact du métier. Une mousse n'a pas de racine
+          capable de traverser de la terre cuite ou du béton. Ce qu'elle fait est plus lent, et se
+          joue sur quatre mécanismes.
+        </p>
+      </div>
+
+      <ol class="registre">
+        {mecanismes.map((m, i) => (
+          <li class="registre__item">
+            <span class="registre__num num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="registre__body">
+              <h3>{m.t}</h3>
+              <p>{m.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================== ARBITRAGE =========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">L'arbitrage</p>
+        <h2>Quand un démoussage vaut son prix — et quand il n'en vaut aucun</h2>
+        <p class="lede lede--wide">
+          Une entreprise de couverture qui vend un démoussage sur une toiture en fin de vie encaisse
+          une prestation et perd un client. Voici la lecture que nous faisons sur place, et elle
+          nous conduit régulièrement à ne pas faire l'intervention.
+        </p>
+      </div>
+
+      <div class="arb">
+        <div class="arb__col arb__col--yes">
+          <h3><Icon name="check" size={20} /> L'intervention a du sens</h3>
+          <ul class="list-check">{utile.map((x) => <li>{x}</li>)}</ul>
+        </div>
+        <div class="arb__col arb__col--no">
+          <h3><Icon name="alert" size={20} /> Nous vous le déconseillons</h3>
+          <ul class="list-rule">{inutile.map((x) => <li>{x}</li>)}</ul>
+          <p class="arb__out">
+            Dans ces situations, le passage sert quand même à quelque chose : il permet de chiffrer
+            ce qu'il faut vraiment faire. Selon ce qu'on trouve, cela relève d'une
+            <a href="/reparation-toiture/">réparation ciblée</a>, d'une
+            <a href="/renovation-toiture/">rénovation de toiture</a> ou d'une
+            <a href="/fuite-toiture/">recherche de fuite</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== DEROULEMENT ========= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Déroulement</p>
+        <h2>Comment nous procédons</h2>
+      </div>
+      <ol class="registre">
+        {etapes.map((e) => (
+          <li class="registre__item">
+            <span class="registre__num num">{e.n}</span>
+            <div class="registre__body">
+              <h3>{e.t}</h3>
+              <p>{e.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================== DEMARCHAGE ========== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">À savoir</p>
+          <h2>« On passait dans le quartier, votre toit a besoin d'un nettoyage »</h2>
+        </div>
+        <p class="lede">
+          Le démoussage est la prestation la plus démarchée du bâtiment, et le bassin minier est un
+          terrain de chasse connu. Trois repères simples, tous vérifiables.
+        </p>
+      </div>
+
+      <div class="dem">
+        <article class="dem__item">
+          <h3>Un devis de couvreur doit porter son assurance</h3>
+          <p>
+            Depuis la loi du 18 juin 2014, tout professionnel du bâtiment soumis à la responsabilité
+            décennale doit faire figurer sur ses devis et ses factures le nom de son assureur, ses
+            coordonnées, le numéro de contrat, les activités garanties et la zone géographique
+            couverte. Ce n'est pas une politesse commerciale : son absence est un manquement
+            sanctionné par la DGCCRF. Un devis qui ne les porte pas se refuse sans discuter.
+          </p>
+        </article>
+        <article class="dem__item">
+          <h3>Le démarchage téléphonique en rénovation énergétique est interdit</h3>
+          <p>
+            La loi n° 2020-901 du 24 juillet 2020 interdit purement et simplement le démarchage
+            téléphonique portant sur des travaux de rénovation énergétique — isolation en tête. Un
+            contrat conclu à la suite d'un tel appel est nul. Les amendes prononcées par la DGCCRF
+            dans ce secteur se comptent en centaines de milliers d'euros.
+          </p>
+        </article>
+        <article class="dem__item">
+          <h3>Personne ne peut diagnostiquer une toiture depuis le trottoir</h3>
+          <p>
+            Un versant vu du sol ne dit rien de l'état d'une tuile, d'un solin ou d'un faîtage. Une
+            entreprise qui annonce un désordre et un prix sans être montée vend une inquiétude, pas
+            un diagnostic. Nous ne chiffrons jamais un démoussage par téléphone.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== FAQ ================= -->
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Entretien de couverture dans le secteur"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur le démoussage de toiture" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks
+        service="demoussage-toiture"
+        text="Le démoussage se planifie, contrairement à une fuite : c'est une intervention que nous regroupons volontiers sur un même secteur."
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="demoussage-toiture"
+        title="Ce que le passage sur la toiture révèle souvent"
+        intro="Un démoussage est rarement une fin en soi : c'est le moment où l'on voit ce qui va devoir être repris."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Démoussage & entretien"
+    title="Faire regarder votre toiture"
+    text="Décrivez l'état de vos versants et l'exposition de la maison. Nous vous dirons si un démoussage se justifie — et s'il ne se justifie pas, nous vous le dirons aussi."
+    primaryLabel="Demander un devis"
+    service="demoussage-toiture"
+    trackLabel="demoussage-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ----------------------------------------------------------- arbitrage */
+  .arb { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-7); margin-top: var(--sp-8); }
+  @media (max-width: 860px) { .arb { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); } }
+
+  .arb__col h3 {
+    display: flex; align-items: center; gap: var(--sp-3);
+    font-size: var(--fs-lg); padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .arb__col--yes h3 { color: var(--verdi-700); }
+  .arb__col--no h3 { color: var(--clay-700); }
+  .arb__col ul { margin-top: var(--sp-5); }
+  .arb__out {
+    margin-top: var(--sp-6); padding-top: var(--sp-5);
+    border-top: 1px solid var(--rule);
+    font-size: var(--fs-sm); color: var(--text-muted);
+  }
+  .arb__out a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------------------------------------------------------- demarchage */
+  .dem { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-7); margin-top: var(--sp-8); }
+  @media (max-width: 900px) { .dem { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+  .dem__item { padding-top: var(--sp-5); border-top: 2px solid var(--clay-400); }
+  .dem__item h3 { font-size: var(--fs-base); line-height: 1.35; }
+  .dem__item p { margin-top: var(--sp-4); font-size: var(--fs-sm); color: var(--text-muted); }
+</style>

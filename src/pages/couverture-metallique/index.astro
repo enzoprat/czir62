@@ -1,0 +1,398 @@
+---
+/**
+ * PAGE COUVERTURE MÉTALLIQUE
+ *
+ * Intention : le visiteur envisage une toiture en métal — souvent parce que
+ * la pente est trop faible pour de la tuile, parce qu'il couvre une annexe
+ * ou un bâtiment professionnel, ou parce qu'il cherche un rendu contemporain.
+ *
+ * Structure propre à cette page : l'idée directrice est qu'il existe DEUX
+ * couvertures métalliques très différentes derrière le même mot — le bac
+ * acier et le joint debout. Toute la page part de cette distinction.
+ *
+ * Elle traite ensuite les deux sujets que personne n'explique et qui font
+ * pourtant la différence entre une bonne et une mauvaise pose : la
+ * condensation en sous-face, et la dilatation.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('couverture-metallique');
+const tel = telHref();
+const realisations = await realisationsForService('couverture-metallique', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Couverture métallique' }];
+
+const cas = [
+  { t: 'La pente est trop faible pour la tuile', d: "C'est le motif le plus fréquent. En dessous de la pente minimale d'une tuile, aucune pose ne tiendra durablement. Le métal descend beaucoup plus bas — c'est souvent la seule solution correcte." },
+  { t: 'Une annexe, un garage, un abri', d: "Grandes surfaces simples, peu de points singuliers, budget mesuré, mise hors d'eau rapide : le bac acier est fait pour ça." },
+  { t: 'Un bâtiment professionnel', d: "Longues portées, charpente légère, entretien réduit. Le poids au mètre carré est sans commune mesure avec une couverture en terre cuite." },
+  { t: 'Un parti pris architectural', d: "Le joint debout donne des lignes verticales continues, sans recouvrement visible. Sur une extension contemporaine ou une lucarne, le rendu n'a rien à voir avec un bac ondulé." },
+];
+
+const materiaux = [
+  { nom: 'Acier laqué', pour: "Le plus courant et le plus économique. Large choix de teintes, bonne tenue si le laquage est adapté à l'exposition.", contre: "Une rayure profonde met l'acier à nu : les découpes et les perçages doivent être traités." },
+  { nom: 'Zinc', pour: "Le matériau de référence du joint debout. Se travaille, se soude, patine avec le temps. Durée de service très longue.", contre: "Ne supporte pas le contact avec le cuivre ni un écoulement venant d'un élément en cuivre." },
+  { nom: 'Aluminium', pour: "Léger, insensible à la corrosion, adapté aux ambiances agressives. Intéressant quand la charpente est limitée.", contre: "Se dilate davantage que l'acier : les fixations et les longueurs doivent en tenir compte." },
+  { nom: 'Cuivre', pour: "Longévité exceptionnelle, patine verte caractéristique. Réservé aux ouvrages où l'aspect compte autant que la fonction.", contre: "Coût nettement supérieur, et incompatible avec tout élément en zinc situé en aval." },
+];
+
+const faqItems = [
+  {
+    q: "Une toiture métallique fait-elle du bruit sous la pluie ?",
+    a: "Sur une annexe non isolée, oui, c'est perceptible. Sur un volume habité correctement isolé, non : c'est l'isolant et le complexe de sous-face qui absorbent le bruit, pas la tôle. La réputation du bac acier bruyant vient des hangars et des abris sans isolation — pas des toitures conçues pour être habitées.",
+  },
+  {
+    q: "Quelle pente minimale pour une couverture métallique ?",
+    a: "Beaucoup plus faible que pour une tuile, et c'est précisément son intérêt. Le joint debout descend particulièrement bas grâce à sa continuité verticale. La valeur exacte dépend du profil retenu, de la longueur du rampant et de l'exposition au vent : c'est une des premières choses que nous mesurons, parce qu'elle détermine tout le reste.",
+  },
+  {
+    q: "Bac acier ou joint debout : comment choisir ?",
+    a: "Le bac acier est un profil nervuré posé et vissé, rapide et économique — parfait pour une annexe, un garage, un bâtiment agricole ou professionnel. Le joint debout est un ouvrage de couvreur-zingueur : des bandes relevées et serties l'une sur l'autre, sans perforation, avec des lignes continues. Il coûte plus cher et demande plus de temps, mais il descend plus bas en pente et il n'a pas le même rendu.",
+  },
+  {
+    q: "Faut-il un écran ou un anti-condensation ?",
+    a: "Oui, presque toujours. Le métal est froid : l'air humide qui touche sa sous-face condense, et ces gouttes tombent ensuite comme une fuite. Selon la configuration, on traite cela par un bac à feutre anti-condensation, par un écran sous-toiture ventilé, ou par un complexe isolé. Une toiture métallique qui « fuit » alors que la couverture est intacte est presque toujours un problème de condensation.",
+  },
+  {
+    q: "Peut-on poser du bac acier sur une charpente existante ?",
+    a: "Souvent oui, et c'est même un argument : le métal pèse bien moins qu'une couverture en terre cuite, donc la structure est rarement le facteur limitant. Ce qu'il faut vérifier, c'est l'écartement des pannes — il doit correspondre à la portée admissible du profil retenu — et l'état des bois. Alléger une toiture ne dispense pas de regarder ce qui la porte.",
+  },
+  {
+    q: "Le métal se dilate : est-ce un problème ?",
+    a: "C'en est un s'il est ignoré. Une longue bande de métal s'allonge et se rétracte avec la température ; si elle est bridée par ses fixations, elle se déforme, ondule, et les perçages s'ovalisent. Une pose correcte prévoit ce mouvement : pattes coulissantes en joint debout, fixations et longueurs adaptées en bac acier. C'est invisible une fois terminé, et c'est pourtant ce qui distingue une pose durable.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/couverture-metallique-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Couverture métallique"
+    title="Couverture métallique à Béthune"
+    lede="Bac acier ou joint debout : deux ouvrages très différents derrière le même mot. Le métal descend là où la tuile ne tient plus, à condition de traiter ce qu'on ne voit pas — la condensation et la dilatation."
+    photo="/images/services/couverture-metallique-czir62.jpg"
+    photoAlt="Couverture métallique à joint debout posée par CZIR62 sur une lucarne"
+    photoRatio="3 / 2"
+    icon="seam"
+    chips={['Bac acier et joint debout', 'Acier, zinc, aluminium', 'Faibles pentes']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=couverture-metallique" class="btn btn--lg" data-track="quote_start" data-track-label="hero-metallique">
+        Étudier mon projet
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg num" data-track-zone="hero-metallique">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ══════════════════════ LES DEUX FAMILLES ══════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Deux ouvrages distincts</p>
+          <h2>Bac acier<br />et joint debout</h2>
+        </div>
+        <p class="lede">
+          On les range sous le même mot, mais ce ne sont ni les mêmes gestes, ni les
+          mêmes délais, ni le même budget, ni le même rendu. Voici comment ils se
+          distinguent réellement.
+        </p>
+      </div>
+
+      <div class="fam2">
+        <article class="fam2__col">
+          <p class="fam2__tag">Bac acier</p>
+          <h3>Un profil nervuré, posé et vissé</h3>
+          <p class="fam2__d">
+            De longues plaques nervurées, fixées à travers la tôle sur les pannes.
+            La pose est rapide, le prix contenu, et la mise hors d'eau intervient
+            en quelques jours sur des surfaces simples.
+          </p>
+          <dl class="fam2__specs">
+            <div><dt>Terrain de jeu</dt><dd>Annexe, garage, abri, bâtiment professionnel ou agricole</dd></div>
+            <div><dt>Pose</dt><dd>Vissée, avec joints d'étanchéité aux fixations</dd></div>
+            <div><dt>Point de vigilance</dt><dd>Chaque vis est une perforation : la qualité des joints fait la durée de vie</dd></div>
+          </dl>
+        </article>
+
+        <article class="fam2__col fam2__col--reco">
+          <p class="fam2__tag">Joint debout</p>
+          <h3>Des bandes relevées et serties</h3>
+          <p class="fam2__d">
+            Des bandes de métal dont les bords sont relevés puis sertis l'un sur
+            l'autre. Aucune fixation ne traverse la couverture : les pattes sont
+            prises dans le joint. C'est un ouvrage de couvreur-zingueur.
+          </p>
+          <dl class="fam2__specs">
+            <div><dt>Terrain de jeu</dt><dd>Extension contemporaine, lucarne, faible pente, ouvrage à forte exigence d'aspect</dd></div>
+            <div><dt>Pose</dt><dd>Sertie, sans perforation, sur support continu</dd></div>
+            <div><dt>Point de vigilance</dt><dd>Le support et la ventilation de la sous-face conditionnent tout</dd></div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ LA CONDENSATION — LE VRAI SUJET ═══════════════════ -->
+  <section class="section section--warm tex tex--tuiles">
+    <div class="container">
+      <div class="cond">
+        <div class="cond__text">
+          <p class="eyebrow">Ce que personne n'explique</p>
+          <h2>Neuf « fuites » sur dix<br />sont de la condensation</h2>
+
+          <div class="prose">
+            <p>
+              Le métal est froid. L'air chargé d'humidité qui touche sa sous-face
+              condense, exactement comme sur une vitre en hiver. Les gouttes
+              s'accumulent, puis tombent.
+            </p>
+            <p>
+              Vu de l'intérieur, c'est indiscernable d'une fuite : ça goutte, ça
+              tache, ça mouille. Sauf que la couverture est parfaitement étanche —
+              et qu'on peut chercher longtemps un trou qui n'existe pas.
+            </p>
+            <p>
+              <strong>Le traitement se décide à la pose, pas après.</strong> Selon la
+              configuration : un bac à feutre anti-condensation qui retient les
+              gouttes et les restitue par évaporation, un écran sous-toiture avec
+              lame d'air ventilée, ou un complexe isolé complet quand le volume est
+              chauffé.
+            </p>
+          </div>
+
+          <p class="note note--warn cond__note">
+            <strong>Le signe qui ne trompe pas :</strong> une « fuite » qui apparaît par
+            temps froid et sec, sans pluie, ou qui mouille uniformément une large zone
+            plutôt qu'un point précis. Ce n'est pas la couverture, c'est l'air.
+          </p>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/couverture-metallique-bac-acier-czir62.jpg"
+          alt="Couvreur CZIR62 traitant un raccord sur une couverture en bac acier"
+          ratio="3 / 4"
+          ratioMobile="4 / 3"
+          icon="seam"
+          tone="dark"
+          zoom
+          sizes="(max-width: 900px) 100vw, 42vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ QUAND LE MÉTAL EST LA RÉPONSE ═════════════ -->
+  <section class="section section--zinc tex tex--plan">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Les bons cas</p>
+        <h2>Quand le métal est la bonne réponse</h2>
+        <p class="lede lede--wide">
+          Ce n'est pas un choix par défaut ni un choix d'économie : il y a des
+          situations où c'est la seule solution techniquement correcte.
+        </p>
+      </div>
+
+      <ol class="list-clean registre cas">
+        {cas.map((c, i) => (
+          <li>
+            <span class="registre__idx">{String(i + 1).padStart(2, '0')}</span>
+            <div><h3>{c.t}</h3><p>{c.d}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ LA DILATATION ══════════════════════════ -->
+  <section class="section">
+    <div class="container container--text">
+      <p class="eyebrow">Second point technique</p>
+      <h2>Le métal bouge, et il faut le laisser bouger</h2>
+      <div class="prose prose--lead dil">
+        <p>
+          Une bande de métal s'allonge quand elle chauffe et se rétracte quand elle
+          refroidit. Sur plusieurs mètres, ce mouvement est parfaitement mesurable.
+        </p>
+        <p>
+          S'il est bridé par des fixations rigides, il ne disparaît pas : il se
+          transforme en déformation. La tôle ondule, les perçages s'ovalisent, les
+          joints d'étanchéité travaillent jusqu'à lâcher. C'est la cause la plus
+          fréquente des reprises sur bac acier mal posé.
+        </p>
+        <p>
+          Une pose correcte prévoit ce mouvement dès le départ : pattes coulissantes
+          en joint debout, longueurs de bandes et type de fixation adaptés en bac
+          acier. On ne le voit jamais une fois le chantier terminé — et c'est
+          pourtant ce qui décide de sa tenue dans dix ans.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ MATÉRIAUX ════════════════════════════ -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Matériaux</p>
+        <h2>Quatre métaux, quatre comportements</h2>
+      </div>
+
+      <div class="met">
+        {materiaux.map((m) => (
+          <article class="met__card">
+            <h3>{m.nom}</h3>
+            <p class="met__pour"><span>Ce qui plaide pour</span>{m.pour}</p>
+            <p class="met__contre"><span>Ce qu'il faut savoir</span>{m.contre}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note met__note">
+        <strong>Zinc et cuivre ne cohabitent pas.</strong> L'eau qui ruisselle sur du cuivre
+        attaque le zinc situé en aval : la couverture ou la gouttière se perce en quelques
+        années. C'est le même point de vigilance qu'en <a href="/zinguerie/">zinguerie</a>,
+        et il vaut ici aussi.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock items={realisations} title="Couvertures métalliques réalisées" moreHref="/realisations/" hideIfEmpty />
+      <Faq items={faqItems} title="Questions sur la couverture métallique" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container"><CityLinks service="couverture-metallique" /></div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices service="couverture-metallique" title="Prestations associées" intro="Le métal en couverture touche à la zinguerie, et se retrouve souvent en bardage sur le même chantier." />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Couverture métallique"
+    title="Faire étudier votre projet"
+    text="La pente réelle, la charpente existante et l'usage du volume décident entre bac acier et joint debout. Cela se mesure sur place, pas au téléphone."
+    primaryLabel="Étudier mon projet"
+    service="couverture-metallique"
+    trackLabel="metallique-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ────────────────────────── deux familles ──────────────────────────── */
+  .fam2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); }
+  @media (max-width: 860px) { .fam2 { grid-template-columns: minmax(0, 1fr); } }
+
+  .fam2__col { padding-top: var(--sp-5); border-top: 3px solid var(--zinc-300); }
+  .fam2__col--reco { border-top-color: var(--clay-500); }
+  .fam2__tag {
+    font-size: 0.72rem;
+    font-weight: 680;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-3);
+  }
+  .fam2__col--reco .fam2__tag { color: var(--accent-ink); }
+  .fam2__col h3 { font-size: var(--fs-xl); }
+  .fam2__d { margin-top: var(--sp-3); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .fam2__specs { margin-top: var(--sp-5); display: grid; gap: 0; }
+  .fam2__specs > div {
+    display: grid;
+    grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+    gap: var(--sp-4);
+    padding: var(--sp-3) 0;
+    border-top: 1px solid var(--border);
+  }
+  .fam2__specs dt {
+    font-size: 0.68rem;
+    font-weight: 680;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-top: 0.15em;
+  }
+  .fam2__specs dd { margin: 0; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-normal); }
+  @media (max-width: 480px) {
+    .fam2__specs > div { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+  }
+
+  /* ────────────────────────── condensation ───────────────────────────── */
+  .cond {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .cond { grid-template-columns: minmax(0, 1fr); } }
+  .cond__text .prose { margin-top: var(--sp-5); }
+  .cond__note { margin-top: var(--sp-6); }
+
+  /* ───────────────────────────── cas ─────────────────────────────────── */
+  .cas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(2rem, 5vw, 4rem); }
+  @media (max-width: 820px) { .cas { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ─────────────────────────── dilatation ────────────────────────────── */
+  .dil { margin-top: var(--sp-5); }
+
+  /* ─────────────────────────── matériaux ─────────────────────────────── */
+  .met { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .met { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .met { grid-template-columns: minmax(0, 1fr); } }
+
+  .met__card { padding-top: var(--sp-4); border-top: 2px solid var(--clay-400); }
+  .met__card h3 { font-size: var(--fs-lg); }
+  .met__pour, .met__contre { font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .met__pour { margin-top: var(--sp-3); }
+  .met__contre { margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--border); }
+  .met__pour span, .met__contre span {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .met__pour span { color: var(--verdi-700); }
+  .met__contre span { color: var(--clay-600); }
+  .met__note { margin-top: var(--sp-7); }
+</style>

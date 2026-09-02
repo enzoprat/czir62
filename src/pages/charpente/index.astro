@@ -1,0 +1,468 @@
+---
+/**
+ * PAGE CHARPENTE
+ * Intention : « charpentier Béthune ». Tonalité nettement plus technique que
+ * les autres pages : le visiteur cherche une compétence structurelle, pas un
+ * dépannage. Beaucoup arrivent aussi parce qu'un couvreur leur a dit que la
+ * charpente devait être reprise, et ils veulent comprendre.
+ *
+ * Structure propre : schéma nommé d'une ferme, distinction traditionnelle /
+ * fermettes et ses conséquences pratiques, désordres observables, et une
+ * section qui dit explicitement ce que nous ne faisons PAS — le traitement
+ * curatif du bois relève d'une autre spécialité, et nous ne le revendiquons pas.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('charpente');
+const tel = telHref();
+const realisations = await realisationsForService('charpente', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Charpente' }];
+
+const desordres = [
+  {
+    t: 'Une panne qui a pris de la flèche',
+    d: "La ligne de toiture n'est plus droite : elle s'incurve entre deux appuis. Le bois a fléchi sous une charge qu'il ne reprend plus correctement, souvent après des années.",
+    grav: 'Structurel',
+  },
+  {
+    t: 'Un pied de chevron altéré',
+    d: "En about de toiture, là où l'humidité stagne. Le bois devient tendre et s'enfonce sous la pointe d'un outil. C'est le désordre le plus courant, et le plus souvent découvert au moment d'une rénovation de couverture.",
+    grav: 'Localisé',
+  },
+  {
+    t: 'Une fente ouverte dans un assemblage',
+    d: "Les assemblages traditionnels travaillent. Une fente qui s'ouvre à l'endroit précis d'un tenon ou d'un embrèvement demande un examen : c'est là que la charge transite.",
+    grav: 'À examiner',
+  },
+  {
+    t: 'Des traces d’humidité récurrentes',
+    d: "Auréoles sombres qui reviennent aux mêmes endroits après chaque pluie. Le bois humide en permanence perd ses caractéristiques et devient un terrain favorable aux dégradations biologiques.",
+    grav: 'Cause à traiter',
+  },
+  {
+    t: 'De la sciure ou des galeries dans le bois',
+    d: "Signe possible d'une attaque biologique en cours. Ce constat relève d'un diagnostic spécialisé : nous vous le signalons, nous ne le traitons pas nous-mêmes.",
+    grav: 'Diagnostic requis',
+  },
+  {
+    t: 'Une charpente modifiée sans étude',
+    d: "Un élément coupé pour passer une gaine, créer une trappe ou agrandir une ouverture. Sur une fermette, retirer une pièce revient à supprimer un côté du triangle qui tient l'ensemble.",
+    grav: 'Structurel',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Comment savoir si ma charpente est en bon état ?',
+    a: "Par l'observation, puis par le contact. Depuis les combles : regardez si la ligne des pannes est droite, cherchez les auréoles sur les bois, testez la fermeté du bois à la pointe d'un tournevis en about de chevron — un bois sain résiste. Depuis l'extérieur : une ligne de faîtage qui ondule ou un versant qui se creuse sont des signes visibles. En cas de doute, un examen sur place tranche rapidement.",
+  },
+  {
+    q: 'Peut-on remplacer une seule pièce de charpente ?',
+    a: "Oui, c'est même l'approche que nous privilégions quand elle est possible. Une reprise en sous-œuvre — moisage d'un chevron, greffe d'un about, renfort d'une panne — conserve la structure d'origine et coûte bien moins cher qu'un remplacement. La condition est d'intervenir avant que la section restante ne soit trop entamée : au-delà, la pièce ne peut plus servir d'appui.",
+  },
+  {
+    q: 'Peut-on modifier une charpente à fermettes pour aménager les combles ?',
+    a: "C'est possible, mais ce n'est jamais un simple retrait de pièces. Une fermette industrielle est calculée comme un ensemble : chaque élément participe à l'équilibre. L'aménagement passe par la mise en place d'une structure de substitution qui reprend les efforts avant que quoi que ce soit ne soit déposé. Cela relève d'une étude, et nous vous le disons d'emblée si votre configuration ne s'y prête pas.",
+  },
+  {
+    q: 'Traitez-vous le bois contre les insectes et les champignons ?',
+    a: "Non, et nous préférons le dire clairement. Le traitement curatif du bois est un métier à part, avec ses diagnostics, ses produits et ses certifications propres. Nous réalisons les travaux de charpente : reprise, renforcement, remplacement de pièces, modification. Si nous constatons une attaque biologique en cours, nous vous le signalons et vous orientons vers un professionnel du traitement — nous ne prétendons pas le faire à sa place.",
+  },
+  {
+    q: 'Ma charpente peut-elle supporter une couverture plus lourde ?',
+    a: "C'est une vraie question, et elle se pose souvent quand on envisage de passer d'une tuile mécanique à une tuile plate, sensiblement plus lourde au mètre carré. La réponse dépend de la section des bois, de leur portée, de leur espacement et de leur état. Elle ne se donne pas à l'œil : c'est précisément le genre de point que nous vérifions avant de valider un changement de matériau.",
+  },
+  {
+    q: 'Faut-il déposer la couverture pour intervenir sur la charpente ?',
+    a: "Pas systématiquement. Une reprise en pied de chevron ou un renfort peuvent souvent se faire par l'intérieur, depuis les combles. En revanche, le remplacement d'une panne ou d'une ferme complète impose généralement d'ouvrir la toiture au-dessus de la zone. C'est un point que le devis doit préciser, parce qu'il change l'organisation et le coût du chantier : l'accès et la durée d'immobilisation de l'échafaudage pèsent souvent plus lourd que le bois lui-même.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/charpente-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Charpente"
+    title="Charpentier à Béthune : reprise et renforcement"
+    lede="La charpente porte tout le reste. Nous intervenons sur les structures bois existantes — reprise de pièces fragilisées, renforcement, modification dans le cadre d'un projet — et sur les charpentes neuves."
+    photo="/images/services/charpente-czir62.jpg"
+    photoAlt="Charpente neuve montée par CZIR62 sur un immeuble, vue depuis la toiture"
+    photoNeed="Photo de charpente : ferme traditionnelle vue depuis les combles, ou charpente neuve en cours de montage."
+    photoRatio="1 / 1"
+    icon="truss"
+    chips={['Traditionnelle et fermettes', 'Reprise partielle privilégiée', 'Neuf et existant']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=charpente" class="btn btn--lg" data-track="quote_start" data-track-label="hero-charpente">
+        Faire examiner ma charpente
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-charpente">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== ROLE STRUCTUREL ===== -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="intro2">
+        <div>
+          <p class="eyebrow">Rôle structurel</p>
+          <h2>Ce que la charpente encaisse réellement</h2>
+        </div>
+        <div class="prose">
+          <p>
+            Une charpente ne porte pas seulement le poids des tuiles. Elle reprend aussi la neige
+            quand elle s'accumule, et surtout les efforts du vent — qui ne pousse pas seulement
+            sur la toiture, mais qui l'aspire aussi par dépression sur le versant sous le vent.
+          </p>
+          <p>
+            Ces charges suivent un chemin précis : la couverture repose sur les liteaux, qui
+            reportent sur les chevrons, qui reportent sur les pannes, lesquelles s'appuient sur
+            les fermes ou sur les murs. <strong>Chaque pièce reprend ce que la précédente lui
+            transmet.</strong> C'est pour cette raison qu'une pièce affaiblie ne pose pas un
+            problème local : elle transfère sa charge à ses voisines, qui n'ont pas été
+            dimensionnées pour cela.
+          </p>
+          <p>
+            C'est aussi pourquoi on ne coupe jamais un élément de charpente pour faire passer
+            une gaine ou agrandir une trappe sans savoir ce qu'il portait.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== SCHEMA ========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Anatomie</p>
+        <h2>Les pièces d’une ferme, et ce qu’elles font</h2>
+        <p class="lede lede--wide">
+          Le vocabulaire de la charpente traditionnelle revient sur tous les devis.
+          Voici de quoi le lire.
+        </p>
+      </div>
+
+      <div class="ferme">
+        <div class="ferme__draw">
+          <svg viewBox="0 0 480 300" role="img" aria-label="Schéma d'une ferme de charpente traditionnelle avec ses pièces nommées : arbalétriers, entrait, poinçon, contrefiches, pannes et sablières">
+            <!-- arbaletriers -->
+            <path d="M40 250 L240 60 L440 250" fill="none" stroke="var(--wood-600)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+            <!-- entrait -->
+            <path d="M40 250 H440" stroke="var(--wood-600)" stroke-width="11" stroke-linecap="round"/>
+            <!-- poincon -->
+            <path d="M240 66 V250" stroke="var(--wood-400)" stroke-width="9" stroke-linecap="round"/>
+            <!-- contrefiches -->
+            <path d="M240 168 L150 250 M240 168 L330 250" stroke="var(--wood-400)" stroke-width="7" stroke-linecap="round"/>
+            <!-- pannes -->
+            <g fill="var(--clay-500)">
+              <rect x="128" y="140" width="20" height="20" rx="3" transform="rotate(-43 128 140)"/>
+              <rect x="330" y="152" width="20" height="20" rx="3" transform="rotate(43 330 152)"/>
+              <rect x="230" y="46" width="20" height="20" rx="3"/>
+            </g>
+            <!-- sablieres -->
+            <rect x="26" y="242" width="24" height="16" rx="3" fill="var(--zinc-600)"/>
+            <rect x="430" y="242" width="24" height="16" rx="3" fill="var(--zinc-600)"/>
+
+            <g class="fr-lbl">
+              <text x="118" y="128" text-anchor="end">arbalétrier</text>
+              <text x="240" y="278" text-anchor="middle">entrait</text>
+              <text x="256" y="212">poinçon</text>
+              <text x="352" y="212">contrefiche</text>
+              <text x="240" y="34" text-anchor="middle">panne faîtière</text>
+              <text x="380" y="140">panne</text>
+              <text x="22" y="232" text-anchor="start">sablière</text>
+            </g>
+          </svg>
+        </div>
+
+        <dl class="ferme__lex">
+          <div><dt>Arbalétrier</dt><dd>La pièce inclinée qui suit la pente du toit et supporte les pannes.</dd></div>
+          <div><dt>Entrait</dt><dd>La pièce horizontale basse. Elle empêche les deux arbalétriers de s'écarter sous la charge — c'est elle qui « ferme » le triangle.</dd></div>
+          <div><dt>Poinçon</dt><dd>La pièce verticale centrale, qui reçoit la panne faîtière et relie le sommet à l'entrait.</dd></div>
+          <div><dt>Contrefiche</dt><dd>Pièce oblique de renfort, qui réduit la portée libre de l'arbalétrier.</dd></div>
+          <div><dt>Panne</dt><dd>Pièce horizontale posée sur les fermes, qui reçoit les chevrons. Panne faîtière en haut, pannes intermédiaires, panne sablière en bas.</dd></div>
+          <div><dt>Sablière</dt><dd>La pièce posée en tête de mur, qui répartit les descentes de charge sur la maçonnerie.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== DEUX FAMILLES ======= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Deux familles</p>
+        <h2>Traditionnelle ou fermettes : la différence compte</h2>
+        <p class="lede lede--wide">
+          Ce n'est pas une question d'âge ou de qualité, mais de logique constructive. Elle
+          détermine ce qu'on peut modifier, et à quelles conditions.
+        </p>
+      </div>
+
+      <div class="fam">
+        <article class="fam__card">
+          <span class="fam__tag">Charpente traditionnelle</span>
+          <h3>Des pièces de forte section, assemblées</h3>
+          <p>
+            Bois massif, assemblages travaillés, volume de comble généralement dégagé.
+            On la trouve surtout sur le bâti ancien du secteur, et sur les volumes de type
+            grange ou dépendance.
+          </p>
+          <ul class="list-check">
+            <li>Se répare pièce par pièce, par greffe ou moisage</li>
+            <li>Combles souvent utilisables sans modification lourde</li>
+            <li>Vieillit bien tant qu'elle reste au sec</li>
+          </ul>
+        </article>
+
+        <article class="fam__card">
+          <span class="fam__tag">Fermettes industrielles</span>
+          <h3>Des éléments fins, calculés comme un tout</h3>
+          <p>
+            Petites sections assemblées en usine par connecteurs métalliques, posées
+            rapprochées. Courantes sur les constructions postérieures aux années 1970,
+            très présentes dans les lotissements du secteur.
+          </p>
+          <ul class="list-check">
+            <li>Aucune pièce ne se coupe sans étude préalable</li>
+            <li>Combles perdus par conception — l'aménagement suppose une reprise structurelle</li>
+            <li>Les connecteurs méritent un contrôle visuel autant que le bois</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ DESORDRES ========= -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Ce qu’on constate</p>
+        <h2>Six désordres, et ce qu’ils signifient</h2>
+      </div>
+
+      <div class="des">
+        {desordres.map((d) => (
+          <article class="des__card reveal">
+            <span class="des__grav">{d.grav}</span>
+            <h3>{d.t}</h3>
+            <p>{d.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ CE QUE NOUS FAISONS === -->
+  <section class="section">
+    <div class="container">
+      <div class="split split--wide-media">
+        <div>
+          <p class="eyebrow">Nos interventions</p>
+          <h2>Réparer plutôt que remplacer, quand c’est possible</h2>
+          <p class="lede">
+            Une charpente ancienne bien conçue a rarement besoin d'être remplacée en totalité.
+            Le remplacement complet est une solution, pas la solution.
+          </p>
+
+          <div class="ops">
+            <article><h3>Reprise en sous-œuvre</h3><p>Greffe d'un about de chevron altéré, moisage d'une pièce fendue, renfort d'une panne. On conserve la structure existante et on lui rend sa capacité.</p></article>
+            <article><h3>Renforcement</h3><p>Ajout de pièces pour reprendre une charge devenue trop importante — changement de matériau de couverture, création d'une ouverture, reprise de portée.</p></article>
+            <article><h3>Remplacement partiel ou complet</h3><p>Quand la section restante ne permet plus de reprendre les efforts. Le remplacement se prépare : il faut étayer et reprendre les charges pendant l'opération.</p></article>
+            <article><h3>Modification pour un projet</h3><p>Création d'un chevêtre pour une fenêtre de toit, adaptation lors d'une <a href="/agrandissement-rehaussement/">surélévation</a>, raccordement d'une <a href="/ossature-bois/">extension à ossature bois</a>.</p></article>
+          </div>
+
+          <div class="note note--warn ops__note">
+            <strong>Ce que nous ne faisons pas :</strong> le traitement curatif du bois contre les
+            insectes xylophages et les champignons. C'est une spécialité distincte, avec ses
+            diagnostics et ses certifications. Si nous constatons une attaque en cours, nous vous
+            le signalons clairement et vous orientons — nous ne nous en chargeons pas.
+          </div>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/charpente-voligeage-czir62.jpg"
+          alt="Voligeage neuf posé sur la charpente d'un chantier CZIR62"
+          need="Photo d'une reprise de charpente : greffe, moisage ou renfort en cours, avec les bois neufs visibles à côté de l'ancien."
+          ratio="3 / 4"
+          icon="truss"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Chantiers de charpente réalisés"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur la charpente" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks
+        service="charpente"
+        text="Les chantiers de charpente nous conduisent souvent vers le bâti rural et les dépendances, plus présents sur ces communes."
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="charpente"
+        title="Ce qui accompagne un chantier de charpente"
+        intro="On n'ouvre pas une toiture pour la charpente sans traiter ce qui la recouvre."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Charpente"
+    title="Faire examiner votre charpente"
+    text="Un doute après avoir vu les combles, ou un couvreur qui vous a signalé un point à vérifier : nous venons regarder et vous disons ce qu'il en est, sans dramatiser ni minimiser."
+    primaryLabel="Demander un examen"
+    service="charpente"
+    trackLabel="charpente-final"
+  />
+</BaseLayout>
+
+<style>
+  .intro2 {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 880px) { .intro2 { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); } }
+
+  /* ---------------------------------------------------------------- ferme */
+  .ferme {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .ferme { grid-template-columns: minmax(0, 1fr); } }
+
+  .ferme__draw {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: var(--sp-5);
+    box-shadow: var(--shadow-xs);
+  }
+  .ferme__draw svg { width: 100%; height: auto; }
+  .fr-lbl text {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--zinc-600);
+  }
+
+  .ferme__lex { display: grid; gap: var(--sp-4); }
+  .ferme__lex > div { padding-bottom: var(--sp-4); border-bottom: 1px solid var(--border); }
+  .ferme__lex > div:last-child { border-bottom: 0; padding-bottom: 0; }
+  .ferme__lex dt { font-weight: 650; color: var(--text-strong); font-size: var(--fs-base); }
+  .ferme__lex dd { margin: 0.25rem 0 0; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-normal); }
+
+  /* -------------------------------------------------------------- familles */
+  .fam { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 820px) { .fam { grid-template-columns: minmax(0, 1fr); } }
+
+  .fam__card {
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--clay-500);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-xs);
+  }
+  .fam__tag {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: var(--sp-3);
+  }
+  .fam__card h3 { font-size: var(--fs-xl); }
+  .fam__card > p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .fam__card .list-check { margin-top: var(--sp-5); }
+
+  /* ── désordres ───────────────────────────────────────────────────────
+     Registre à filets sur fond profond : la gravité est portée par une
+     étiquette, pas par une carte. */
+  .des {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--border-invert);
+  }
+  @media (max-width: 820px) { .des { grid-template-columns: minmax(0, 1fr); } }
+
+  .des__card { padding: var(--sp-5) 0; border-bottom: 1px solid var(--border-invert); }
+  .des__grav {
+    display: inline-block;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--clay-300);
+    margin-bottom: var(--sp-3);
+  }
+  .des__card h3 {
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 650;
+    letter-spacing: -0.022em;
+  }
+  .des__card p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-300); line-height: var(--lh-relaxed); }
+
+  /* ----------------------------------------------------------- operations */
+  .ops { display: grid; gap: var(--sp-5); margin-top: var(--sp-6); }
+  .ops h3 { font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .ops p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .ops__note { margin-top: var(--sp-6); }
+</style>

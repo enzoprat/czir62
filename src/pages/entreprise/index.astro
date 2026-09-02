@@ -1,0 +1,277 @@
+---
+/**
+ * PAGE ENTREPRISE
+ * Page de confiance. Elle ne raconte pas une histoire de marque : elle
+ * rassemble les éléments vérifiables — le local, la méthode, les limites de
+ * ce que nous faisons — parce que ce sont eux qui rassurent réellement.
+ *
+ * NOTE ÉDITORIALE : l'histoire de l'entreprise (date de création, parcours,
+ * effectif, qualifications) n'est PAS inventée ici. Voir A-FOURNIR.md :
+ * ces éléments sont à fournir par l'entreprise avant mise en ligne.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import BrandsStrip from '@/components/BrandsStrip.astro';
+import GalerieChantiers from '@/components/GalerieChantiers.astro';
+import GoogleReviews from '@/components/GoogleReviews.astro';
+import ZoneMap from '@/components/ZoneMap.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Icon from '@/components/Icon.astro';
+import { servicesByOrder } from '@/data/services';
+import { nap, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { breadcrumbSchema, webPageSchema, placeSchema } from '@/lib/schema';
+
+const crumbs = [{ name: "L'entreprise" }];
+const tel = telHref();
+
+const engagements = [
+  { t: 'Nous regardons avant de chiffrer', d: "Un montant annoncé au téléphone ne tient pas compte de l'accès, de la pente, de l'état de la charpente ni des points singuliers. Nous passons voir, et c'est gratuit.", ico: 'search' as const },
+  { t: 'Le devis est détaillé, pas forfaitaire', d: "Vous devez pouvoir lire le matériau retenu, les surfaces, le traitement des points singuliers et ce qui est exclu. « Rénovation de toiture — forfait » ne vous apprend rien.", ico: 'ruler' as const },
+  { t: 'Nous disons quand il n’y a rien à faire', d: "Une toiture ancienne mais saine n'a pas besoin d'être refaite. Nous préférons le dire et perdre un chantier plutôt que vendre des travaux inutiles.", ico: 'shield' as const },
+  { t: 'Nous rendons le terrain propre', d: "Les gravats de dépose sont évacués vers une filière adaptée, pas laissés au fond du jardin. Cela devrait aller de soi ; ce n'est pas toujours le cas.", ico: 'check' as const },
+];
+---
+
+<BaseLayout
+  title="L'entreprise — CZIR62, couvreur implanté à Béthune"
+  description="CZIR62, entreprise générale de couverture avec un local à Béthune : nos prestations, notre méthode de travail et notre zone d'intervention autour de Béthune."
+  path="/entreprise/"
+  schema={[
+    webPageSchema({ path: '/entreprise/', name: "L'entreprise CZIR62", description: "Présentation de CZIR62, entreprise générale de couverture à Béthune." }),
+    breadcrumbSchema(crumbs),
+    placeSchema('/images/local/devanture-czir62-bethune.jpg'),
+  ]}
+>
+  <section class="en-hero">
+    <div class="container en-hero__in">
+      <div>
+        <Breadcrumbs items={crumbs} />
+        <p class="en-hero__kicker"><Icon name="storefront" size={16} /> Béthune, Pas-de-Calais</p>
+        <h1>CZIR62, une entreprise de couverture implantée à Béthune</h1>
+        <p class="lede">
+          Couverture, charpente, zinguerie, Velux, ossature bois, bardage et agrandissement.
+          Une seule entreprise pour l'ensemble de l'enveloppe d'une maison — et une adresse
+          physique où l'on peut nous trouver.
+        </p>
+        <div class="btn-row en-hero__btns">
+          <a href="/devis/" class="btn" data-track="quote_start" data-track-label="entreprise-hero">Demander un devis</a>
+          {hasPhone() && tel && (
+            <a href={tel} class="btn btn--ghost" data-track-zone="entreprise-hero">
+              <Icon name="phone" size={18} /> {nap.phone}
+            </a>
+          )}
+        </div>
+      </div>
+
+      <PhotoSlot
+        src="/images/local/devanture-czir62-bethune.jpg"
+        alt="Devanture du local CZIR62 à Béthune, entreprise générale de couverture"
+        need="LA photo de référence : devanture du local prise de face, en journée, enseigne CZIR62 et prestations lisibles."
+        ratio="4 / 3"
+        priority
+        icon="storefront"
+        sizes="(max-width: 900px) 100vw, 46vw"
+      />
+    </div>
+  </section>
+
+  <!-- =============================================== LE LOCAL =========== -->
+  <section class="section">
+    <div class="container">
+      <div class="intro3">
+        <div>
+          <p class="eyebrow">Implantation</p>
+          <h2>Pourquoi une devanture change quelque chose</h2>
+        </div>
+        <div class="prose">
+          <p>
+            Dans le bâtiment, et particulièrement en couverture, beaucoup d'entreprises se créent
+            et disparaissent en l'espace d'une saison. Après une tempête, le nombre d'intervenants
+            proposant des travaux dans la rue augmente brutalement, puis retombe.
+          </p>
+          <p>
+            Un local avec une devanture n'est pas un argument commercial : c'est un fait
+            vérifiable. Vous pouvez situer l'entreprise, passer devant, et savoir où revenir si
+            quelque chose doit être repris six mois plus tard. C'est exactement pour cela que
+            nous mettons cette photo en avant plutôt qu'une image de toiture générique.
+          </p>
+          {hasAddress() && <p><strong>Notre adresse : {addressOneLine()}.</strong> La même sur ce site, sur notre fiche Google et sur nos devis.</p>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== CE QUE NOUS FAISONS = -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Périmètre</p>
+        <h2>Ce que nous faisons, et ce que nous ne faisons pas</h2>
+        <p class="lede lede--wide">
+          Annoncer un périmètre clair évite les malentendus. Nous préférons vous orienter vers
+          le bon professionnel que d'accepter un travail qui n'est pas le nôtre.
+        </p>
+      </div>
+
+      <div class="perim">
+        <div class="perim__col perim__col--oui">
+          <h3><Icon name="check" size={19} /> Nos {servicesByOrder.length} prestations</h3>
+          <ul class="list-clean perim__list">
+            {servicesByOrder.map((s) => (
+              <li><a href={s.url}><Icon name={s.icon} size={18} />{s.name}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="perim__col perim__col--non">
+          <h3><Icon name="alert" size={19} /> Ce qui relève d’autres métiers</h3>
+          <ul class="list-clean perim__non">
+            <li><strong>Le traitement curatif du bois</strong><span>Insectes xylophages, champignons : diagnostic et produits relèvent d'une spécialité distincte. Nous signalons, nous ne traitons pas.</span></li>
+            <li><strong>Les lots techniques intérieurs</strong><span>Électricité, plomberie, chauffage, chape et finitions ne font pas partie de notre corps de métier.</span></li>
+            <li><strong>L’isolation thermique par l’extérieur seule</strong><span>Nous posons le bardage et son support ; une prestation d'ITE avec ses aides et ses certifications propres est un autre sujet.</span></li>
+            <li><strong>Les travaux de maçonnerie lourde</strong><span>Reprise en sous-œuvre, fondations profondes : nous travaillons avec la structure existante, pas contre elle.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== ENGAGEMENTS ========= -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Méthode</p>
+        <h2>Quatre façons de travailler</h2>
+        <p class="lede lede--wide">
+          Rien d'extraordinaire. Simplement ce qui devrait être la norme, et qui ne l'est pas
+          toujours.
+        </p>
+      </div>
+
+      <div class="eng">
+        {engagements.map((e) => (
+          <article class="eng__card reveal">
+            <span class="eng__ico"><Icon name={e.ico} size={22} /></span>
+            <h3>{e.t}</h3>
+            <p>{e.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <GalerieChantiers
+        limit={8}
+        title="Le travail, tel qu'il se présente"
+        intro="Dépose, support, écran, liteaunage, couverture, zinguerie. Ces photos montrent les étapes que l'on ne voit plus une fois le chantier terminé."
+      />
+      <p class="gal-more">
+        <a href="/realisations/" class="link-arrow">Voir toutes nos réalisations, triées par prestation</a>
+      </p>
+    </div>
+  </section>
+
+  <BrandsStrip />
+
+  <ZoneMap
+    title="Un secteur volontairement resserré"
+    intro="Nous intervenons autour de Béthune plutôt que sur tout le département. Cela nous permet de repasser rapidement quand c'est nécessaire, et de connaître réellement le bâti sur lequel nous travaillons."
+    showList={false}
+  />
+
+  <GoogleReviews variant="alt" />
+
+  {import.meta.env.DEV && (
+    <section class="section">
+      <div class="container">
+        <div class="note note--warn">
+          <strong>Bloc de développement — invisible en production.</strong>
+          Cette page gagnerait beaucoup à contenir des éléments que nous n'inventons pas :
+          année de création, parcours de l'entreprise, taille de l'équipe, assurance décennale,
+          éventuelles qualifications. Voir <code>A-FOURNIR.md</code>, section « Entreprise ».
+          Une fois fournis, ils s'ajoutent ici et dans <code>src/config/site.ts</code>
+          (<code>foundingYear</code>, <code>siret</code>).
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand
+    variant="clay"
+    eyebrow="CZIR62"
+    title="Venez nous voir, ou faites-nous venir"
+    text="Notre local est à Béthune. Pour un projet ou un désordre, nous nous déplaçons pour établir le devis."
+    primaryLabel="Demander un devis"
+    trackLabel="entreprise-final"
+  />
+</BaseLayout>
+
+<style>
+  .gal-more { margin-top: var(--sp-7); }
+  .en-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .en-hero__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .en-hero__in { grid-template-columns: minmax(0, 1fr); } }
+  .en-hero__kicker {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: var(--sp-5);
+    font-size: var(--fs-xs); font-weight: 640; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .en-hero h1 { margin-top: var(--sp-4); font-size: var(--fs-3xl); }
+  .en-hero .lede { margin-top: var(--sp-4); }
+  .en-hero__btns { margin-top: var(--sp-6); }
+
+  .intro3 { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 880px) { .intro3 { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); } }
+
+  .perim { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 3.5rem); }
+  @media (max-width: 880px) { .perim { grid-template-columns: minmax(0, 1fr); } }
+  .perim__col h3 {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 650;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding-bottom: var(--sp-3); margin-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--border);
+  }
+  .perim__col--oui h3 { color: var(--ok-ink); }
+  .perim__col--non h3 { color: var(--clay-600); }
+
+  .perim__list { display: grid; gap: 0.15rem; }
+  .perim__list a {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--r-sm);
+    text-decoration: none; color: var(--text-strong); font-weight: 550; font-size: var(--fs-sm);
+    transition: background var(--t-fast);
+  }
+  .perim__list a:hover { background: var(--clay-50); color: var(--accent-ink); }
+  .perim__list :global(svg) { color: var(--accent); flex: none; }
+
+  .perim__non { display: grid; gap: var(--sp-4); }
+  .perim__non li { padding-left: var(--sp-4); border-left: 2px solid var(--border-strong); }
+  .perim__non strong { display: block; font-size: var(--fs-base); color: var(--text-strong); }
+  .perim__non span { display: block; margin-top: 0.25rem; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .eng { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .eng { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .eng { grid-template-columns: minmax(0, 1fr); } }
+  .eng__card { padding: var(--sp-5); background: rgba(255,255,255,.04); border: 1px solid var(--border-invert); border-radius: var(--r-lg); }
+  .eng__ico {
+    display: grid; place-items: center; width: 42px; height: 42px;
+    border-radius: var(--r-sm); background: rgba(174,90,47,.26); color: var(--clay-200);
+    margin-bottom: var(--sp-4);
+  }
+  .eng__card h3 { color: #fff; font-size: var(--fs-base); font-family: var(--font-sans); font-weight: 650; }
+  .eng__card p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+</style>

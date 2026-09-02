@@ -1,0 +1,472 @@
+---
+/**
+ * En-tête.
+ *
+ * Deux niveaux, avec une intention :
+ *  1. un bandeau d'ancrage local très fin, en ardoise texturée « rangs de
+ *     tuiles ». Il porte la preuve d'implantation avant même la navigation.
+ *     Il se rétracte au défilement — l'information a été lue, elle libère
+ *     la place ;
+ *  2. la barre principale, qui se compacte en même temps.
+ *
+ * Le panneau des prestations s'ouvre au survol ET au focus clavier, en CSS
+ * pur. Aucun JavaScript n'est nécessaire pour naviguer ; il ne sert qu'au
+ * menu mobile, à la touche Échap et à l'état compact.
+ */
+import Logo from '@/components/Logo.astro';
+import Icon from '@/components/Icon.astro';
+import { servicesByOrder, serviceFamilies, servicesOfFamily } from '@/data/services';
+import { nap, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const tel = telHref();
+
+const mainNav = [
+  { href: '/prestations/', label: 'Prestations', panel: true },
+  { href: '/zone-intervention/', label: "Zone d'intervention" },
+  { href: '/realisations/', label: 'Réalisations' },
+  { href: '/entreprise/', label: "L'entreprise" },
+];
+---
+
+<header class="hdr">
+  <!-- Filet de faîtage : la ligne terre cuite qui coiffe tout le site -->
+  <div class="hdr__ridge" aria-hidden="true"></div>
+
+  <div class="hdr__top tex tex--tuiles">
+    <div class="container hdr__top-in">
+      <span class="hdr__loc">
+        <Icon name="storefront" size={15} />
+        <strong>Local à Béthune</strong>
+        {hasAddress() && <span class="hdr__addr">{addressOneLine()}</span>}
+      </span>
+      <span class="hdr__top-right">
+        <span class="hdr__zone">Bassin béthunois · Pas-de-Calais</span>
+        {hasPhone() && tel && (
+          <a href={tel} class="hdr__tel num" data-track-zone="header-top">
+            <Icon name="phone" size={14} />{nap.phone}
+          </a>
+        )}
+      </span>
+    </div>
+  </div>
+
+  <div class="hdr__bar">
+    <div class="container hdr__in">
+      <a href="/" class="hdr__logo" aria-label="CZIR62 — accueil"><Logo /></a>
+
+      <nav class="hdr__nav" aria-label="Navigation principale">
+        <ul class="hdr__list">
+          {mainNav.map((item) => (
+            <li class:list={['hdr__item', item.panel && 'hdr__item--panel']}>
+              <a
+                href={item.href}
+                class:list={['hdr__link', isActive(item.href) && 'is-active']}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                {item.panel && <Icon name="chevron-down" size={13} class="hdr__caret" />}
+              </a>
+
+              {item.panel && (
+                <div class="panel">
+                  <div class="panel__in">
+                    <div class="panel__cols">
+                      {serviceFamilies.map((fam) => (
+                        <div class="panel__col">
+                          <p class="panel__title">{fam.label}</p>
+                          <ul class="list-clean panel__links">
+                            {servicesOfFamily(fam.key).map((s) => (
+                              <li>
+                                <a href={s.url} class="panel__link">
+                                  <Icon name={s.icon} size={18} class="panel__ico" />
+                                  <span>
+                                    <strong>{s.navLabel ?? s.name}</strong>
+                                    <em>{s.cardText.split(/[:.]/)[0]}</em>
+                                  </span>
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+
+                    <aside class="panel__aside tex tex--tuiles">
+                      <p class="panel__aside-eyebrow">Urgence</p>
+                      <p class="panel__aside-title">Une infiltration en cours ?</p>
+                      <p class="panel__aside-text">
+                        Décrivez ce que vous voyez : nous rappelons pour situer l'origine
+                        avant de nous déplacer.
+                      </p>
+                      <a href="/fuite-toiture/#assistant" class="btn btn--sm">Signaler une fuite</a>
+                    </aside>
+                  </div>
+
+                  <div class="panel__foot">
+                    <a href="/prix-toiture/"><Icon name="ruler" size={16} /> Prix des travaux de toiture</a>
+                    <a href="/outils/"><Icon name="search" size={16} /> Outils de diagnostic</a>
+                    <a href="/realisations/"><Icon name="camera" size={16} /> Nos chantiers en photos</a>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="hdr__actions">
+        {hasPhone() && tel && (
+          <a href={tel} class="hdr__call num" data-track-zone="header">
+            <Icon name="phone" size={16} /><span>{nap.phone}</span>
+          </a>
+        )}
+        <a href="/devis/" class="btn btn--sm hdr__quote" data-track="quote_start" data-track-label="header">
+          Demander un devis
+        </a>
+      </div>
+
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu-mobile" aria-label="Ouvrir le menu">
+        <span class="burger__box" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Menu mobile : plein écran, hiérarchie claire, cibles larges -->
+  <div class="mnav" id="menu-mobile" hidden>
+    <div class="mnav__in">
+      <p class="mnav__label">Prestations</p>
+      <ul class="list-clean mnav__services">
+        {servicesByOrder.map((s, i) => (
+          <li style={`--i:${i}`}>
+            <a href={s.url} class="mnav__service">
+              <Icon name={s.icon} size={19} />
+              <span>{s.navLabel ?? s.name}</span>
+              <em aria-hidden="true">→</em>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="mnav__label">Le site</p>
+      <ul class="list-clean mnav__pages">
+        {mainNav.filter((i) => !i.panel).map((item) => (
+          <li><a href={item.href} class="mnav__page">{item.label}</a></li>
+        ))}
+        <li><a href="/avis/" class="mnav__page">Avis clients</a></li>
+        <li><a href="/outils/" class="mnav__page">Outils de diagnostic</a></li>
+        <li><a href="/prix-toiture/" class="mnav__page">Prix des travaux</a></li>
+        <li><a href="/contact/" class="mnav__page">Contact</a></li>
+      </ul>
+
+      <div class="mnav__cta">
+        <a href="/devis/" class="btn btn--block btn--lg" data-track="quote_start" data-track-label="menu-mobile">
+          Demander un devis
+        </a>
+        {hasPhone() && tel && (
+          <a href={tel} class="btn btn--ghost btn--block btn--lg num" data-track-zone="menu-mobile">
+            <Icon name="phone" size={18} /> {nap.phone}
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--bone);
+  }
+  .hdr__ridge { height: 3px; background: var(--clay-500); }
+
+  /* ───────────────────────── bandeau d'ancrage ──────────────────────── */
+  .hdr__top {
+    background: var(--zinc-900);
+    color: var(--zinc-300);
+    font-size: 0.75rem;
+    overflow: hidden;
+    max-height: 34px;
+    transition: max-height var(--t-base) var(--ease-out), opacity var(--t-fast) linear;
+  }
+  .hdr.is-stuck .hdr__top { max-height: 0; opacity: 0; }
+
+  .hdr__top-in { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); height: 34px; }
+  .hdr__loc { display: inline-flex; align-items: center; gap: 0.45rem; letter-spacing: 0.01em; }
+  .hdr__loc :global(svg) { color: var(--clay-400); }
+  .hdr__loc strong { color: #fff; font-weight: 620; }
+  .hdr__addr { color: var(--zinc-400); }
+  .hdr__addr::before { content: '·'; margin: 0 0.4rem; }
+
+  .hdr__top-right { display: inline-flex; align-items: center; gap: var(--sp-5); }
+  .hdr__zone { letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.68rem; color: var(--zinc-400); }
+  .hdr__tel { display: inline-flex; align-items: center; gap: 0.35rem; color: #fff; font-weight: 640; text-decoration: none; }
+  .hdr__tel :global(svg) { color: var(--clay-400); }
+  .hdr__tel:hover { color: var(--clay-200); }
+  @media (max-width: 900px) { .hdr__top { display: none; } }
+  @media (max-width: 1180px) { .hdr__zone, .hdr__addr { display: none; } }
+
+  /* ───────────────────────── barre principale ───────────────────────── */
+  .hdr__bar { border-bottom: 1px solid var(--border); background: var(--bone); transition: box-shadow var(--t-base); }
+  .hdr.is-stuck .hdr__bar { box-shadow: 0 8px 24px -18px rgba(30, 18, 10, 0.5); }
+
+  .hdr__in { display: flex; align-items: center; gap: var(--sp-5); min-height: var(--header-h); transition: min-height var(--t-base) var(--ease-out); }
+  .hdr.is-stuck .hdr__in { min-height: 60px; }
+  .hdr__logo { text-decoration: none; flex: none; }
+
+  .hdr__nav { margin-left: auto; }
+  .hdr__list { display: flex; align-items: center; gap: 0.1rem; list-style: none; margin: 0; }
+  .hdr__item { position: relative; }
+
+  .hdr__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.6rem 0.78rem;
+    border-radius: var(--r-xs);
+    color: var(--zinc-700);
+    font-size: 0.9rem;
+    font-weight: 570;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--t-fast), background var(--t-fast);
+  }
+  .hdr__link:hover { color: var(--accent-ink); background: var(--sand-100); }
+  .hdr__link.is-active { color: var(--accent-ink); }
+  .hdr__link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 0.78rem; right: 0.78rem; bottom: 0.2rem;
+    height: 2px;
+    background: var(--accent);
+  }
+  .hdr__link :global(.hdr__caret) { transition: transform var(--t-base) var(--ease-out); opacity: .55; }
+
+  /* ─────────────────────── panneau des prestations ──────────────────── */
+  .panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    width: min(62rem, calc(100vw - 3rem));
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out), visibility var(--t-base);
+  }
+  .panel::before { content: ''; position: absolute; inset: -0.6rem 0 auto; height: 0.9rem; }
+  .hdr__item--panel:hover .panel,
+  .hdr__item--panel:focus-within .panel { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+  .hdr__item--panel:hover :global(.hdr__caret),
+  .hdr__item--panel:focus-within :global(.hdr__caret) { transform: rotate(180deg); opacity: 1; }
+
+  .panel__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--clay-500);
+    border-radius: 0 0 var(--r-md) var(--r-md);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .panel__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); padding: var(--sp-6); }
+  .panel__title {
+    font-size: 0.68rem;
+    font-weight: 680;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .panel__links { display: grid; gap: 0.1rem; }
+  .panel__link {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.45rem 0.5rem;
+    border-radius: var(--r-xs);
+    text-decoration: none;
+    color: var(--text);
+    transition: background var(--t-fast);
+  }
+  .panel__link:hover { background: var(--clay-50); }
+  .panel__link :global(.panel__ico) { color: var(--accent); margin-top: 0.12rem; flex: none; }
+  .panel__link strong { display: block; font-size: 0.875rem; font-weight: 630; color: var(--text-strong); }
+  .panel__link em { display: block; font-style: normal; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; margin-top: 0.1rem; }
+
+  .panel__aside {
+    background: var(--zinc-900);
+    padding: var(--sp-6);
+    color: var(--text-invert);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    align-items: flex-start;
+  }
+  .panel__foot {
+    display: flex; flex-wrap: wrap; gap: var(--sp-4) var(--sp-7);
+    margin-top: var(--sp-6); padding-top: var(--sp-5);
+    border-top: 1px solid var(--rule);
+  }
+  .panel__foot a {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    font-size: var(--fs-sm); color: var(--text-muted); text-decoration: none;
+  }
+  .panel__foot a:hover, .panel__foot a:focus-visible { color: var(--clay-700); }
+
+  .panel__aside-eyebrow { font-size: 0.66rem; font-weight: 680; letter-spacing: 0.16em; text-transform: uppercase; color: var(--clay-300); }
+  .panel__aside-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+  .panel__aside-text { font-size: 0.83rem; color: var(--zinc-300); line-height: 1.55; }
+
+  /* ───────────────────────────── actions ────────────────────────────── */
+  .hdr__actions { display: flex; align-items: center; gap: var(--sp-4); flex: none; }
+  .hdr__call {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 680;
+    letter-spacing: -0.015em;
+    color: var(--text-strong);
+    text-decoration: none;
+  }
+  .hdr__call :global(svg) { color: var(--accent); }
+  .hdr__call:hover { color: var(--accent-ink); }
+  @media (max-width: 1240px) { .hdr__call { display: none; } }
+  @media (max-width: 980px) { .hdr__nav { display: none; } }
+
+  /* ───────────────────────────── burger ─────────────────────────────── */
+  .burger {
+    display: none;
+    margin-left: auto;
+    width: 44px; height: 44px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    padding: 0;
+  }
+  .burger__box { display: grid; gap: 4px; justify-items: center; }
+  .burger__box span {
+    display: block;
+    width: 18px; height: 2px;
+    background: var(--zinc-700);
+    transition: transform var(--t-base) var(--ease-out), opacity var(--t-fast) linear, width var(--t-base);
+  }
+  .burger__box span:nth-child(3) { width: 12px; }
+  .burger[aria-expanded='true'] .burger__box span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .burger[aria-expanded='true'] .burger__box span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded='true'] .burger__box span:nth-child(3) { width: 18px; transform: translateY(-6px) rotate(-45deg); }
+
+  @media (max-width: 980px) {
+    .burger { display: grid; place-items: center; }
+    .hdr__actions { margin-left: auto; }
+    .hdr__quote { display: none; }
+  }
+  @media (max-width: 560px) { .hdr__actions { display: none; } }
+
+  /* ──────────────────────────── menu mobile ─────────────────────────── */
+  .mnav {
+    display: none;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .mnav:not([hidden]) { display: block; }
+  .mnav__in { padding: var(--sp-5) var(--gutter) var(--sp-8); }
+
+  .mnav__label {
+    font-size: 0.68rem;
+    font-weight: 680;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: var(--sp-6) 0 var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .mnav__in > .mnav__label:first-child { margin-top: 0; }
+
+  .mnav__services { display: grid; }
+  .mnav__service {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.92rem 0.2rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text-strong);
+    font-weight: 560;
+    font-size: 1.02rem;
+    letter-spacing: -0.015em;
+  }
+  .mnav__service :global(svg) { color: var(--accent); flex: none; }
+  .mnav__service em { margin-left: auto; font-style: normal; color: var(--zinc-300); }
+  .mnav__service:active { background: var(--clay-50); }
+
+  /* Apparition en cascade à l'ouverture — courte, jamais bloquante */
+  @media (prefers-reduced-motion: no-preference) {
+    .mnav:not([hidden]) .mnav__services li {
+      animation: mnav-in 300ms var(--ease-out) backwards;
+      animation-delay: calc(var(--i) * 22ms);
+    }
+    @keyframes mnav-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+  }
+
+  .mnav__pages { display: grid; }
+  .mnav__page {
+    display: block;
+    padding: 0.82rem 0.2rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--zinc-600);
+    font-weight: 560;
+  }
+
+  .mnav__cta { display: grid; gap: var(--sp-3); margin-top: var(--sp-7); }
+</style>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>('.burger');
+  const menu = document.getElementById('menu-mobile');
+  const header = document.querySelector<HTMLElement>('.hdr');
+
+  if (burger && menu) {
+    const setOpen = (open: boolean) => {
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+      menu.hidden = !open;
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    burger.addEventListener('click', () => setOpen(menu.hidden));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) { setOpen(false); burger.focus(); }
+    });
+    matchMedia('(min-width: 981px)').addEventListener('change', (e) => {
+      if (e.matches && !menu.hidden) setOpen(false);
+    });
+  }
+
+  /* État compact : le bandeau d'ancrage se rétracte une fois lu.
+     Sentinelle observée plutôt qu'un écouteur de défilement : aucun coût
+     processeur pendant le scroll. */
+  if (header) {
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;height:1px;width:1px;pointer-events:none';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(
+      ([entry]) => header.classList.toggle('is-stuck', !entry.isIntersecting),
+      { threshold: 0 },
+    ).observe(sentinel);
+  }
+</script>

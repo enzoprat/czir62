@@ -1,0 +1,354 @@
+---
+/**
+ * FICHE DE REALISATION — /realisations/<slug>/
+ *
+ * Générée pour chaque fichier de src/content/realisations/. Les brouillons
+ * (draft: true) sont exclus en production.
+ *
+ * Chaque fiche est reliée automatiquement : à sa prestation, à sa commune,
+ * et aux chantiers similaires. C'est ce maillage qui donne sa valeur à la
+ * base de réalisations.
+ */
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import BeforeAfter from '@/components/BeforeAfter.astro';
+import RealisationCard from '@/components/RealisationCard.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Icon from '@/components/Icon.astro';
+
+import { getRealisations, realisationsSimilaires, formatDateFr, type Realisation } from '@/lib/realisations';
+import { getService } from '@/data/services';
+import { getVille } from '@/data/villes';
+import { breadcrumbSchema, webPageSchema, ID } from '@/lib/schema';
+import { site } from '@/config/site';
+
+export const getStaticPaths = (async () => {
+  const entries = await getRealisations();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+interface Props { entry: Realisation }
+const { entry } = Astro.props;
+const d = entry.data;
+
+const service = getService(d.service);
+const ville = getVille(d.ville);
+const secondaires = d.servicesSecondaires.map(getService);
+const similaires = await realisationsSimilaires(entry, 3);
+const { Content } = await render(entry);
+
+const url = `/realisations/${entry.id}/`;
+const crumbs = [{ name: 'Réalisations', url: '/realisations/' }, { name: d.titre }];
+
+const title = d.metaTitle ?? `${d.titre} — Réalisation CZIR62`;
+const description = d.metaDescription ?? d.resume;
+
+/** Fiche de chantier déclarée comme production de l'entreprise */
+const chantierSchema = {
+  '@type': 'CreativeWork',
+  '@id': `${site.url}${url}#chantier`,
+  name: d.titre,
+  description: d.resume,
+  creator: { '@id': ID.org },
+  dateCreated: d.date.toISOString().slice(0, 10),
+  locationCreated: {
+    '@type': 'Place',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: ville.name,
+      postalCode: ville.postalCode,
+      addressCountry: 'FR',
+    },
+  },
+  about: { '@id': `${site.url}${service.url}#service` },
+  ...(d.photo?.src ? { image: `${site.url}${d.photo.src}` } : {}),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={url}
+  noindex={d.draft}
+  pageEvent="realisation_view"
+  pageSlug={entry.id}
+  pageLabel={d.titre}
+  ogImage={d.photo?.src ?? '/images/og-default.jpg'}
+  schema={[
+    webPageSchema({
+      path: url,
+      name: title,
+      description,
+      image: d.photo?.src,
+      datePublished: d.date.toISOString(),
+    }),
+    breadcrumbSchema(crumbs),
+    chantierSchema,
+  ]}
+>
+  {d.draft && (
+    <p class="draftbar">
+      <Icon name="alert" size={16} />
+      Fiche d'exemple — <code>draft: true</code>. Visible en développement uniquement,
+      exclue de la production et de l'indexation.
+    </p>
+  )}
+
+  <article>
+    <!-- ================================================= EN-TETE ======== -->
+    <header class="rhero">
+      <div class="container rhero__in">
+        <div class="rhero__text">
+          <Breadcrumbs items={crumbs} />
+          <div class="tag-row rhero__tags">
+            <a href={service.url} class="tag tag--accent">{service.name}</a>
+            <a href={ville.url} class="tag">{ville.name}</a>
+            {secondaires.map((s) => <a href={s.url} class="tag">{s.name}</a>)}
+          </div>
+          <h1>{d.titre}</h1>
+          <p class="rhero__resume">{d.resume}</p>
+
+          <dl class="rfiche">
+            <div><dt>Commune</dt><dd><a href={ville.url}>{ville.name}</a></dd></div>
+            <div><dt>Prestation</dt><dd><a href={service.url}>{service.name}</a></dd></div>
+            <div><dt>Chantier terminé</dt><dd>{formatDateFr(d.date)}</dd></div>
+            {d.typeBien && <div><dt>Type de bien</dt><dd>{d.typeBien}</dd></div>}
+            {d.surface && <div><dt>Surface</dt><dd>{d.surface} m²</dd></div>}
+            {d.duree && <div><dt>Durée</dt><dd>{d.duree}</dd></div>}
+          </dl>
+        </div>
+
+        <PhotoSlot
+          src={d.photo?.src}
+          alt={d.photo?.alt ?? `${d.titre} — chantier réalisé par CZIR62`}
+          need={`Photo principale du chantier : ${d.titre}`}
+          ratio="4 / 3"
+          priority
+          icon={service.icon}
+          sizes="(max-width: 900px) 100vw, 46vw"
+        />
+      </div>
+    </header>
+
+    <!-- ============================================= PROBLEME / TRAVAUX = -->
+    <section class="section">
+      <div class="container">
+        <div class="ptv">
+          <div class="ptv__col">
+            <p class="eyebrow">État initial</p>
+            <h2>Ce que nous avons constaté</h2>
+            <p class="ptv__text">{d.probleme}</p>
+          </div>
+
+          <div class="ptv__col">
+            <p class="eyebrow">Intervention</p>
+            <h2>Les travaux réalisés</h2>
+            <ol class="list-clean travaux">
+              {d.travaux.map((t, i) => (
+                <li><span>{String(i + 1).padStart(2, '0')}</span>{t}</li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {d.materiaux.length > 0 && (
+          <div class="mats-used">
+            <h3>Matériaux mis en œuvre</h3>
+            <ul class="tag-row">{d.materiaux.map((m) => <li class="tag">{m}</li>)}</ul>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- ================================================ AVANT / APRES === -->
+    {d.avantApres && (
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-head section-head--center">
+            <p class="eyebrow eyebrow--center">Avant / après</p>
+            <h2>Le même point de vue, avant et après</h2>
+          </div>
+          <div class="ba-wrap">
+            <BeforeAfter
+              avant={d.avantApres.avant}
+              apres={d.avantApres.apres}
+              ratio="16 / 10"
+              icon={service.icon}
+            />
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ==================================================== RECIT ======= -->
+    <section class="section">
+      <div class="container container--text">
+        <div class="prose recit"><Content /></div>
+      </div>
+    </section>
+
+    <!-- =================================================== PHOTOS ======= -->
+    {d.photos.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">En images</p>
+            <h2>Le chantier en détail</h2>
+          </div>
+          <div class="gal">
+            {d.photos.map((p) => (
+              <PhotoSlot
+                src={p.src}
+                alt={p.alt}
+                caption={p.legende}
+                need={p.alt}
+                ratio="3 / 2"
+                icon={service.icon}
+                sizes="(max-width: 700px) 100vw, 33vw"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ================================================== MAILLAGE ====== -->
+    <section class="section">
+      <div class="container">
+        <div class="liens">
+          <a href={service.url} class="liens__card">
+            <Icon name={service.icon} size={24} />
+            <span>
+              <em>La prestation</em>
+              <strong>{service.name}</strong>
+              <span class="liens__d">{service.cardText}</span>
+            </span>
+          </a>
+          <a href={ville.url} class="liens__card">
+            <Icon name="pin" size={24} />
+            <span>
+              <em>La commune</em>
+              <strong>Couvreur à {ville.name}</strong>
+              <span class="liens__d">Le bâti local, les désordres fréquents et nos interventions sur place.</span>
+            </span>
+          </a>
+        </div>
+
+        {similaires.length > 0 && (
+          <div class="simil">
+            <h2>Chantiers similaires</h2>
+            <ul class="list-clean simil__grid">
+              {similaires.map((s) => <li><RealisationCard entry={s} /></li>)}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
+  </article>
+
+  <CtaBand
+    variant="clay"
+    eyebrow={service.name}
+    title="Un chantier comparable chez vous ?"
+    text="Chaque toiture est différente, mais les méthodes se ressemblent. Décrivez votre situation, nous passons voir avant de chiffrer."
+    primaryLabel="Demander un devis"
+    service={service.slug}
+    trackLabel={`realisation-${entry.id}`}
+  />
+</BaseLayout>
+
+<style>
+  .draftbar {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: var(--sp-3) var(--gutter);
+    background: var(--alert-bg);
+    border-bottom: 1px dashed var(--alert-border);
+    color: var(--alert-ink);
+    font-size: var(--fs-sm);
+    font-weight: 550;
+  }
+  .draftbar code { background: rgba(0,0,0,.06); padding: .05em .35em; border-radius: 4px; }
+
+  .rhero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .rhero__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .rhero__in { grid-template-columns: minmax(0, 1fr); }
+    .rhero__text { order: 2; }
+  }
+  .rhero__tags { margin-top: var(--sp-5); }
+  .rhero__tags a { text-decoration: none; }
+  .rhero h1 { margin-top: var(--sp-4); font-size: var(--fs-3xl); }
+  .rhero__resume { margin-top: var(--sp-4); font-size: var(--fs-lg); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .rfiche {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4);
+    margin-top: var(--sp-6);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border);
+  }
+  .rfiche dt { font-size: var(--fs-xs); font-weight: 640; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+  .rfiche dd { margin: 0.25rem 0 0; font-size: var(--fs-base); font-weight: 600; color: var(--text-strong); }
+
+  .ptv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2rem, 5vw, 4rem); }
+  @media (max-width: 820px) { .ptv { grid-template-columns: minmax(0, 1fr); } }
+  .ptv__text { margin-top: var(--sp-4); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .travaux { display: grid; gap: var(--sp-3); margin-top: var(--sp-4); }
+  .travaux li {
+    display: flex; gap: var(--sp-3); align-items: flex-start;
+    font-size: var(--fs-base); color: var(--zinc-600); line-height: var(--lh-normal);
+  }
+  .travaux li span {
+    font-family: var(--font-display); font-size: 0.85rem; font-weight: 700;
+    color: var(--clay-400); flex: none; padding-top: 0.2em;
+  }
+
+  .mats-used { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid var(--border); }
+  .mats-used h3 { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--sp-4); }
+
+  .ba-wrap { max-width: 62rem; margin-inline: auto; }
+  .recit { margin-inline: auto; }
+
+  .gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 900px) { .gal { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .gal { grid-template-columns: minmax(0, 1fr); } }
+
+  .liens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 760px) { .liens { grid-template-columns: minmax(0, 1fr); } }
+  .liens__card {
+    display: flex; gap: var(--sp-4); align-items: flex-start;
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  }
+  .liens__card:hover { border-color: var(--clay-300); transform: translateY(-2px); box-shadow: var(--shadow-sm); color: var(--text); }
+  .liens__card > :global(svg) { color: var(--accent); flex: none; margin-top: 0.15rem; }
+  .liens__card em { display: block; font-style: normal; font-size: var(--fs-xs); font-weight: 640; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); }
+  .liens__card strong { display: block; margin-top: 0.2rem; font-size: var(--fs-lg); font-family: var(--font-display); font-weight: 600; color: var(--text-strong); }
+  .liens__d { display: block; margin-top: 0.35rem; font-size: var(--fs-sm); color: var(--zinc-600); line-height: 1.5; }
+
+  .simil { margin-top: var(--sp-9); }
+  .simil h2 { margin-bottom: var(--sp-5); }
+  .simil__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 980px) { .simil__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .simil__grid { grid-template-columns: minmax(0, 1fr); } }
+  .simil__grid > li { display: flex; }
+  .simil__grid > li > :global(*) { width: 100%; }
+</style>

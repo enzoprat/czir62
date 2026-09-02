@@ -1,0 +1,152 @@
+---
+/**
+ * PAGE AVIS
+ * Elle affiche les avis réels quand ils existent. Quand ils n'existent pas
+ * encore, elle explique pourquoi nous n'affichons rien — ce qui, en soi, est
+ * un signal de confiance plus fort qu'une note fabriquée.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import GoogleReviews from '@/components/GoogleReviews.astro';
+import GoogleLogo from '@/components/GoogleLogo.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Icon from '@/components/Icon.astro';
+import { google } from '@/config/site';
+import { hasAvis } from '@/data/avis';
+import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Avis clients' }];
+---
+
+<BaseLayout
+  title="Avis clients — CZIR62, couvreur à Béthune"
+  description="Les avis de nos clients sur CZIR62, entreprise de couverture à Béthune. Avis publiés sur Google Business Profile, sans sélection ni retouche."
+  path="/avis/"
+  schema={[
+    webPageSchema({ path: '/avis/', name: 'Avis clients CZIR62', description: 'Avis Google des clients de CZIR62 à Béthune.' }),
+    breadcrumbSchema(crumbs),
+  ]}
+>
+  <section class="av-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Ce que disent nos clients</h1>
+      <p class="lede lede--wide">
+        Nos avis sont publiés sur Google Business Profile. Nous les reprenons ici tels quels,
+        sans en sélectionner certains et sans en reformuler aucun.
+      </p>
+    </div>
+  </section>
+
+  <GoogleReviews variant="light" title="Avis Google" intro={undefined} />
+
+  <!-- ========================================= NOTRE POSITION SUR LES AVIS -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="pos">
+        <div class="pos__text">
+          <p class="eyebrow">Transparence</p>
+          <h2>Pourquoi vous ne verrez jamais de faux avis ici</h2>
+          <div class="prose">
+            <p>
+              Il est techniquement trivial d'afficher « 4,9/5 sur 187 avis » sur un site
+              internet. Aucune vérification n'est faite par le navigateur, et la mention passe
+              parfaitement inaperçue. C'est précisément pour cela qu'elle ne vaut rien.
+            </p>
+            <p>
+              Nous avons fait un choix opposé, inscrit dans le code de ce site : la note et les
+              avis affichés proviennent exclusivement de notre fiche Google. Tant qu'un avis
+              n'existe pas réellement, cette page ne l'invente pas — et le balisage de données
+              structurées envoyé à Google n'annonce aucune note.
+            </p>
+            <p>
+              C'est aussi une question de risque : afficher une note agrégée sans avis
+              correspondants expose à une pénalité manuelle de Google, en plus d'être une
+              pratique commerciale trompeuse.
+            </p>
+          </div>
+        </div>
+
+        <div class="pos__card">
+          <GoogleLogo size={32} />
+          <h3>Consulter la source</h3>
+          <p>
+            Les avis se lisent directement sur notre fiche Google, avec leur date, leur auteur
+            et les éventuelles réponses de l'entreprise.
+          </p>
+          <div class="pos__btns">
+            {google.reviewsUrl ? (
+              <a href={google.reviewsUrl} class="btn" target="_blank" rel="noopener"
+                 data-track="google_reviews_click" data-track-label="page-avis">
+                Voir les avis Google
+              </a>
+            ) : (
+              <p class="pos__todo">
+                <Icon name="alert" size={15} />
+                Notre fiche Google Business Profile est en cours de mise en ligne. Le lien direct
+                vers les avis sera publié ici dès qu'elle sera active.
+                {import.meta.env.DEV && <span> [dev] renseigner <code>google.placeId</code> dans <code>src/config/site.ts</code>.</span>}
+              </p>
+            )}
+            {google.writeReviewUrl && (
+              <a href={google.writeReviewUrl} class="btn btn--ghost" target="_blank" rel="noopener">
+                Laisser un avis
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {!hasAvis() && (
+    <section class="section">
+      <div class="container container--text">
+        <div class="note">
+          <strong>Vous avez fait appel à nous ?</strong> Un avis, même court, aide davantage les
+          personnes qui cherchent un couvreur qu'une page de promesses. Il aide aussi
+          concrètement à faire remonter l'entreprise dans les résultats locaux.
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand
+    variant="soft"
+    eyebrow="Devis gratuit"
+    title="Faire appel à nous"
+    text="Décrivez votre situation. Nous passons voir avant de chiffrer, et le déplacement n'est pas facturé."
+    primaryLabel="Demander un devis"
+    trackLabel="avis-final"
+  />
+</BaseLayout>
+
+<style>
+  .av-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem);
+  }
+  .av-hero h1 { margin-top: var(--sp-5); }
+  .av-hero .lede { margin-top: var(--sp-4); }
+
+  .pos { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 900px) { .pos { grid-template-columns: minmax(0, 1fr); } }
+  .pos__text .prose { margin-top: var(--sp-4); }
+
+  .pos__card {
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
+  @media (max-width: 900px) { .pos__card { position: static; } }
+  .pos__card h3 { margin-top: var(--sp-4); font-size: var(--fs-xl); }
+  .pos__card p { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .pos__btns { display: grid; gap: var(--sp-3); margin-top: var(--sp-5); }
+  .pos__todo { display: flex; gap: 0.5rem; align-items: flex-start; font-size: var(--fs-xs); color: var(--text-muted); }
+  .pos__todo :global(svg) { color: var(--clay-400); flex: none; margin-top: .1rem; }
+  .pos__todo code { background: var(--sand-100); padding: .1em .35em; border-radius: 4px; }
+</style>

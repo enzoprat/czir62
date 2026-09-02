@@ -1,0 +1,96 @@
+---
+/**
+ * Prestations complémentaires.
+ *
+ * En registre à deux colonnes, pas en grille de cartes : sur une page qui en
+ * contient déjà plusieurs, quatre rectangles supplémentaires n'apportent
+ * aucune information — ils diluent. L'ordre vient du champ `related` de la
+ * prestation source : il est éditorial, pas alphabétique.
+ */
+import Icon from '@/components/Icon.astro';
+import { getRelated } from '@/data/services';
+
+interface Props {
+  service: string;
+  title?: string;
+  intro?: string;
+  limit?: number;
+}
+const { service, title = 'Prestations liées', intro, limit = 4 } = Astro.props;
+const related = getRelated(service, limit);
+---
+
+<section class="rel">
+  <div class="head-split">
+    <div>
+      <p class="eyebrow">Aller plus loin</p>
+      <h2>{title}</h2>
+    </div>
+    {intro && <p class="lede">{intro}</p>}
+  </div>
+
+  <ul class="list-clean rel__list">
+    {related.map((s) => (
+      <li class="rel__row">
+        <a href={s.url} class="rel__link">
+          <span class="rel__ico"><Icon name={s.icon} size={22} /></span>
+          <span class="rel__body">
+            <strong>{s.name}</strong>
+            <em>{s.cardText}</em>
+          </span>
+          <span class="rel__go" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .rel__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 780px) { .rel__list { grid-template-columns: minmax(0, 1fr); } }
+  :global(.section--deep) .rel__list, :global(.section--deep) .rel__row { border-color: var(--border-invert); }
+
+  .rel__row { border-bottom: 1px solid var(--border); }
+  .rel__link {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr) 1.4rem;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-5) 0.3rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: padding-left var(--t-base) var(--ease-out), background var(--t-fast);
+  }
+  .rel__link:hover { padding-left: 0.9rem; background: var(--surface-sand); color: var(--text); }
+  :global(.section--deep) .rel__link:hover { background: rgba(255, 255, 255, 0.04); }
+
+  .rel__ico { color: var(--accent); }
+  :global(.section--deep) .rel__ico { color: var(--clay-300); }
+
+  .rel__body strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 650;
+    letter-spacing: -0.022em;
+    color: var(--text-strong);
+  }
+  :global(.section--deep) .rel__body strong { color: #fff; }
+  .rel__body em {
+    display: block;
+    font-style: normal;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 0.15rem;
+  }
+  :global(.section--deep) .rel__body em { color: var(--zinc-400); }
+
+  .rel__go { color: var(--zinc-200); text-align: right; transition: transform var(--t-base) var(--ease-out), color var(--t-base); }
+  .rel__link:hover .rel__go { transform: translateX(4px); color: var(--accent); }
+</style>

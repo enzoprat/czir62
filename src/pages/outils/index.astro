@@ -1,0 +1,117 @@
+---
+/**
+ * PAGE OUTILS
+ * Rassemble les outils interactifs du site. Chacun a une fonction précise :
+ * orienter, qualifier, ou donner un repère de surface. Aucun ne prétend
+ * remplacer une visite, et chacun le dit.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import DiagnosticToiture from '@/components/DiagnosticToiture.astro';
+import SurfaceCalculator from '@/components/SurfaceCalculator.astro';
+import Estimateur from '@/components/Estimateur.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Icon from '@/components/Icon.astro';
+import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Outils' }];
+
+const outils = [
+  { id: '#diagnostic', t: 'Diagnostic rapide', d: "Ce que vous constatez, ce que cela signifie généralement, et ce qu'il est utile de vérifier avant notre passage.", ico: 'search' as const },
+  { id: '#surface', t: 'Estimation de surface', d: "Un ordre de grandeur de la surface développée de votre toiture, à partir de l'emprise au sol et de la pente.", ico: 'ruler' as const },
+  { id: '#estimateur', t: 'Estimateur de projet', d: "Cinq questions pour préparer votre projet, et surtout comprendre ce qui fera varier le montant dans votre cas.", ico: 'check' as const },
+  { id: '/fuite-toiture/#assistant', t: 'Assistant infiltration', d: "Un parcours court pour décrire une fuite en cours. Il se trouve sur la page dédiée aux infiltrations.", ico: 'leak' as const, external: true },
+];
+---
+
+<BaseLayout
+  title="Outils de diagnostic toiture — CZIR62 Béthune"
+  description="Diagnostic rapide, estimation de surface de toiture et préparation de projet : des outils gratuits pour situer votre besoin avant de nous contacter."
+  path="/outils/"
+  schema={[
+    webPageSchema({ path: '/outils/', name: 'Outils de diagnostic', description: 'Outils interactifs pour situer un problème de toiture ou préparer un projet.' }),
+    breadcrumbSchema(crumbs),
+  ]}
+>
+  <section class="ou-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Outils</h1>
+      <p class="lede lede--wide">
+        Trois outils pour situer votre besoin avant même de nous appeler. Aucun ne remplace une
+        visite — et aucun ne vous annoncera un prix sorti d'un algorithme, parce qu'un tel prix
+        n'engagerait personne. Pour les ordres de grandeur, nous publions à part
+        <a href="/prix-toiture/">les fourchettes du marché et ce qui les fait varier</a>.
+      </p>
+
+      <ul class="list-clean ou-nav">
+        {outils.map((o) => (
+          <li>
+            <a href={o.id} class="ou-nav__card">
+              <span class="ou-nav__ico"><Icon name={o.ico} size={22} /></span>
+              <strong>{o.t}</strong>
+              <span>{o.d}</span>
+              {o.external && <em>Sur la page fuite de toiture →</em>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><DiagnosticToiture /></div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container"><SurfaceCalculator /></div>
+  </section>
+
+  <section class="section">
+    <div class="container"><Estimateur /></div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Après les outils"
+    title="Rien ne remplace un passage sur place"
+    text="Ces outils orientent. La visite tranche. Elle est gratuite, et elle n'engage à rien."
+    primaryLabel="Demander un devis"
+    trackLabel="outils-final"
+  />
+</BaseLayout>
+
+<style>
+  .ou-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .ou-hero h1 { margin-top: var(--sp-5); }
+  .ou-hero .lede { margin-top: var(--sp-4); }
+
+  .ou-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); margin-top: var(--sp-7); }
+  @media (max-width: 1000px) { .ou-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .ou-nav { grid-template-columns: minmax(0, 1fr); } }
+
+  .ou-nav__card {
+    display: block;
+    height: 100%;
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: var(--shadow-xs);
+    transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  }
+  .ou-nav__card:hover { border-color: var(--clay-300); transform: translateY(-3px); box-shadow: var(--shadow-md); color: var(--text); }
+  .ou-nav__ico {
+    display: grid; place-items: center; width: 42px; height: 42px;
+    border-radius: var(--r-sm); background: var(--clay-50); border: 1px solid var(--clay-100);
+    color: var(--accent); margin-bottom: var(--sp-4);
+  }
+  .ou-nav__card strong { display: block; font-size: var(--fs-lg); font-family: var(--font-display); font-weight: 600; color: var(--text-strong); }
+  .ou-nav__card > span { display: block; margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: 1.55; }
+  .ou-nav__card em { display: block; margin-top: var(--sp-3); font-style: normal; font-size: var(--fs-xs); font-weight: 600; color: var(--accent-ink); }
+</style>

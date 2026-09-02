@@ -1,0 +1,367 @@
+---
+/**
+ * GUIDE — PRIX DES TRAVAUX DE TOITURE
+ * Intention : « prix renovation toiture au m2 », « tarif couvreur », « prix
+ * demoussage toiture », « combien coute refaire une toiture ». C'est le plus
+ * gros bloc de recherche du metier et le site n'y repondait nulle part.
+ *
+ * REGLE ABSOLUE — aucun chiffre de cette page n'est un tarif CZIR62. Ce sont
+ * des fourchettes publiees par les guides de prix nationaux, citees comme
+ * telles, datees, et encadrees par un avertissement visible. Aucun Offer ni
+ * priceRange dans le JSON-LD : declarer un prix qu'on ne pratique pas serait
+ * un balisage mensonger.
+ *
+ * Ce que la page apporte et que les agregateurs n'ont pas : les sept postes
+ * qui font reellement bouger un devis de couvreur, vus du chantier.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+
+import { telHref, hasPhone, nap } from '@/config/site';
+import { breadcrumbSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const path = '/prix-toiture/';
+const metaTitle = 'Prix des travaux de toiture : fourchettes 2026 | CZIR62';
+const metaDescription =
+  "Réparation, démoussage, zinguerie, réfection : les fourchettes du marché en 2026, la TVA applicable et les sept postes qui font vraiment varier un devis.";
+const crumbs = [{ name: 'Prix des travaux de toiture' }];
+const tel = telHref();
+
+/* Fourchettes 2026 relevees sur les guides de prix nationaux (travaux.com,
+   guide-toiture.com, prix-travaux-m2.com, couvreurdefrance.fr). Volontairement
+   larges : les resserrer donnerait une fausse precision. */
+const grille = [
+  { g: 'Interventions ponctuelles', l: [
+    { t: 'Réparation localisée — quelques tuiles, une rive, un scellement', p: '150 – 450 €', u: 'forfait' },
+    { t: 'Fuite complexe — noue, souche de cheminée, faîtage à reprendre', p: '400 – 1 500 €', u: 'forfait' },
+    { t: 'Main-d’œuvre de couvreur', p: '40 – 70 €', u: 'de l’heure' },
+  ]},
+  { g: 'Entretien', l: [
+    { t: 'Démoussage et nettoyage de couverture', p: '10 – 30 €', u: 'du m²' },
+    { t: 'Gouttière déposée et remplacée — PVC', p: '15 – 30 €', u: 'du mètre' },
+    { t: 'Gouttière déposée et remplacée — zinc', p: '35 – 60 €', u: 'du mètre' },
+  ]},
+  { g: 'Couverture neuve ou refaite', l: [
+    { t: 'Tuile terre cuite ou béton', p: '90 – 160 €', u: 'du m²' },
+    { t: 'Ardoise', p: '140 – 270 €', u: 'du m²' },
+    { t: 'Zinc à joint debout', p: '145 – 305 €', u: 'du m²' },
+    { t: 'Bac acier', p: '60 – 200 €', u: 'du m²' },
+    { t: 'Étanchéité de toiture-terrasse', p: '100 – 230 €', u: 'du m²' },
+  ]},
+  { g: 'Chantier complet', l: [
+    { t: 'Rénovation de toiture, dépose comprise', p: '130 – 260 €', u: 'du m²' },
+    { t: 'Échafaudage', p: '10 – 15 €', u: 'du m² de façade' },
+  ]},
+];
+
+/* Le coeur de la page : ce qui n'est nulle part ailleurs. */
+const postes = [
+  {
+    t: "L'accès, avant tout le reste",
+    d: "C'est le premier poste, et celui que personne n'anticipe. Une maison isolée avec une cour où le camion se gare n'a rien à voir avec une maison de rangée dont le pignon donne directement sur la voie : il faut alors une autorisation d'occupation du domaine public, parfois un arrêté de circulation, et une logistique qui se compte en heures. Dans les centres anciens et les rangées de corons du bassin minier, l'accès pèse plus lourd que le matériau.",
+  },
+  {
+    t: "L'échafaudage se loue à la semaine",
+    d: "Il se monte, se démonte, et se facture pour la durée entière du chantier — pas pour les jours travaillés. Un chantier de trois jours qui immobilise l'échafaudage deux semaines coûte davantage en échafaudage qu'en main-d'œuvre. C'est aussi la ligne qui trahit un devis trop bas : si elle n'y figure pas, soit l'entreprise ne compte pas en installer, soit elle vous l'ajoutera plus tard.",
+  },
+  {
+    t: 'La dépose et la mise en décharge',
+    d: "Retirer l'ancienne couverture, la descendre, la trier et la déposer en déchèterie représente un vrai temps de main-d'œuvre et un coût de traitement. Attention au cas particulier du fibrociment posé avant 1997 : il peut contenir de l'amiante, son retrait relève d'une réglementation spécifique et d'entreprises qualifiées pour cela. Un devis qui l'ignore n'est pas un devis moins cher, c'est un devis faux.",
+  },
+  {
+    t: "Ce qu'on ne voit pas avant d'avoir découvert",
+    d: "Le voligeage, les chevrons, les pannes : personne ne peut les chiffrer au travers de la couverture. Un devis honnête l'écrit, dit ce qui a été supposé, et prévoit comment se traite une pièce trouvée hors d'usage. Un devis qui présente un forfait ferme sur une charpente qu'il n'a pas vue est soit très cher pour se couvrir, soit sur le point de faire un avenant.",
+  },
+  {
+    t: 'La pente, la hauteur, le nombre de niveaux',
+    d: "Une toiture à faible pente se marche ; une toiture raide impose des dispositifs d'accroche et ralentit tout. Le niveau d'égout change les moyens d'accès. Deux toitures de 100 m² peuvent demander un rapport du simple au double en temps de pose pour cette seule raison.",
+  },
+  {
+    t: 'Le nombre de points singuliers',
+    d: "Un versant nu est vite couvert. Ce sont les noues, les souches de cheminée, les lucarnes, les fenêtres de toit, les changements de pente et les raccords contre mur qui prennent le temps : chacun demande un travail de zinguerie particulier. À surface égale, une toiture avec trois lucarnes et deux souches n'est pas la même toiture.",
+  },
+  {
+    t: 'Le matériau, et sa disponibilité',
+    d: "Le prix catalogue ne dit pas tout. Sur une réparation, la vraie question est de retrouver le modèle et la teinte : un modèle arrêté impose de chercher de l'occasion, de prélever ailleurs sur la toiture, ou d'assumer une différence visible. Cette recherche a un coût que la ligne « fourniture » ne montre jamais.",
+  },
+];
+
+const tva = [
+  { taux: '10 %', q: "Entretien, réparation, amélioration ou transformation d'un logement achevé depuis plus de deux ans.", ex: "C'est le taux qui s'applique à la très grande majorité des travaux de couverture : réparation, démoussage, zinguerie, réfection de toiture." },
+  { taux: '5,5 %', q: "Travaux d'amélioration de la qualité énergétique du logement, et travaux indissociablement liés.", ex: "Concerne principalement l'isolation. Une couverture refaite n'y ouvre pas droit du seul fait qu'elle est neuve." },
+  { taux: '20 %', q: "Logement de moins de deux ans, construction neuve — et travaux qui augmentent la surface de plancher de plus de 10 % ou qui procèdent d'une surélévation.", ex: "Une surélévation bascule l'intégralité du chantier au taux normal, y compris les travaux qui auraient été à 10 % pris isolément (article 279-0 bis du CGI)." },
+];
+
+const faqItems = [
+  {
+    q: 'Pourquoi deux devis pour le même chantier peuvent-ils varier du simple au double ?',
+    a: "Parce qu'ils ne décrivent pas le même chantier. L'écart vient presque toujours de quatre lignes : l'échafaudage est-il compté, la dépose et l'évacuation le sont-elles, l'écran sous-toiture est-il prévu, et la zinguerie est-elle chiffrée ou renvoyée à plus tard. Comparez ces quatre postes avant de comparer les totaux : dans neuf cas sur dix, l'explication est là et non dans la marge de l'entreprise.",
+  },
+  {
+    q: 'Un devis de couvreur est-il payant ?',
+    a: "Le devis lui-même doit indiquer s'il est gratuit ou payant : c'est une mention obligatoire. Chez nous il est gratuit, y compris le déplacement pour venir constater, dans toute notre zone d'intervention. Un déplacement d'expertise long ou nécessitant des moyens particuliers se discute avant, jamais après.",
+  },
+  {
+    q: 'Que doit obligatoirement contenir un devis de travaux de toiture ?',
+    a: "La date et la durée de validité, l'identité et le SIRET de l'entreprise, vos coordonnées, le décompte détaillé de chaque prestation en quantité et en prix unitaire, le prix de la main-d'œuvre, les frais de déplacement s'il y en a, le total hors taxes et toutes taxes comprises avec le taux de TVA appliqué, et le caractère gratuit ou payant du devis. S'y ajoute, pour tout professionnel du bâtiment soumis à la garantie décennale, la mention de son assurance : nom de l'assureur, coordonnées, numéro de contrat, activités garanties et zone géographique couverte. Cette dernière obligation date de la loi du 18 juin 2014 et son absence est sanctionnée.",
+  },
+  {
+    q: 'Un prix nettement plus bas que les autres, est-ce une bonne affaire ?',
+    a: "Parfois. Mais avant de conclure, vérifiez trois choses sur le devis le moins cher : la mention d'assurance décennale y figure-t-elle, l'échafaudage est-il compté, et l'évacuation des déchets est-elle prévue. Un devis auquel il manque ces trois lignes n'est pas moins cher : il est incomplet. Le reste apparaîtra en cours de chantier, quand la toiture sera ouverte et que vous n'aurez plus le choix.",
+  },
+  {
+    q: 'Puis-je bénéficier de MaPrimeRénov’ pour ma toiture ?',
+    a: "MaPrimeRénov' finance la rénovation énergétique, c'est-à-dire l'isolation — celle des combles perdus ou d'une toiture-terrasse, par exemple —, pas la couverture en elle-même. Refaire des tuiles n'y ouvre pas droit. Si votre projet comporte un volet isolation, retenez trois conditions : les travaux doivent être réalisés par une entreprise qualifiée RGE, la demande doit être déposée et l'accusé de réception de l'Anah obtenu avant de commencer, et le montant dépend de votre catégorie de revenus. Vérifiez la qualification RGE de l'entreprise que vous retenez avant de signer quoi que ce soit.",
+  },
+  {
+    q: 'Le prix change-t-il selon la commune où j’habite ?',
+    a: "Pas le prix des travaux. Ce qui peut changer, à l'intérieur de notre zone, c'est le temps d'accès pour les interventions courtes et les contraintes de stationnement en centre-ville. Sur un chantier de plusieurs jours, cela ne se voit pas dans le devis. Nous n'appliquons pas de majoration par commune.",
+  },
+];
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDescription}
+  path={path}
+  pageLabel="Prix des travaux"
+  schema={[
+    webPageSchema({ path, name: metaTitle, description: metaDescription, dateModified: '2026-09-02' }),
+    breadcrumbSchema(crumbs),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Guide"
+    title="Combien coûtent des travaux de toiture ?"
+    lede="Une toiture ne se chiffre pas au mètre carré, elle se chiffre au chantier. Voici les fourchettes que publient les guides de prix, ce qu'elles valent réellement, et les sept postes qui expliquent presque tous les écarts entre deux devis."
+    icon="ruler"
+    chips={['Fourchettes du marché', 'TVA applicable', 'Lire un devis']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="hero-prix">
+        Demander un devis gratuit
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-prix">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== AVERTISSEMENT ======= -->
+  <section class="section section--tight">
+    <div class="container">
+      <aside class="warn">
+        <p class="warn__k"><Icon name="alert" size={20} /> À lire avant le tableau</p>
+        <p>
+          <strong>Les montants ci-dessous ne sont pas nos tarifs.</strong> Ce sont les fourchettes
+          publiées en 2026 par les guides de prix nationaux du bâtiment. Nous les reprenons parce
+          qu'elles donnent un ordre de grandeur utile pour préparer un budget — pas parce qu'elles
+          décrivent votre toiture. Nous ne chiffrons jamais un chantier sans être passés le voir,
+          et nous ne communiquons pas de tarif au téléphone : ce serait un chiffre inventé.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================================== GRILLE ============== -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Ordres de grandeur</p>
+          <h2>Ce que publient les guides de prix</h2>
+        </div>
+        <p class="lede">
+          Fourchettes larges et assumées comme telles. Les resserrer donnerait une précision qui
+          n'existe pas : le même mètre carré varie du simple au double selon l'accès et la
+          complexité de la toiture.
+        </p>
+      </div>
+
+      <div class="grille">
+        {grille.map((bloc) => (
+          <div class="grille__bloc">
+            <h3 class="grille__g">{bloc.g}</h3>
+            <table class="tarif">
+              <tbody>
+                {bloc.l.map((r) => (
+                  <tr>
+                    <th scope="row">{r.t}</th>
+                    <td class="tarif__p num">{r.p}</td>
+                    <td class="tarif__u">{r.u}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+
+      <p class="src">
+        Relevé en 2026 sur les guides de prix de travaux.com, guide-toiture.com,
+        prix-travaux-m2.com et couvreurdefrance.fr. Montants TTC, hors situations particulières.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== POSTES ============== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Ce qui fait vraiment le prix</p>
+        <h2>Sept postes que le prix au mètre carré ne dit pas</h2>
+        <p class="lede lede--wide">
+          Un devis de couvreur est rarement dominé par le prix du matériau. Il est dominé par
+          l'accès, le temps et ce qu'on découvre en ouvrant. C'est pour cela qu'un chiffre donné
+          au téléphone ne vaut rien.
+        </p>
+      </div>
+
+      <ol class="registre">
+        {postes.map((p, i) => (
+          <li class="registre__item">
+            <span class="registre__num num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="registre__body">
+              <h3>{p.t}</h3>
+              <p>{p.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================== TVA ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Fiscalité</p>
+          <h2>Le taux de TVA change le budget de 10 %</h2>
+        </div>
+        <p class="lede">
+          C'est la seule « aide » qui s'applique automatiquement à des travaux de couverture, sans
+          dossier ni condition de revenus. L'entreprise applique le taux directement sur le devis.
+        </p>
+      </div>
+
+      <div class="tva">
+        {tva.map((t) => (
+          <article class="tva__item">
+            <p class="tva__taux num">{t.taux}</p>
+            <p class="tva__q">{t.q}</p>
+            <p class="tva__ex">{t.ex}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="src">
+        Le bénéfice du taux réduit suppose que vous attestiez de l'ancienneté du logement et de la
+        nature des travaux. C'est l'entreprise qui applique le taux : vous n'avez aucune démarche à
+        engager auprès de l'administration.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== PARCOURS ============ -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Prochaine étape</p>
+        <h2>Passer de la fourchette au chiffre</h2>
+        <p class="lede lede--wide">
+          La seule façon d'obtenir un montant qui veut dire quelque chose est de faire regarder la
+          toiture. Selon ce que vous constatez, le point d'entrée n'est pas le même.
+        </p>
+      </div>
+
+      <ul class="list-clean route">
+        <li><a href="/fuite-toiture/"><strong>Une trace d'eau, une auréole au plafond</strong><em>Recherche de fuite puis réparation</em></a></li>
+        <li><a href="/reparation-toiture/"><strong>Des tuiles déplacées, un faîtage qui bouge</strong><em>Réparation ciblée</em></a></li>
+        <li><a href="/demoussage-toiture/"><strong>Des versants chargés en mousse</strong><em>Démoussage — s'il se justifie</em></a></li>
+        <li><a href="/zinguerie/"><strong>Une gouttière qui déborde ou une trace en façade</strong><em>Zinguerie et évacuations</em></a></li>
+        <li><a href="/renovation-toiture/"><strong>Une toiture arrivée en fin de vie</strong><em>Rénovation complète ou partielle</em></a></li>
+        <li><a href="/outils/"><strong>Vous ne savez pas encore où vous en êtes</strong><em>Diagnostic et estimation de surface</em></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <Faq items={faqItems} title="Questions sur les prix et les devis" />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Devis"
+    title="Un chiffre pour votre toiture, pas pour une moyenne"
+    text="Décrivez ce que vous constatez et joignez une photo si vous en avez une. Nous passons voir, puis vous recevez un devis détaillé, ligne par ligne."
+    primaryLabel="Demander un devis gratuit"
+    trackLabel="prix-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------- avertissement */
+  .warn {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--clay-500);
+    background: var(--surface-sand);
+    padding: var(--sp-6) var(--sp-7);
+  }
+  .warn__k {
+    display: flex; align-items: center; gap: var(--sp-3);
+    font-weight: 600; color: var(--clay-700); margin-bottom: var(--sp-4);
+  }
+  .warn p:last-child { color: var(--text-muted); max-width: 68ch; }
+
+  /* --------------------------------------------------------------- table */
+  .grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-8) var(--sp-9); margin-top: var(--sp-8); }
+  @media (max-width: 900px) { .grille { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
+
+  .grille__g {
+    font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted); padding-bottom: var(--sp-3);
+    border-bottom: 2px solid var(--clay-400);
+  }
+  .tarif { width: 100%; border-collapse: collapse; }
+  .tarif th {
+    text-align: left; font-weight: 400; padding: var(--sp-4) var(--sp-4) var(--sp-4) 0;
+    border-bottom: 1px solid var(--rule); line-height: 1.4;
+  }
+  .tarif td { padding: var(--sp-4) 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; white-space: nowrap; }
+  .tarif__p { font-weight: 650; text-align: right; padding-right: var(--sp-3) !important; }
+  .tarif__u { font-size: var(--fs-xs); color: var(--text-muted); width: 1%; }
+
+  .src { margin-top: var(--sp-7); font-size: var(--fs-xs); color: var(--text-muted); max-width: 74ch; }
+
+  /* ----------------------------------------------------------------- tva */
+  .tva { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-7); margin-top: var(--sp-8); }
+  @media (max-width: 860px) { .tva { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+  .tva__item { padding-top: var(--sp-5); border-top: 1px solid var(--rule); }
+  .tva__taux { font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: 700; letter-spacing: -0.03em; color: var(--clay-600); }
+  .tva__q { margin-top: var(--sp-3); font-weight: 550; line-height: 1.45; }
+  .tva__ex { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--text-muted); }
+
+  /* -------------------------------------------------------------- routes */
+  .route { margin-top: var(--sp-8); border-top: 1px solid rgba(255,255,255,.14); }
+  .route a {
+    display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-5);
+    padding: var(--sp-5) 0; border-bottom: 1px solid rgba(255,255,255,.14);
+    color: inherit; text-decoration: none; transition: padding-left .18s ease;
+  }
+  .route a:hover, .route a:focus-visible { padding-left: var(--sp-3); }
+  .route em { font-style: normal; font-size: var(--fs-sm); opacity: .62; text-align: right; flex: none; }
+  @media (max-width: 640px) {
+    .route a { flex-direction: column; gap: var(--sp-2); }
+    .route em { text-align: left; }
+  }
+</style>

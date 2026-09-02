@@ -1,0 +1,430 @@
+---
+/**
+ * PAGE REPARATION DE TOITURE
+ * Intention : désordre localisé, souvent récent, à traiter vite. Le visiteur
+ * ne prépare pas un projet : il a constaté quelque chose et veut savoir si
+ * c'est réparable, à quel prix d'ordre de grandeur, et sous quel délai.
+ *
+ * Structure propre : catalogue des réparations réellement courantes, arbitrage
+ * réparer/remplacer, section « après un coup de vent » (le déclencheur numéro
+ * un dans le secteur), et une section « ce qui ne se répare pas » qui assume
+ * de dire non.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('reparation-toiture');
+const tel = telHref();
+const realisations = await realisationsForService('reparation-toiture', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Réparation de toiture' }];
+
+const reparations = [
+  {
+    t: 'Tuiles cassées ou déplacées',
+    icon: 'repair' as const,
+    d: "Le motif d'appel le plus fréquent. On remplace les éléments concernés et on vérifie le rang au-dessus : quand le vent a soulevé une tuile, il en a souvent décalé plusieurs sans qu'elles soient tombées.",
+  },
+  {
+    t: 'Faîtage descellé',
+    icon: 'roof' as const,
+    d: "Les faîtières scellées au mortier se fissurent avec les cycles de gel. La reprise se fait aujourd'hui en pose à sec ventilée : plus durable, et cela laisse la sous-face respirer.",
+  },
+  {
+    t: 'Solin fissuré',
+    icon: 'chimney' as const,
+    d: "La jonction entre une souche de cheminée ou un mur et la couverture. C'est un point de fuite classique : la reprise du solin règle souvent une infiltration qu'on croyait plus grave.",
+  },
+  {
+    t: 'Rive abîmée',
+    icon: 'cladding' as const,
+    d: "Sur un pignon exposé, les tuiles de rive sont les premières à se déchausser. On les reprend avant que le vent ne s'engouffre sous le rang suivant.",
+  },
+  {
+    t: 'Raccord de fenêtre de toit',
+    icon: 'velux' as const,
+    d: "Le raccord d'étanchéité périphérique se dépose et se remplace sans toucher à la fenêtre elle-même, dans la plupart des cas.",
+  },
+  {
+    t: 'Noue encombrée ou percée',
+    icon: 'gutter' as const,
+    d: "Elle rassemble l'eau de deux versants : c'est l'endroit où le débit est le plus fort. Un nettoyage ou une reprise localisée évite un débordement sous la couverture.",
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Faut-il un échafaudage pour remplacer deux tuiles ?',
+    a: "Pas toujours, mais souvent plus qu'on ne l'imagine. Cela dépend de la hauteur, de la pente et de l'accès. Une intervention en bas de rampant sur une maison de plain-pied peut se traiter autrement ; une reprise de faîtage sur un R+1 exige un moyen d'accès sécurisé. Nous vous le disons franchement : c'est ce poste, et non la tuile, qui pèse sur le montant d'une petite réparation.",
+  },
+  {
+    q: 'Ma tuile n’existe plus, que faites-vous ?',
+    a: "Trois pistes, dans cet ordre. D'abord chercher le modèle en réemploi ou en fin de série. Ensuite, prélever des tuiles sur une partie peu visible de la toiture — un versant arrière, un appentis — pour les remonter sur la façade et poser le modèle approchant à l'arrière. Enfin, si l'écart est trop visible, envisager la reprise d'un versant complet. Nous vous montrons les options avant de décider.",
+  },
+  {
+    q: 'Combien de temps faut-il pour intervenir ?',
+    a: "Cela dépend des chantiers en cours et de la nature du désordre. Une infiltration active passe avant une reprise de rive. Nous ne promettons pas de délai automatique — quand une entreprise annonce systématiquement une intervention le lendemain, c'est rarement tenu. En revanche, nous vous donnons une date réaliste au téléphone, et nous la respectons.",
+  },
+  {
+    q: 'Mon assurance peut-elle prendre en charge les dégâts ?',
+    a: "Après un événement climatique — tempête, grêle, poids de la neige —, la garantie de votre contrat multirisque habitation peut jouer, sous réserve des conditions et de la franchise prévues. Les délais de déclaration sont généralement courts, souvent de l'ordre de cinq jours ouvrés : consultez votre contrat sans attendre. Nous pouvons fournir un devis détaillé et des photos du désordre pour appuyer votre déclaration ; la décision appartient ensuite à votre assureur.",
+  },
+  {
+    q: 'Peut-on réparer par temps de pluie ?',
+    a: "Pour une mise en sécurité provisoire, parfois oui, si les conditions le permettent en toute sécurité. Pour une réparation définitive, non : on ne referme pas une toiture sur un support mouillé, et une couverture humide est glissante. Mieux vaut une bâche posée correctement qu'une réparation faite dans de mauvaises conditions.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/reparation-toiture-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Réparation de toiture"
+    title="Réparation de toiture à Béthune"
+    lede="Une tuile tombée, un faîtage qui se descelle, un solin fissuré : la plupart des désordres se traitent sur place, sans toucher au reste de la toiture. Encore faut-il ne pas laisser passer l'hiver."
+    photo="/images/services/reparation-toiture-czir62.jpg"
+    photoAlt="Couvreur CZIR62 découpant une tuile pour un remplacement ciblé"
+    photoNeed="Photo d'une réparation ciblée : main du couvreur remettant une tuile, ou zone de rive en cours de reprise."
+    icon="repair"
+    chips={['Intervention ciblée', 'Constat avant travaux', 'Bassin béthunois']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=reparation-toiture" class="btn btn--lg" data-track="quote_start" data-track-label="hero-reparation">
+        Décrire le problème
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-reparation">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== CE QU'ON REPARE ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Interventions courantes</p>
+        <h2>Ce que nous réparons le plus souvent</h2>
+        <p class="lede lede--wide">
+          Six situations reviennent en permanence sur le bâti du secteur. Aucune n'exige de
+          refaire la toiture — à condition d'intervenir avant que l'eau ne s'installe.
+        </p>
+      </div>
+
+      <div class="rep">
+        {reparations.map((r) => (
+          <article class="rep__card reveal">
+            <span class="rep__ico"><Icon name={r.icon} size={22} /></span>
+            <h3>{r.t}</h3>
+            <p>{r.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ REPARER OU REFAIRE ==== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split split--wide-media">
+        <div>
+          <p class="eyebrow">Arbitrage</p>
+          <h2>Réparer, ou commencer à envisager autre chose ?</h2>
+          <p class="lede">
+            C'est la question qu'on nous pose le plus. Trois critères permettent de trancher,
+            et aucun d'eux n'est l'âge de la toiture.
+          </p>
+
+          <ol class="list-clean crit">
+            <li>
+              <span class="crit__n">1</span>
+              <div>
+                <h3>Le désordre est-il isolé ?</h3>
+                <p>
+                  Un point unique, identifiable, sans équivalent ailleurs sur la toiture :
+                  la réparation est la bonne réponse. Trois désordres indépendants en deux ans
+                  disent autre chose.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="crit__n">2</span>
+              <div>
+                <h3>Le matériau environnant est-il sain ?</h3>
+                <p>
+                  Si les tuiles voisines s'effritent ou se cassent quand on les manipule,
+                  réparer revient à poser du neuf au milieu de ce qui va lâcher. Le résultat
+                  ne tiendra pas.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="crit__n">3</span>
+              <div>
+                <h3>Le coût d’accès est-il proportionné ?</h3>
+                <p>
+                  Sur un chantier nécessitant un échafaudage complet, l'accès pèse souvent plus
+                  que la réparation. Il devient alors logique de traiter en une fois tout ce qui
+                  se voit depuis là-haut.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/reparation-toiture-constat-czir62.jpg"
+          alt="Couvreur CZIR62 au travail sur une toiture en tuiles"
+          need="Photo d'un désordre localisé bien lisible : tuiles décalées, faîtage fissuré ou solin ouvert."
+          ratio="3 / 4"
+          icon="search"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================== COUP DE VENT ======= -->
+  <section class="section vent">
+    <div class="container">
+      <div class="vent__box">
+        <div class="vent__text">
+          <p class="eyebrow">Après un épisode venteux</p>
+          <h2>Ce qu’il faut vérifier dans les jours qui suivent</h2>
+          <p class="vent__lede">
+            Le bassin béthunois reçoit régulièrement des coups de vent d'ouest. Les dégâts ne
+            sont pas toujours spectaculaires : ce sont souvent quelques tuiles décalées qui ne
+            se manifesteront qu'à la première pluie battante.
+          </p>
+
+          <div class="vent__cols">
+            <div>
+              <h3>Depuis le sol</h3>
+              <ul class="list-signs">
+                <li>Des fragments de tuile au pied des murs ou dans les gouttières.</li>
+                <li>Une ligne de faîtage qui n'est plus régulière.</li>
+                <li>Des tuiles de rive visiblement décalées sur le pignon.</li>
+                <li>Une gouttière descendue d'un côté, ou un crochet arraché.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Dans les combles</h3>
+              <ul class="list-signs">
+                <li>Un point de lumière visible là où il n'y en avait pas.</li>
+                <li>Des traces sombres et fraîches sur un chevron.</li>
+                <li>De l'isolant tassé ou humide en un endroit précis.</li>
+                <li>Une odeur d'humidité récente et localisée.</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="note note--warn vent__note">
+            <strong>Attention au démarchage.</strong> Après un épisode venteux, des propositions
+            sont parfois faites directement dans la rue, avec signature immédiate. Un contrat
+            signé à domicile ouvre un droit de rétractation de 14 jours, et rien ne vous oblige
+            à décider sur-le-champ.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ CE QUI NE SE REPARE PAS -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="nono">
+        <div class="nono__head">
+          <p class="eyebrow">Franchise</p>
+          <h2>Ce que nous ne réparons pas</h2>
+          <p class="lede lede--wide">
+            Accepter une réparation qui ne tiendra pas ne rend service à personne. Voici les cas
+            où nous le disons.
+          </p>
+        </div>
+
+        <ul class="list-clean nono__list">
+          <li>
+            <h3>Une couverture globalement gélive</h3>
+            <p>Quand les tuiles s'effritent sur plusieurs versants, chaque intervention en abîme d'autres. Nous orientons vers une <a href="/renovation-toiture/">reprise d'ensemble</a>.</p>
+          </li>
+          <li>
+            <h3>Une toiture sous sa pente minimale</h3>
+            <p>Un matériau posé sous la pente pour laquelle il est conçu prendra l'eau, quelle que soit la qualité de la réparation. Il faut changer de solution technique, pas réparer.</p>
+          </li>
+          <li>
+            <h3>Une charpente qui a cédé</h3>
+            <p>Remettre des tuiles sur une structure déformée revient à masquer le problème. La <a href="/charpente/">reprise de charpente</a> passe avant la couverture.</p>
+          </li>
+          <li>
+            <h3>Une réparation par-dessus une réparation</h3>
+            <p>Empiler les rustines finit toujours par coûter plus cher que d'ouvrir la zone et de la traiter proprement une bonne fois.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Réparations réalisées dans le secteur"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur la réparation de toiture" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks service="reparation-toiture" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="reparation-toiture"
+        title="Selon ce que révèle le constat"
+        intro="Une réparation commence souvent par une recherche d'origine, et débouche parfois sur autre chose."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="soft"
+    eyebrow="Réparation"
+    title="Faire constater un désordre"
+    text="Décrivez ce que vous avez vu, ajoutez une photo si vous en avez une. Nous vous rappelons pour convenir d'un passage."
+    primaryLabel="Décrire le problème"
+    service="reparation-toiture"
+    trackLabel="reparation-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ── interventions courantes ─────────────────────────────────────────
+     Registre à deux colonnes : ce sont des situations, pas des produits. */
+  .rep {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 820px) { .rep { grid-template-columns: minmax(0, 1fr); } }
+
+  .rep__card {
+    display: grid;
+    grid-template-columns: 2.8rem minmax(0, 1fr);
+    gap: var(--sp-4);
+    align-items: start;
+    padding: var(--sp-5) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rep__ico {
+    display: grid; place-items: center;
+    width: 38px; height: 38px;
+    border: 1px solid var(--clay-200);
+    background: var(--clay-50);
+    color: var(--accent);
+  }
+  .rep__card h3 {
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 650;
+    letter-spacing: -0.022em;
+  }
+  .rep__card p {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--zinc-600);
+    line-height: var(--lh-relaxed);
+  }
+
+  /* ------------------------------------------------------------ criteres */
+  .crit { display: grid; gap: var(--sp-5); margin-top: var(--sp-6); }
+  .crit li { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .crit__n {
+    display: grid; place-items: center;
+    width: 32px; height: 32px; flex: none;
+    border-radius: 50%;
+    border: 2px solid var(--clay-400);
+    color: var(--clay-700);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .crit h3 { font-size: var(--fs-base); font-family: var(--font-sans); font-weight: 650; }
+  .crit p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  /* ---------------------------------------------------------- coup de vent */
+  .vent__box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    box-shadow: var(--shadow-sm);
+  }
+  .vent__lede { margin-top: var(--sp-4); color: var(--zinc-600); line-height: var(--lh-relaxed); max-width: 62ch; }
+
+  .vent__cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-6);
+    margin-top: var(--sp-6);
+  }
+  @media (max-width: 720px) { .vent__cols { grid-template-columns: minmax(0, 1fr); } }
+  .vent__cols h3 {
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: var(--sp-4);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .vent__note { margin-top: var(--sp-6); }
+
+  /* -------------------------------------------------------------- franchise */
+  .nono__head { max-width: 46rem; margin-bottom: var(--sp-6); }
+  .nono__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 820px) { .nono__list { grid-template-columns: minmax(0, 1fr); } }
+
+  .nono__list li {
+    padding: var(--sp-5);
+    background: rgba(255, 255, 255, 0.04);
+    border-left: 3px solid var(--clay-500);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+  .nono__list h3 { color: #fff; font-size: var(--fs-base); font-family: var(--font-sans); font-weight: 650; }
+  .nono__list p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+</style>

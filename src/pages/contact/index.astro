@@ -1,0 +1,269 @@
+---
+/**
+ * PAGE CONTACT
+ * Deuxième bloc NAP de référence du site, strictement identique au footer et
+ * au JSON-LD. Elle sert aussi de relais vers la fiche Google : itinéraire,
+ * avis, appel — les mêmes actions que sur la fiche, au même endroit.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import QuoteForm from '@/components/QuoteForm.astro';
+import Icon from '@/components/Icon.astro';
+import { nap, google, socials, telHref, hasPhone, hasEmail, hasAddress, hasHours, hasGeo, addressOneLine, site } from '@/config/site';
+import { breadcrumbSchema, webPageSchema, placeSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Contact' }];
+const tel = telHref();
+
+const JOURS: Record<string, string> = {
+  Monday: 'Lundi', Tuesday: 'Mardi', Wednesday: 'Mercredi',
+  Thursday: 'Jeudi', Friday: 'Vendredi', Saturday: 'Samedi', Sunday: 'Dimanche',
+};
+const fmtJours = (d: string[]) =>
+  d.length > 1 ? `${JOURS[d[0]] ?? d[0]} – ${JOURS[d[d.length - 1]] ?? d[d.length - 1]}` : (JOURS[d[0]] ?? d[0]);
+
+const canaux = [
+  { t: 'Une infiltration en cours', d: "Appelez. Un formulaire attend d'être lu ; un téléphone sonne tout de suite.", ico: 'phone' as const, urgent: true },
+  { t: 'Un projet à préparer', d: "Le formulaire est plus adapté : vous prenez le temps de décrire, nous arrivons préparés.", ico: 'check' as const },
+  { t: 'Une question technique', d: "Par téléphone ou par e-mail. Nous répondons même quand la réponse est « ce n'est pas nécessaire ».", ico: 'search' as const },
+];
+---
+
+<BaseLayout
+  title="Contact — CZIR62, couvreur à Béthune"
+  description="Contacter CZIR62, entreprise générale de couverture à Béthune : téléphone, adresse du local, itinéraire et demande de devis en ligne."
+  path="/contact/"
+  schema={[
+    webPageSchema({ path: '/contact/', name: 'Contact CZIR62', description: 'Coordonnées et accès au local CZIR62 à Béthune.' }),
+    breadcrumbSchema(crumbs),
+    placeSchema('/images/local/devanture-czir62-bethune.jpg'),
+  ]}
+>
+  <section class="ct-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Nous contacter</h1>
+      <p class="lede lede--wide">
+        Notre local se trouve à Béthune. Vous pouvez nous appeler, écrire, ou décrire
+        votre situation en ligne — nous vous rappelons dans tous les cas.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================== COORDONNEES ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="ct-grid">
+        <div class="ct-nap">
+          <h2 class="ct-nap__title">{nap.name}</h2>
+
+          <address class="ct-nap__list">
+            {hasAddress() ? (
+              <p><Icon name="pin" size={19} /><span><strong>Adresse</strong>{addressOneLine()}</span></p>
+            ) : import.meta.env.DEV ? (
+              <p class="ct-nap__todo"><Icon name="pin" size={19} /><span><strong>Adresse</strong>À renseigner dans <code>src/config/site.ts</code></span></p>
+            ) : null}
+
+            {hasPhone() && tel ? (
+              <p><Icon name="phone" size={19} /><span><strong>Téléphone</strong><a href={tel} data-track-zone="page-contact">{nap.phone}</a></span></p>
+            ) : (
+              <p><Icon name="phone" size={19} /><span><strong>Téléphone</strong>
+                <a href="/devis/" data-track="quote_start" data-track-label="contact-rappel">Demander à être rappelé</a>
+              </span></p>
+            )}
+
+            {hasEmail() && (
+              <p><Icon name="mail" size={19} /><span><strong>E-mail</strong><a href={`mailto:${nap.email}`}>{nap.email}</a></span></p>
+            )}
+
+            {hasHours() && (
+              <p><Icon name="clock" size={19} /><span><strong>Horaires</strong>
+                {nap.openingHours.map((h) => <span class="ct-hours">{fmtJours(h.days)} : {h.opens} – {h.closes}</span>)}
+              </span></p>
+            )}
+          </address>
+
+          <div class="ct-actions">
+            {google.directionsUrl && (
+              <a href={google.directionsUrl} class="btn btn--ghost" target="_blank" rel="noopener"
+                 data-track="directions_click" data-track-label="page-contact">
+                <Icon name="route" size={18} /> Itinéraire
+              </a>
+            )}
+            {google.reviewsUrl && (
+              <a href={google.reviewsUrl} class="btn btn--ghost" target="_blank" rel="noopener"
+                 data-track="google_reviews_click" data-track-label="page-contact">
+                <Icon name="star" size={18} /> Voir les avis
+              </a>
+            )}
+            {google.writeReviewUrl && (
+              <a href={google.writeReviewUrl} class="btn btn--ghost" target="_blank" rel="noopener">
+                <Icon name="quote" size={18} /> Laisser un avis
+              </a>
+            )}
+            {hasPhone() && tel && (
+              <a href={tel} class="btn" data-track-zone="page-contact-cta">
+                <Icon name="phone" size={18} /> Appeler
+              </a>
+            )}
+          </div>
+
+          {socials.length > 0 && (
+            <ul class="list-clean ct-social">
+              {socials.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.name}</a></li>)}
+            </ul>
+          )}
+
+          {!hasAddress() && (
+            <p class="note note--warn ct-todo">
+              <strong>Coordonnées à compléter.</strong> Adresse, téléphone, e-mail, horaires et
+              identifiant de fiche Google se renseignent dans un seul fichier :
+              <code>src/config/site.ts</code>. Ils se propagent ensuite à l'en-tête, au pied de
+              page, aux données structurées et à toutes les pages locales.
+            </p>
+          )}
+        </div>
+
+        <div class="ct-local">
+          <PhotoSlot
+            src="/images/local/devanture-czir62-bethune.jpg"
+            alt="Devanture du local CZIR62 à Béthune"
+            need="Photo de la devanture du local, prise de face, en journée, enseigne CZIR62 lisible."
+            ratio="4 / 3"
+            icon="storefront"
+            caption="Notre local à Béthune."
+            sizes="(max-width: 900px) 100vw, 48vw"
+          />
+
+          {hasGeo() ? (
+            <iframe
+              class="ct-map"
+              title={`Carte de localisation de ${site.brand} à ${nap.address.city}`}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${nap.geo.lng! - 0.008},${nap.geo.lat! - 0.004},${nap.geo.lng! + 0.008},${nap.geo.lat! + 0.004}&layer=mapnik&marker=${nap.geo.lat},${nap.geo.lng}`}
+            ></iframe>
+          ) : (
+            <div class="ct-map-todo">
+              <Icon name="pin" size={22} />
+              <p>
+                Notre local se trouve <strong>{addressOneLine()}</strong>. Le bouton d'itinéraire
+                ci-dessus ouvre directement la navigation depuis votre position.
+              </p>
+              {import.meta.env.DEV && (
+                <p><code>geo.lat</code> / <code>geo.lng</code> à renseigner dans <code>src/config/site.ts</code> pour afficher la carte.</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== CANAUX ========= -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Le bon canal</p>
+        <h2>Comment nous joindre selon votre situation</h2>
+      </div>
+      <div class="canaux">
+        {canaux.map((c) => (
+          <article class:list={['canaux__card', c.urgent && 'canaux__card--urgent']}>
+            <span class="canaux__ico"><Icon name={c.ico} size={22} /></span>
+            <h3>{c.t}</h3>
+            <p>{c.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--text">
+      <QuoteForm
+        id="formulaire"
+        origin="contact"
+        title="Décrire votre situation"
+        intro="Le formulaire arrive directement chez nous, avec un numéro de référence que vous conservez."
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ct-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .ct-hero h1 { margin-top: var(--sp-5); }
+  .ct-hero .lede { margin-top: var(--sp-4); }
+
+  .ct-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 900px) { .ct-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .ct-nap__title { font-size: var(--fs-2xl); margin-bottom: var(--sp-5); }
+  .ct-nap__list { font-style: normal; display: grid; gap: var(--sp-4); }
+  .ct-nap__list p { display: flex; gap: var(--sp-3); align-items: flex-start; }
+  .ct-nap__list :global(svg) { color: var(--accent); flex: none; margin-top: 0.15rem; }
+  .ct-nap__list strong {
+    display: block;
+    font-size: var(--fs-xs);
+    font-weight: 640;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+  }
+  .ct-nap__list span { font-size: var(--fs-base); color: var(--text-strong); font-weight: 550; }
+  .ct-nap__list a { color: var(--accent-ink); text-decoration: none; font-weight: 650; }
+  .ct-hours { display: block; font-weight: 500; }
+  .ct-nap__todo span { color: var(--text-muted); font-weight: 400; }
+  .ct-nap__todo code { background: var(--sand-100); padding: .1em .35em; border-radius: 4px; font-size: .85em; }
+
+  .ct-actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-6); }
+  .ct-social { display: flex; gap: var(--sp-4); margin-top: var(--sp-5); font-size: var(--fs-sm); }
+  .ct-todo { margin-top: var(--sp-6); }
+  .ct-todo code { background: rgba(0,0,0,.06); padding: .1em .35em; border-radius: 4px; font-size: .85em; }
+
+  .ct-local { display: grid; gap: var(--sp-4); }
+  .ct-map {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: var(--sand-100);
+  }
+  .ct-map-todo {
+    display: flex; gap: var(--sp-3); align-items: flex-start;
+    padding: var(--sp-5);
+    background: var(--surface-sunk);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-lg);
+  }
+  .ct-map-todo :global(svg) { color: var(--clay-400); flex: none; }
+  .ct-map-todo p { font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .ct-map-todo code { background: var(--sand-200); padding: .1em .35em; border-radius: 4px; font-size: .9em; }
+
+  .canaux { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 880px) { .canaux { grid-template-columns: minmax(0, 1fr); } }
+  .canaux__card {
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  .canaux__card--urgent { border-color: var(--clay-300); background: var(--clay-50); }
+  .canaux__ico {
+    display: grid; place-items: center;
+    width: 42px; height: 42px;
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    border: 1px solid var(--clay-200);
+    color: var(--accent);
+    margin-bottom: var(--sp-4);
+  }
+  .canaux__card h3 { font-size: var(--fs-lg); }
+  .canaux__card p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+</style>

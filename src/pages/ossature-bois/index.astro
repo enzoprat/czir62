@@ -1,0 +1,251 @@
+---
+/**
+ * PAGE OSSATURE BOIS
+ * Intention : construction. Le visiteur a un projet (extension, annexe,
+ * garage) et compare des modes constructifs. Il veut savoir si c'est solide,
+ * combien de temps ça prend, et jusqu'où va l'entreprise.
+ *
+ * Structure propre : usages, composition d'un mur ossature couche par couche,
+ * comparaison honnête avec le maçonné, étapes du chantier, et une section
+ * explicite sur les limites de notre lot — nous ne prétendons pas livrer
+ * une extension clés en main tous corps d'état.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('ossature-bois');
+const tel = telHref();
+const realisations = await realisationsForService('ossature-bois', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Ossature bois' }];
+
+const usages = [
+  { t: 'Extension de maison', d: "Gagner une pièce de vie, une chambre ou un bureau en prolongeant le volume existant. Le raccordement à la maison est le point technique du projet." },
+  { t: 'Annexe indépendante', d: "Atelier, bureau de jardin, pool house. Volume autonome, souvent posé sur plots ou sur dalle légère." },
+  { t: 'Garage ou carport', d: "Structure simple, mise hors d'eau rapide, finition extérieure au choix." },
+  { t: 'Abri et appentis', d: "Adossé à l'existant, avec la même exigence de raccordement et d'écoulement des eaux que pour une extension." },
+];
+
+const couches = [
+  { t: 'Lisse basse', d: "La pièce horizontale posée sur le support, isolée de l'humidité du sol par une barrière d'étanchéité. C'est le premier point de vigilance de toute ossature." },
+  { t: 'Montants verticaux', d: "Les pièces porteuses, espacées régulièrement. Leur section détermine l'épaisseur d'isolant que le mur peut recevoir." },
+  { t: 'Contreventement', d: "Panneaux ou diagonales qui empêchent la structure de se déformer en parallélogramme sous l'effet du vent. Invisible une fois fini, indispensable." },
+  { t: 'Isolation', d: "Elle se loge entre les montants, dans l'épaisseur même du mur. C'est l'un des intérêts du procédé : le mur porte et isole en même temps." },
+  { t: 'Pare-vapeur', d: "Côté intérieur. Il empêche l'humidité produite dans la maison de migrer dans l'isolant. Sa continuité est déterminante — une déchirure suffit à créer un point de condensation." },
+  { t: 'Pare-pluie et bardage', d: "Côté extérieur, avec une lame d'air ventilée entre les deux. Le principe est le même que pour un bardage rapporté sur maçonnerie." },
+];
+
+const faqItems = [
+  {
+    q: 'Une extension en ossature bois est-elle aussi solide qu’en maçonnerie ?',
+    a: "Oui, dès lors qu'elle est correctement dimensionnée et contreventée. Ce sont deux modes constructifs différents, pas un bon et un mauvais. Le bois travaille en résistance mécanique là où la maçonnerie travaille en masse. Ce qui fait la durabilité d'une ossature, c'est avant tout la gestion de l'humidité : lisse basse protégée, pare-vapeur continu, lame d'air ventilée.",
+  },
+  {
+    q: 'Faut-il des fondations ?',
+    a: "Oui, mais généralement plus légères qu'en maçonnerie, puisque la structure pèse moins. Selon la nature du sol et la taille du projet, cela va des plots à une dalle sur fondations. Le sol du secteur n'est pas homogène : c'est un point qui se tranche sur place, et non depuis un catalogue.",
+  },
+  {
+    q: 'Quelle épaisseur fait un mur en ossature bois ?',
+    a: "Elle dépend de la section des montants et du complexe retenu. L'intérêt du procédé est que l'isolation se loge dans l'épaisseur porteuse : à performance équivalente, le mur fini est souvent plus mince qu'une solution maçonnée doublée. Sur une petite extension, quelques centimètres gagnés sur chaque mur représentent une surface intérieure non négligeable.",
+  },
+  {
+    q: 'Peut-on enduire une ossature bois pour qu’elle ressemble à la maison ?',
+    a: "Oui. Le bardage n'est pas la seule finition possible : il existe des systèmes d'enduit sur support adapté qui permettent de retrouver l'aspect de la maçonnerie existante. C'est un choix à faire tôt, car il conditionne la composition du mur — on ne remplace pas un bardage par un enduit une fois la structure montée.",
+  },
+  {
+    q: 'Faut-il un permis de construire ?',
+    a: "Cela dépend de la surface créée et du PLU de votre commune. En résumé : les très petites surfaces peuvent être dispensées de formalité, les surfaces intermédiaires relèvent d'une déclaration préalable, au-delà c'est un permis de construire. En zone urbaine couverte par un PLU, le seuil de la déclaration préalable est relevé. Et si la surface totale de la maison dépasse 150 m² après travaux, le recours à un architecte devient obligatoire. Ces règles se vérifient en mairie avant tout engagement.",
+  },
+  {
+    q: 'Combien de temps dure un chantier ?',
+    a: "Nous ne donnons pas de durée type, parce qu'elle dépend entièrement de la taille, de l'accès et de la nature des fondations. Ce que l'on peut dire du procédé : la phase de montage de la structure est nettement plus rapide qu'en maçonnerie, et la mise hors d'eau intervient tôt — ce qui met le chantier à l'abri de la météo bien plus vite.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/ossature-bois-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Ossature bois"
+    title="Construction à ossature bois à Béthune"
+    lede="Extension, annexe, garage ou abri : une structure porteuse en bois se monte vite, pèse peu et intègre son isolation dans l'épaisseur du mur. Encore faut-il traiter l'humidité correctement, à chaque couche."
+    photo="/images/services/ossature-bois-czir62.jpg"
+    photoAlt="Extension à ossature bois en cours de construction par CZIR62"
+    photoNeed="Photo d'une ossature bois montée mais non fermée : montants et contreventement visibles."
+    icon="frame"
+    chips={['Extension et annexe', 'Isolation intégrée au mur', 'Mise hors d’eau rapide']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=ossature-bois" class="btn btn--lg" data-track="quote_start" data-track-label="hero-ossature">
+        Parler de mon projet
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-ossature">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Usages</p>
+        <h2>Ce que nous construisons en ossature bois</h2>
+      </div>
+      <div class="usg">
+        {usages.map((u) => (
+          <article class="usg__item reveal">
+            <h3>{u.t}</h3>
+            <p>{u.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split split--wide-media">
+        <div>
+          <p class="eyebrow">Composition</p>
+          <h2>Un mur ossature, couche par couche</h2>
+          <p class="lede">
+            Six couches, chacune avec une fonction distincte. La performance ne vient d'aucune
+            d'elles en particulier, mais de leur continuité.
+          </p>
+          <ol class="list-clean obc">
+            {couches.map((c, i) => (
+              <li>
+                <span class="obc__n">{String(i + 1).padStart(2, '0')}</span>
+                <div><h3>{c.t}</h3><p>{c.d}</p></div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <PhotoSlot
+          src="/images/services/ossature-bois-detail-czir62.jpg"
+          alt="Ossature bois d'une extension montée contre un mur existant"
+          need="Photo de détail : mur ossature avec isolant en place entre les montants, pare-vapeur partiellement posé."
+          ratio="3 / 4"
+          icon="frame"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Déroulement</p>
+        <h2>Les étapes d’un chantier</h2>
+      </div>
+      <ol class="list-clean obs">
+        <li><span>01</span><h3>Étude et faisabilité</h3><p>Relevé sur place, vérification de ce que permet le PLU, définition du mode de fondation selon le sol et la taille du projet.</p></li>
+        <li><span>02</span><h3>Support</h3><p>Plots, longrines ou dalle. La barrière d'étanchéité sous lisse basse se pose ici : c'est irrattrapable après coup.</p></li>
+        <li><span>03</span><h3>Montage de la structure</h3><p>Lisses, montants, contreventement, puis charpente de couverture. C'est la phase la plus visible et la plus rapide.</p></li>
+        <li><span>04</span><h3>Mise hors d’eau</h3><p>Couverture posée. Le chantier n'est plus tributaire de la météo, ce qui change tout sur la suite.</p></li>
+        <li><span>05</span><h3>Mise hors d’air</h3><p>Menuiseries, pare-pluie, bardage ou support d'enduit, pare-vapeur intérieur. Le volume est clos et isolé.</p></li>
+      </ol>
+
+      <div class="limites">
+        <h3><Icon name="alert" size={19} /> Ce que comprend notre intervention — et ce qu’elle ne comprend pas</h3>
+        <p>
+          Nous réalisons la structure, la charpente, la couverture et l'enveloppe extérieure :
+          jusqu'au hors d'eau et hors d'air. Les lots électricité, plomberie, chauffage, chape et
+          finitions intérieures ne relèvent pas de notre corps de métier. Nous vous le disons dès
+          le premier échange plutôt que de laisser croire à une livraison clés en main —
+          vous saurez exactement ce qu'il vous reste à organiser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock items={realisations} title="Réalisations en ossature bois" moreHref="/realisations/" hideIfEmpty />
+      <Faq items={faqItems} title="Questions sur l'ossature bois" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container"><CityLinks service="ossature-bois" /></div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices service="ossature-bois" title="Prestations associées" intro="Une ossature bois se prolonge naturellement vers la couverture et l'enveloppe extérieure." />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="deep"
+    eyebrow="Ossature bois"
+    title="Parler de votre projet"
+    text="Surface envisagée, emplacement, contraintes du terrain : nous regardons la faisabilité avant de parler de chiffres."
+    primaryLabel="Décrire mon projet"
+    service="ossature-bois"
+    trackLabel="ossature-final"
+  />
+</BaseLayout>
+
+<style>
+  .usg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .usg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .usg { grid-template-columns: minmax(0, 1fr); } }
+  .usg__item { padding: var(--sp-5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
+  .usg__item h3 { font-size: var(--fs-lg); }
+  .usg__item p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .obc { display: grid; gap: var(--sp-4); margin-top: var(--sp-6); }
+  .obc li { display: flex; gap: var(--sp-4); align-items: flex-start; }
+  .obc__n { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--clay-400); flex: none; }
+  .obc h3 { font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .obc p { margin-top: 0.25rem; font-size: var(--fs-sm); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+
+  .obs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1080px) { .obs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .obs { grid-template-columns: minmax(0, 1fr); } }
+  .obs li { padding-top: var(--sp-4); border-top: 2px solid var(--clay-600); }
+  .obs li > span { display: block; font-family: var(--font-display); font-size: .9rem; font-weight: 700; letter-spacing: .08em; color: var(--clay-300); margin-bottom: var(--sp-3); }
+  .obs h3 { color: #fff; font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .obs p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+
+  .limites {
+    margin-top: var(--sp-8);
+    padding: var(--sp-6);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-invert);
+    border-left: 3px solid var(--clay-400);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  }
+  .limites h3 { display: flex; align-items: center; gap: 0.6rem; color: #fff; font-family: var(--font-sans); font-size: var(--fs-lg); font-weight: 650; }
+  .limites h3 :global(svg) { color: var(--clay-300); flex: none; }
+  .limites p { margin-top: var(--sp-3); color: var(--text-invert-muted); line-height: var(--lh-relaxed); max-width: 70ch; }
+</style>

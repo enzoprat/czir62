@@ -1,0 +1,290 @@
+---
+/**
+ * INDEX DES REALISATIONS
+ *
+ * C'est le levier SEO le plus puissant du site à moyen terme : chaque chantier
+ * publié crée une page unique, reliée à sa prestation et à sa commune. Vingt
+ * chantiers documentés valent mieux que vingt pages de villes vides.
+ *
+ * Le filtrage est fait côté client sur des éléments déjà présents dans le HTML :
+ * aucun rendu JavaScript, aucun contenu masqué à l'indexation.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import RealisationCard from '@/components/RealisationCard.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import GalerieChantiers from '@/components/GalerieChantiers.astro';
+import Icon from '@/components/Icon.astro';
+import { getRealisations, realisationsStats } from '@/lib/realisations';
+import { chantiers } from '@/data/chantiers';
+import { getService } from '@/data/services';
+import { getVille } from '@/data/villes';
+import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Réalisations' }];
+const entries = await getRealisations();
+const stats = await realisationsStats();
+
+// Filtres construits à partir des chantiers réellement publiés
+const servicesPresents = [...new Set(entries.map((e) => e.data.service))].map(getService);
+const villesPresentes = [...new Set(entries.map((e) => e.data.ville))].map(getVille);
+---
+
+<BaseLayout
+  title="Nos réalisations — Chantiers de couverture | CZIR62"
+  description="Les chantiers de CZIR62 autour de Béthune en photos : couverture, charpente, zinguerie, étanchéité, bardage. Le travail avant qu'il ne soit recouvert."
+  path="/realisations/"
+  schema={[
+    webPageSchema({
+      path: '/realisations/',
+      name: 'Réalisations CZIR62',
+      description: 'Chantiers de couverture, charpente et zinguerie réalisés autour de Béthune.',
+    }),
+    breadcrumbSchema(crumbs),
+  ]}
+>
+  <section class="hub-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Nos réalisations</h1>
+      <p class="lede lede--wide">
+        Nos propres chantiers, photographiés pendant les travaux. Pas de banque d'images, pas de
+        toitures qui ne sont pas les nôtres : ce que vous voyez ici,
+        <a href="/entreprise/">l'entreprise</a> l'a fait.
+      </p>
+
+      <ul class="list-clean stats">
+        <li><strong>{chantiers.length}</strong><span>photos de chantier</span></li>
+        <li><strong>{new Set(chantiers.map((c) => c.categorie)).size}</strong><span>prestations illustrées</span></li>
+      </ul>
+
+      {stats.total > 0 && (
+        <ul class="list-clean stats">
+          <li><strong>{stats.total}</strong><span>chantier{stats.total > 1 ? 's' : ''} publié{stats.total > 1 ? 's' : ''}</span></li>
+          <li><strong>{stats.villes}</strong><span>commune{stats.villes > 1 ? 's' : ''}</span></li>
+          <li><strong>{stats.services}</strong><span>prestation{stats.services > 1 ? 's' : ''}</span></li>
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {entries.length > 0 ? (
+        <>
+          <div class="filters" role="group" aria-label="Filtrer les réalisations">
+            <button type="button" class="chip is-on" data-filter="all">Tout ({entries.length})</button>
+            {servicesPresents.map((s) => (
+              <button type="button" class="chip" data-filter-service={s.slug}>{s.name}</button>
+            ))}
+            {villesPresentes.map((v) => (
+              <button type="button" class="chip chip--ville" data-filter-ville={v.slug}>{v.name}</button>
+            ))}
+          </div>
+
+          <ul class="list-clean rea-grid" data-grid>
+            {entries.map((entry) => (
+              <li data-service={entry.data.service} data-ville={entry.data.ville}>
+                <RealisationCard entry={entry} />
+              </li>
+            ))}
+          </ul>
+
+          <p class="empty-filter" data-empty hidden>
+            Aucun chantier publié ne correspond à ce filtre pour le moment.
+          </p>
+        </>
+      ) : null}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <GalerieChantiers
+        filtres
+        title="Le travail, tel qu'il se présente"
+        intro="Dépose, support, écran, liteaunage, couverture, zinguerie, étanchéité. Ces photos montrent les étapes que l'on ne voit plus une fois le chantier terminé. Utilisez les filtres pour n'afficher qu'une prestation."
+      />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Comment les regarder</p>
+          <h2>Ce qu'un couvreur regarde sur ces photos</h2>
+        </div>
+        <p class="lede">
+          Une toiture finie se ressemble d'un chantier à l'autre. Tout se joue avant : sur le
+          support, sur l'écran, sur le liteaunage. Voilà ce que vous pouvez vérifier vous-même,
+          sur nos photos comme sur votre propre chantier.
+        </p>
+      </div>
+
+      <ol class="registre">
+        <li class="registre__item">
+          <span class="registre__num num">01</span>
+          <div class="registre__body">
+            <h3>Le recouvrement de l'écran sous-toiture</h3>
+            <p>
+              Les lés doivent se recouvrir franchement, le lé haut par-dessus le lé bas, et remonter
+              contre chaque relief. Un écran posé bord à bord ou dans le mauvais sens conduit l'eau
+              exactement là où on ne veut pas qu'elle aille. C'est invisible une fois les tuiles
+              posées, et c'est irrattrapable sans tout redéposer.
+            </p>
+          </div>
+        </li>
+        <li class="registre__item">
+          <span class="registre__num num">02</span>
+          <div class="registre__body">
+            <h3>La régularité du liteaunage</h3>
+            <p>
+              L'écartement entre deux liteaux — le pureau — détermine le recouvrement des tuiles. Il
+              se calcule à partir du modèle posé et se répartit sur toute la hauteur du rampant, pas
+              au jugé. Des liteaux réguliers donnent des rangs droits ; des rangs droits ne sont pas
+              une question d'esthétique, ce sont des tuiles qui portent correctement les unes sur
+              les autres.
+            </p>
+          </div>
+        </li>
+        <li class="registre__item">
+          <span class="registre__num num">03</span>
+          <div class="registre__body">
+            <h3>Le traitement des points singuliers</h3>
+            <p>
+              Noues, solins contre mur, souches de cheminée, abords de fenêtre de toit : c'est là
+              que fuient les toitures, jamais au milieu d'un versant. Sur une photo, regardez si le
+              raccord est fait en zinc façonné ou rattrapé au mastic. La deuxième solution tient
+              quelques saisons.
+            </p>
+          </div>
+        </li>
+        <li class="registre__item">
+          <span class="registre__num num">04</span>
+          <div class="registre__body">
+            <h3>La ventilation de la couverture</h3>
+            <p>
+              Une toiture doit respirer en partie basse et en partie haute. Sans lame d'air, la
+              condensation s'installe sous les tuiles et fait vieillir le bois de charpente sans que
+              rien ne se voie de l'intérieur. Les closoirs de faîtage et les entrées d'air en égout
+              ne sont pas des options.
+            </p>
+          </div>
+        </li>
+        <li class="registre__item">
+          <span class="registre__num num">05</span>
+          <div class="registre__body">
+            <h3>L'état du chantier pendant les travaux</h3>
+            <p>
+              Un échafaudage correctement monté, des matériaux rangés, une bâche en place le soir.
+              Ce n'est pas une question de présentation : une toiture ouverte le soir sans
+              protection est une toiture qui prend l'eau si la nuit tourne mal.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand
+    variant="soft"
+    eyebrow="Votre chantier"
+    title="Le prochain chantier documenté sera peut-être le vôtre"
+    text="Décrivez votre projet ou le désordre que vous constatez. Nous passons voir, puis nous chiffrons."
+    primaryLabel="Demander un devis"
+    trackLabel="realisations-final"
+  />
+</BaseLayout>
+
+<style>
+  .hub-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .hub-hero h1 { margin-top: var(--sp-5); }
+  .hub-hero .lede { margin-top: var(--sp-4); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: var(--sp-6); margin-top: var(--sp-6); }
+  .stats li { display: flex; align-items: baseline; gap: 0.5rem; }
+  .stats strong { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; color: var(--accent-ink); }
+  .stats span { font-size: var(--fs-sm); color: var(--text-muted); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-6); }
+  .chip {
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--zinc-600);
+    font-size: var(--fs-sm);
+    font-weight: 550;
+    cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+  .chip:hover { border-color: var(--clay-300); color: var(--accent-ink); }
+  .chip.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip--ville { border-style: dashed; }
+
+  .rea-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 980px) { .rea-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .rea-grid { grid-template-columns: minmax(0, 1fr); } }
+  .rea-grid > li { display: flex; }
+  .rea-grid > li > :global(*) { width: 100%; }
+  .rea-grid > li[hidden] { display: none; }
+
+  .empty-filter { margin-top: var(--sp-5); color: var(--text-muted); }
+  .empty-filter[hidden] { display: none; }
+
+  .vide {
+    display: grid;
+    gap: var(--sp-4);
+    justify-items: start;
+    max-width: 56rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: var(--surface-sunk);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-xl);
+  }
+  .vide__ico {
+    display: grid; place-items: center;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--clay-50);
+    border: 1px solid var(--clay-200);
+    color: var(--accent);
+  }
+  .vide h2 { font-size: var(--fs-2xl); }
+  .vide p { color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  .vide__btns { margin-top: var(--sp-3); }
+</style>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  if (grid) {
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('li'));
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((c) => c.classList.toggle('is-on', c === chip));
+
+        const service = chip.dataset.filterService;
+        const ville = chip.dataset.filterVille;
+        let visible = 0;
+
+        items.forEach((li) => {
+          const ok =
+            (!service && !ville) ||
+            (service && li.dataset.service === service) ||
+            (ville && li.dataset.ville === ville);
+          li.hidden = !ok;
+          if (ok) visible++;
+        });
+
+        if (empty) empty.hidden = visible > 0;
+      });
+    });
+  }
+</script>

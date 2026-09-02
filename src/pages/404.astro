@@ -1,0 +1,97 @@
+---
+/**
+ * PAGE 404
+ * Une page d'erreur reste une page d'entrée possible : elle propose donc de
+ * vraies portes de sortie plutôt qu'un simple message.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { servicesByOrder } from '@/data/services';
+import { villesByOrder } from '@/data/villes';
+import { nap, telHref, hasPhone } from '@/config/site';
+
+const tel = telHref();
+const top = servicesByOrder.filter((s) => s.featured).slice(0, 5);
+const villes = villesByOrder.slice(0, 5);
+---
+
+<BaseLayout
+  title="Page introuvable — CZIR62"
+  description="La page demandée n'existe pas ou a été déplacée."
+  path="/404/"
+  noindex
+>
+  <section class="e404">
+    <div class="container container--text">
+      <p class="e404__code">404</p>
+      <h1>Cette page n'existe pas</h1>
+      <p class="lede">
+        Le lien est peut-être ancien, ou l'adresse comporte une faute. Voici les pages
+        les plus consultées — et si vous cherchez une réponse précise, appelez-nous, ce sera
+        plus rapide.
+      </p>
+
+      <div class="btn-row e404__btns">
+        <a href="/" class="btn">Retour à l'accueil</a>
+        {hasPhone() && tel && (
+          <a href={tel} class="btn btn--ghost" data-track-zone="404">
+            <Icon name="phone" size={18} /> {nap.phone}
+          </a>
+        )}
+      </div>
+
+      <div class="e404__cols">
+        <div>
+          <h2>Prestations</h2>
+          <ul class="list-clean e404__list">
+            {top.map((s) => <li><a href={s.url}><Icon name={s.icon} size={17} />{s.name}</a></li>)}
+            <li><a href="/prestations/"><Icon name="arrow-right" size={17} />Toutes les prestations</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Communes</h2>
+          <ul class="list-clean e404__list">
+            {villes.map((v) => <li><a href={v.url}><Icon name="pin" size={17} />Couvreur à {v.name}</a></li>)}
+            <li><a href="/zone-intervention/"><Icon name="arrow-right" size={17} />Toute la zone</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .e404 { padding-block: clamp(3rem, 8vw, 6rem) var(--sp-10); }
+  .e404__code {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 12vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--clay-200);
+  }
+  .e404 h1 { margin-top: var(--sp-3); }
+  .e404 .lede { margin-top: var(--sp-4); }
+  .e404__btns { margin-top: var(--sp-6); }
+  .e404__cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-6);
+    margin-top: var(--sp-9);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 560px) { .e404__cols { grid-template-columns: minmax(0, 1fr); } }
+  .e404__cols h2 {
+    font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 650;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: var(--sp-4);
+  }
+  .e404__list { display: grid; gap: 0.2rem; }
+  .e404__list a {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.5rem 0.4rem; border-radius: var(--r-sm);
+    text-decoration: none; color: var(--zinc-600); font-size: var(--fs-sm); font-weight: 550;
+  }
+  .e404__list a:hover { background: var(--clay-50); color: var(--accent-ink); }
+  .e404__list :global(svg) { color: var(--accent); flex: none; }
+</style>

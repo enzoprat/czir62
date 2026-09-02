@@ -1,0 +1,80 @@
+---
+/**
+ * Barre d'action mobile persistante.
+ *
+ * Deux gestes seulement, en cibles pleine hauteur atteignables au pouce.
+ * Un filet terre cuite la coiffe : c'est le même signe que le faîtage de
+ * l'en-tête, en bas de l'écran. Elle ne recouvre jamais le contenu (le
+ * <body> réserve sa hauteur) et aucune fenêtre surgissante ne l'accompagne.
+ */
+import Icon from '@/components/Icon.astro';
+import { nap, telHref, hasPhone } from '@/config/site';
+
+const tel = telHref();
+---
+
+<div class="mbar" role="group" aria-label="Contacter CZIR62">
+  <div class="mbar__ridge" aria-hidden="true"></div>
+  <div class="mbar__in">
+    {hasPhone() && tel ? (
+      <a href={tel} class="mbar__btn mbar__btn--call" data-track-zone="barre-mobile">
+        <Icon name="phone" size={18} />
+        <span>
+          <em>Appeler</em>
+          <strong class="num">{nap.phone}</strong>
+        </span>
+      </a>
+    ) : (
+      <a href="/devis/?origine=rappel" class="mbar__btn mbar__btn--call">
+        <Icon name="phone" size={18} />
+        <span><em>Sans engagement</em><strong>Être rappelé</strong></span>
+      </a>
+    )}
+
+    <a href="/devis/" class="mbar__btn mbar__btn--quote" data-track="quote_start" data-track-label="barre-mobile">
+      <Icon name="check" size={18} />
+      <span><em>Gratuit</em><strong>Mon devis</strong></span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .mbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: var(--z-mobilebar);
+    display: none;
+    background: var(--surface);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -10px 30px -18px rgba(30, 18, 10, 0.55);
+  }
+  @media (max-width: 860px) { .mbar { display: block; } }
+
+  .mbar__ridge { height: 2px; background: var(--clay-500); }
+  .mbar__in { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+
+  .mbar__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 62px;
+    text-decoration: none;
+    transition: filter var(--t-fast);
+  }
+  .mbar__btn:active { filter: brightness(0.94); }
+  .mbar__btn span { display: grid; line-height: 1.15; }
+  .mbar__btn em {
+    font-style: normal;
+    font-size: 0.62rem;
+    font-weight: 660;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+  .mbar__btn strong { font-size: 0.98rem; font-weight: 680; letter-spacing: -0.02em; margin-top: 0.1rem; }
+
+  .mbar__btn--call { background: var(--surface); color: var(--text-strong); }
+  .mbar__btn--call :global(svg) { color: var(--accent); }
+  .mbar__btn--quote { background: var(--clay-600); color: #fff; }
+</style>

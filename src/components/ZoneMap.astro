@@ -1,0 +1,296 @@
+---
+/**
+ * Representation schematique de la zone d'intervention.
+ *
+ * Ce n'est PAS une carte geographique : c'est un diagramme de distances
+ * depuis le local de Bethune, presente comme tel. Choix assume — une carte
+ * interactive tierce couterait 200 a 400 Ko de JavaScript, une requete vers
+ * un domaine externe et un impact direct sur l'INP, pour une information que
+ * ce schema transmet en 4 Ko de SVG en ligne.
+ *
+ * Les orientations sont approximatives et servent la lisibilite. Elles ne
+ * remplacent pas les pages locales, qui portent le contenu reel.
+ */
+import Icon from '@/components/Icon.astro';
+import { villesByOrder, communesDesservies, RAYON_KM } from '@/data/villes';
+
+interface Props {
+  title?: string;
+  intro?: string;
+  showList?: boolean;
+}
+const {
+  title = "Notre zone d'intervention autour de Béthune",
+  intro = "Nous intervenons depuis notre local de Béthune sur le bassin béthunois et les communes voisines. Plus la commune est proche, plus il nous est facile de passer constater rapidement.",
+  showList = true,
+} = Astro.props;
+
+/*
+ * Placement des communes.
+ * `deg` : orientation approximative depuis Bethune (0 = est, sens trigo).
+ * `anchor` et `dy` : reglages d'etiquette. Le sud-est du secteur est
+ * geographiquement dense (Noeux, Barlin, Bully, Lievin, Lens) : sans decalage
+ * explicite, les libelles se chevauchent. Ces valeurs sont un choix de
+ * lisibilite, pas une donnee geographique.
+ */
+const PLACEMENT: Record<
+  string,
+  { deg: number; anchor?: 'start' | 'end' | 'middle'; dx?: number; dy?: number }
+> = {
+  beuvry: { deg: -2, dy: -12 },
+  'noeux-les-mines': { deg: -50, anchor: 'end', dx: -14, dy: 5 },
+  barlin: { deg: -68, anchor: 'middle', dy: 24 },
+  'bruay-la-buissiere': { deg: 202, anchor: 'end', dy: 18 },
+  auchel: { deg: 184, anchor: 'end', dy: -10 },
+  lillers: { deg: 158, anchor: 'end', dy: -10 },
+  'bully-les-mines': { deg: -34, dy: 20 },
+  lievin: { deg: -18, dy: 20 },
+  lens: { deg: -8, dy: -12 },
+};
+
+const CX = 300;
+const CY = 268;
+/* L'echelle decoule du rayon declare : la couronne exterieure reste au meme
+   endroit quel que soit le rayon, la carte n'a pas a etre redessinee. */
+const R_MAX_PX = 262;
+const SCALE = R_MAX_PX / RAYON_KM;
+
+/**
+ * Reperes hors zone de pages locales : grandes villes qui situent l'etendue
+ * du secteur sans justifier une page dediee. Tracees differemment des
+ * communes, pour que la distinction reste lisible.
+ */
+const REPERES = [{ name: 'Lille', km: 40, deg: 12 }];
+
+const points = villesByOrder
+  .filter((v) => !v.isBase)
+  .map((v) => {
+    const cfg = PLACEMENT[v.slug] ?? { deg: 0 };
+    const rad = (cfg.deg * Math.PI) / 180;
+    const r = v.distanceKm * SCALE;
+    const x = CX + r * Math.cos(rad);
+    const y = CY - r * Math.sin(rad);
+    const anchor = cfg.anchor ?? (Math.cos(rad) < -0.15 ? 'end' : 'start');
+    const dx = cfg.dx ?? (anchor === 'end' ? -12 : anchor === 'middle' ? 0 : 12);
+    const dy = cfg.dy ?? 4.5;
+    return { ...v, x, y, anchor, dx, dy };
+  });
+
+const rings = [10, 20, 30, 40];
+const base = villesByOrder.find((v) => v.isBase)!;
+---
+
+<section class="zone">
+  <div class="container zone__in">
+    <div class="zone__text">
+      <p class="eyebrow">Secteur desservi</p>
+      <h2>{title}</h2>
+      <p class="lede">{intro}</p>
+
+      <ul class="list-clean zone__legend">
+        <li><span class="dot dot--base"></span> Notre local</li>
+        <li><span class="dot dot--near"></span> Moins de 15 km</li>
+        <li><span class="dot dot--far"></span> 15 à 25 km</li>
+        <li><span class="dot dot--repere"></span> Limite de zone</li>
+      </ul>
+
+      <p class="zone__note">
+        Schéma des distances depuis Béthune, donné à titre indicatif.
+        Nous intervenons dans un rayon d'environ {RAYON_KM} km, jusqu'à la
+        métropole lilloise.
+      </p>
+
+      <div class="zone__cta">
+        <p><strong>Votre commune n'apparaît pas ?</strong> Indiquez-la, nous vous confirmons
+        tout de suite si nous nous déplaçons.</p>
+        <a href="/devis/" class="btn btn--sm" data-track="quote_start" data-track-label="carte-zone">
+          Vérifier ma commune
+        </a>
+      </div>
+
+      <a href="/zone-intervention/" class="link-arrow">Voir toutes les communes</a>
+    </div>
+
+    <div class="zone__map" aria-hidden="true">
+      <svg viewBox="0 0 760 520" class="zone__svg" role="presentation">
+        <defs>
+          <radialGradient id="zoneGlow" cx="39.5%" cy="51.5%" r="45%">
+            <stop offset="0%" stop-color="var(--clay-100)" stop-opacity=".7"/>
+            <stop offset="100%" stop-color="var(--clay-100)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <rect width="760" height="520" fill="url(#zoneGlow)"/>
+
+        {rings.map((km) => (
+          <>
+            <circle
+              cx={CX} cy={CY} r={km * SCALE}
+              fill="none"
+              stroke="var(--border-strong)"
+              stroke-width="1"
+              stroke-dasharray="3 5"
+              opacity={km === 25 ? 0.9 : 0.55}
+            />
+            <text
+              x={CX + 4} y={CY - km * SCALE - 5}
+              class="zone__ring-label"
+            >{km} km</text>
+          </>
+        ))}
+
+        {points.map((p) => (
+          <>
+            <line x1={CX} y1={CY} x2={p.x} y2={p.y} stroke="var(--clay-300)" stroke-width="1" opacity=".38"/>
+            <circle
+              cx={p.x} cy={p.y} r={p.distanceKm < 15 ? 7 : 5.5}
+              fill={p.distanceKm < 15 ? 'var(--clay-500)' : 'var(--zinc-500)'}
+              stroke="var(--surface-sand)" stroke-width="3"
+            />
+            <text x={p.x + p.dx} y={p.y + p.dy} text-anchor={p.anchor} class="zone__city">{p.name}</text>
+          </>
+        ))}
+
+        {REPERES.map((r) => {
+          const rad = (r.deg * Math.PI) / 180;
+          const x = CX + r.km * SCALE * Math.cos(rad);
+          const y = CY - r.km * SCALE * Math.sin(rad);
+          return (
+            <>
+              <line x1={CX} y1={CY} x2={x} y2={y} stroke="var(--zinc-300)" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>
+              <circle cx={x} cy={y} r="6.5" fill="none" stroke="var(--zinc-500)" stroke-width="2.5"/>
+              <text x={x + 12} y={y + 4.5} class="zone__city zone__city--repere">{r.name}</text>
+            </>
+          );
+        })}
+
+        <circle cx={CX} cy={CY} r="26" fill="var(--clay-500)" opacity=".1"/>
+        <circle cx={CX} cy={CY} r="15" fill="var(--clay-500)" opacity=".18"/>
+        <circle cx={CX} cy={CY} r="9" fill="var(--clay-600)" stroke="var(--surface-sand)" stroke-width="3.5"/>
+        <text x={CX} y={CY - 26} text-anchor="middle" class="zone__base">{base.name}</text>
+      </svg>
+    </div>
+  </div>
+
+  {showList && (
+    <div class="container">
+      <div class="zone__also">
+        <p class="zone__also-title">Également desservi</p>
+        <p class="zone__also-list">
+          {communesDesservies.map((c, i) => (
+            <>{i > 0 && <span aria-hidden="true"> · </span>}{c.name}</>
+          ))}
+        </p>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  .zone { padding-block: var(--section-y); background: var(--surface-sand); }
+
+  .zone__in {
+    display: grid;
+    grid-template-columns: minmax(0, 0.76fr) minmax(0, 1.24fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .zone__in { grid-template-columns: minmax(0, 1fr); } }
+
+  .zone__text .lede { margin-top: var(--sp-4); }
+
+  .zone__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+    margin-top: var(--sp-5);
+    font-size: var(--fs-sm);
+    color: var(--zinc-600);
+  }
+  .zone__legend li { display: flex; align-items: center; gap: 0.45rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot--base { background: var(--clay-600); box-shadow: 0 0 0 4px var(--clay-100); }
+  .dot--near { background: var(--clay-500); }
+  .dot--far { background: var(--clay-400); }
+
+  .zone__note {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: var(--lh-relaxed);
+    max-width: 44ch;
+  }
+  .zone__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-top: var(--sp-5);
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--clay-50);
+    border: 1px solid var(--clay-200);
+    border-radius: var(--r-md);
+  }
+  .zone__cta p {
+    font-size: var(--fs-sm);
+    color: var(--clay-700);
+    line-height: var(--lh-normal);
+    max-width: 34ch;
+  }
+  .zone__cta strong { color: var(--clay-900); }
+  @media (max-width: 520px) {
+    .zone__cta { flex-direction: column; align-items: stretch; }
+    .zone__cta .btn { width: 100%; }
+  }
+
+  .zone__text .link-arrow { margin-top: var(--sp-5); }
+
+  .zone__svg { width: 100%; height: auto; }
+  .zone__city--repere { fill: var(--zinc-500); font-style: italic; }
+  .zone__city {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+    fill: var(--zinc-700);
+  }
+  .zone__base {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    fill: var(--clay-700);
+  }
+  .zone__ring-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    fill: var(--clay-400);
+  }
+
+  /* Sous 720px, le schema devient illisible : on ne l'affiche pas.
+     L'information reste accessible par la liste des communes. */
+  @media (max-width: 720px) { .zone__map { display: none; } }
+
+  .zone__also {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border-strong);
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: var(--sp-4) var(--sp-6);
+    align-items: baseline;
+  }
+  @media (max-width: 700px) { .zone__also { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); } }
+  .zone__also-title {
+    font-size: 0.7rem;
+    font-weight: 660;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .zone__also-list { font-size: var(--fs-base); color: var(--zinc-600); line-height: var(--lh-relaxed); }
+</style>

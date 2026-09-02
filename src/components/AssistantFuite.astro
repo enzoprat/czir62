@@ -1,0 +1,396 @@
+---
+/**
+ * Assistant fuite.
+ *
+ * Traitement volontairement different de l'estimateur : ton direct, fond
+ * sombre, questions courtes. Le visiteur qui arrive ici a un probleme en
+ * cours — il ne veut pas explorer, il veut etre pris en charge.
+ *
+ * Chaque reponse declenche une information reellement utile. C'est ce qui
+ * distingue un outil d'un formulaire deguise : meme sans aller au bout, le
+ * visiteur a appris quelque chose sur sa situation.
+ */
+import Icon from '@/components/Icon.astro';
+import { villesByOrder, communesDesservies } from '@/data/villes';
+import { nap, telHref, hasPhone } from '@/config/site';
+
+interface Props { id?: string; }
+const { id = 'assistant' } = Astro.props;
+
+const communes = [...villesByOrder.map((v) => v.name), ...communesDesservies.map((c) => c.name)];
+const tel = telHref();
+
+const q1 = [
+  { v: 'active', l: "Oui, de l'eau passe en ce moment" },
+  { v: 'pluie', l: 'Seulement pendant la pluie' },
+  { v: 'traces', l: 'Non, mais il y a des traces' },
+  { v: 'inconnu', l: 'Je ne sais pas' },
+];
+
+const q2 = [
+  { v: 'plafond', l: 'Au plafond', i: 'leak' as const },
+  { v: 'mur', l: 'Sur un mur', i: 'cladding' as const },
+  { v: 'velux', l: "Autour d'un Velux", i: 'velux' as const },
+  { v: 'cheminee', l: "Autour d'une cheminée", i: 'chimney' as const },
+  { v: 'combles', l: 'Dans les combles', i: 'truss' as const },
+  { v: 'inconnu', l: 'Origine inconnue', i: 'search' as const },
+];
+
+const q3 = [
+  { v: 'velux', l: 'Une fenêtre de toit' },
+  { v: 'cheminee', l: 'Une cheminée' },
+  { v: 'les-deux', l: 'Les deux' },
+  { v: 'gouttiere', l: 'Une gouttière ou une noue' },
+  { v: 'rien', l: 'Rien de particulier' },
+  { v: 'inconnu', l: 'Je ne sais pas' },
+];
+---
+
+<section class="af" id={id} data-wz>
+  <div class="af__inner">
+    <div class="af__head">
+      <p class="af__eyebrow"><Icon name="leak" size={18} /> Assistant infiltration</p>
+      <h2>Décrivez ce que vous voyez</h2>
+      <p class="af__lede">
+        Quatre questions courtes. Elles nous évitent de découvrir la situation au téléphone,
+        et vous donnent déjà une idée de ce qui est en cause.
+      </p>
+    </div>
+
+    <div class="af__progress" data-wz-progress>
+      <div class="af__bar"><span data-wz-fill style="width:20%"></span></div>
+      <p class="af__step">Question <strong data-wz-num>1</strong>/<span data-wz-total>5</span></p>
+    </div>
+
+    <!-- 1 --------------------------------------------------------------- -->
+    <fieldset class="af__fs" data-wz-step="1">
+      <legend class="af__legend" data-wz-legend="etat">L'eau passe-t-elle en ce moment ?</legend>
+      <div class="af__choices">
+        {q1.map((o) => (
+          <button type="button" class="af__choice" data-wz-choice data-name="etat" data-value={o.v} data-label={o.l} aria-pressed="false">
+            {o.l}
+          </button>
+        ))}
+      </div>
+      <p class="af__hint af__hint--urgent" data-wz-hint="etat:active">
+        Si de l'eau tombe activement : placez un récipient, écartez ce qui peut être endommagé
+        et coupez l'électricité de la zone si l'eau approche d'un point lumineux ou d'une prise.
+        Appelez-nous ensuite — ce cas ne s'attend pas.
+      </p>
+      <p class="af__hint" data-wz-hint="etat:traces">
+        Des traces sèches ne veulent pas dire que le problème est réglé. Une auréole qui a bruni
+        sur les bords indique un passage d'eau répété dans le temps.
+      </p>
+    </fieldset>
+
+    <!-- 2 --------------------------------------------------------------- -->
+    <fieldset class="af__fs" data-wz-step="2" hidden>
+      <legend class="af__legend" data-wz-legend="localisation">Où voyez-vous l'infiltration ?</legend>
+      <div class="af__choices af__choices--grid">
+        {q2.map((o) => (
+          <button type="button" class="af__choice af__choice--ico" data-wz-choice data-name="localisation" data-value={o.v} data-label={o.l} aria-pressed="false">
+            <Icon name={o.i} size={19} />
+            <span>{o.l}</span>
+          </button>
+        ))}
+      </div>
+
+      <p class="af__hint" data-wz-hint="localisation:plafond">
+        Une tache au plafond se situe rarement sous son point d'entrée : l'eau suit un chevron
+        ou une panne avant de tomber. Nous cherchons donc en amont, souvent plus haut sur le versant.
+      </p>
+      <p class="af__hint" data-wz-hint="localisation:mur">
+        Une trace sur un mur oriente vers un solin, une rive, un débord ou une descente d'eau
+        pluviale qui rejette contre la maçonnerie — pas nécessairement vers la couverture.
+      </p>
+      <p class="af__hint" data-wz-hint="localisation:velux">
+        Autour d'une fenêtre de toit, c'est presque toujours le raccord d'étanchéité périphérique
+        qui est en cause, pas le vitrage. Une trace en partie haute de l'encadrement pointe le
+        raccord amont.
+      </p>
+      <p class="af__hint" data-wz-hint="localisation:cheminee">
+        Le solin — la jonction entre la souche et la couverture — est le premier point que nous
+        examinons. La maçonnerie de la souche elle-même peut aussi absorber l'eau et la restituer
+        à l'intérieur.
+      </p>
+      <p class="af__hint" data-wz-hint="localisation:combles">
+        C'est l'endroit le plus utile pour observer. Une trace fraîche sur un chevron, un point
+        de lumière visible depuis l'intérieur, ou un isolant tassé et humide localisent bien mieux
+        la fuite qu'une tache au plafond.
+      </p>
+      <p class="af__hint" data-wz-hint="localisation:inconnu">
+        C'est le cas le plus fréquent, et ce n'est pas gênant : identifier le point d'entrée
+        fait partie du travail. Le repérage se fait sur place, versant par versant.
+      </p>
+
+      <div class="af__nav"><button type="button" class="af__back" data-wz-back>Retour</button></div>
+    </fieldset>
+
+    <!-- 3 --------------------------------------------------------------- -->
+    <fieldset class="af__fs" data-wz-step="3" hidden>
+      <legend class="af__legend" data-wz-legend="element">Y a-t-il un de ces éléments à proximité ?</legend>
+      <div class="af__choices af__choices--grid">
+        {q3.map((o) => (
+          <button type="button" class="af__choice" data-wz-choice data-name="element" data-value={o.v} data-label={o.l} aria-pressed="false">
+            {o.l}
+          </button>
+        ))}
+      </div>
+      <p class="af__hint" data-wz-hint="element:rien">
+        En pleine surface de versant, sans point singulier à proximité, les causes les plus
+        courantes sont une tuile cassée ou déplacée, ou un écran sous-toiture absent ou percé.
+      </p>
+      <p class="af__hint" data-wz-hint="element:gouttiere">
+        Une noue ou une gouttière en charge peut refouler sous la couverture. Ce type de fuite
+        n'apparaît souvent que lors des pluies fortes, ce qui aide déjà au diagnostic.
+      </p>
+      <div class="af__nav"><button type="button" class="af__back" data-wz-back>Retour</button></div>
+    </fieldset>
+
+    <!-- 4 --------------------------------------------------------------- -->
+    <fieldset class="af__fs" data-wz-step="4" hidden>
+      <legend class="af__legend" data-wz-legend="commune">Dans quelle commune ?</legend>
+      <input class="input af__input" type="text" data-wz-input="commune" list="af-communes"
+             autocomplete="address-level2" placeholder="Béthune, Beuvry, Barlin…" aria-label="Commune" />
+      <datalist id="af-communes">{communes.map((c) => <option value={c}></option>)}</datalist>
+      <div class="af__nav">
+        <button type="button" class="af__back" data-wz-back>Retour</button>
+        <button type="button" class="btn" data-wz-next="5" data-requires="commune">Continuer</button>
+      </div>
+    </fieldset>
+
+    <!-- 5 --------------------------------------------------------------- -->
+    <fieldset class="af__fs" data-wz-step="5" hidden>
+      <legend class="af__legend">Comment vous joindre ?</legend>
+
+      <ul class="list-clean af__recap" data-wz-recap></ul>
+
+      <div class="af__row">
+        <div class="field">
+          <label class="label af__label" for="af-nom">Votre nom <span class="req">*</span></label>
+          <input class="input" id="af-nom" type="text" data-wz-nom autocomplete="name" />
+        </div>
+        <div class="field">
+          <label class="label af__label" for="af-tel">Téléphone <span class="req">*</span></label>
+          <input class="input" id="af-tel" type="tel" inputmode="tel" data-wz-tel autocomplete="tel" placeholder="06 12 34 56 78" />
+        </div>
+      </div>
+
+      <div class="hp" aria-hidden="true">
+        <label for="af-hp">Ne pas remplir</label>
+        <input id="af-hp" type="text" data-wz-hp tabindex="-1" autocomplete="off" />
+      </div>
+
+      <p class="error-msg af__error" data-wz-error hidden></p>
+
+      <div class="af__nav">
+        <button type="button" class="af__back" data-wz-back="4">Retour</button>
+        <button type="button" class="btn btn--lg" data-wz-submit>Demander un rappel</button>
+      </div>
+      <p class="af__legal">
+        Vos réponses partent directement à l'entreprise avec votre demande.
+        Nous rappelons pour situer l'origine avant de nous déplacer.
+      </p>
+    </fieldset>
+
+    <!-- confirmation ------------------------------------------------------ -->
+    <div class="af__done" data-wz-done hidden>
+      <div class="af__done-ico"><Icon name="check" size={28} /></div>
+      <h3>C'est enregistré</h3>
+      <p>
+        Votre description nous est parvenue. Nous vous rappelons pour préciser la situation
+        et convenir d'un passage.
+      </p>
+      <p class="af__ref">Référence <strong data-wz-id></strong></p>
+      {hasPhone() && tel && (
+        <p class="af__done-call">
+          Si l'eau passe activement, appelez directement :
+          <a href={tel} data-track-zone="assistant-fuite">{nap.phone}</a>
+        </p>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .af {
+    background: var(--zinc-900);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    position: relative;
+  }
+  .af::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--clay-500), var(--clay-300), transparent);
+  }
+  .af__inner { padding: clamp(1.5rem, 4vw, 2.75rem); }
+
+  .af__head { margin-bottom: var(--sp-6); }
+  .af__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-xs);
+    font-weight: 640;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--clay-300);
+    margin-bottom: var(--sp-3);
+  }
+  .af__head h2 { color: #fff; font-size: var(--fs-2xl); }
+  .af__lede {
+    margin-top: var(--sp-3);
+    color: var(--text-invert-muted);
+    line-height: var(--lh-relaxed);
+    max-width: 54ch;
+  }
+
+  .af__progress { display: flex; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-5); }
+  .af__progress[hidden] { display: none; }
+  .af__bar { flex: 1; height: 3px; background: rgba(255,255,255,.14); border-radius: 3px; overflow: hidden; }
+  .af__bar span { display: block; height: 100%; background: var(--clay-400); transition: width var(--t-slow) var(--ease-out); }
+  .af__step { font-size: var(--fs-xs); color: var(--text-invert-muted); white-space: nowrap; }
+  .af__step strong { color: var(--clay-300); }
+
+  .af__fs { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .af__fs[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .af__fs:not([hidden]) { animation: af-in 280ms var(--ease-out); }
+    @keyframes af-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+
+  .af__legend {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: var(--sp-5);
+    padding: 0;
+  }
+
+  .af__choices { display: grid; gap: var(--sp-2); }
+  .af__choices--grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+
+  .af__choice {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 54px;
+    padding: 0.85rem 1.1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-md);
+    color: var(--sand-100);
+    font-size: var(--fs-sm);
+    font-weight: 550;
+    text-align: left;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  }
+  .af__choice:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.32); }
+  .af__choice:active { transform: scale(0.99); }
+  .af__choice[aria-pressed='true'] {
+    background: var(--clay-600);
+    border-color: var(--clay-400);
+    color: #fff;
+  }
+  .af__choice :global(svg) { color: var(--clay-300); flex: none; }
+  .af__choice[aria-pressed='true'] :global(svg) { color: #fff; }
+
+  .af__hint {
+    margin-top: var(--sp-4);
+    padding: var(--sp-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--clay-400);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    font-size: var(--fs-sm);
+    color: var(--sand-200);
+    line-height: var(--lh-relaxed);
+  }
+  .af__hint[hidden] { display: none; }
+  .af__hint--urgent { background: rgba(174, 90, 47, 0.22); border-left-color: var(--clay-300); color: #FBEDE3; }
+
+  .af__nav { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+  .af__nav .btn { margin-left: auto; }
+  .af__back {
+    background: none;
+    border: 0;
+    padding: 0.5rem 0;
+    color: var(--text-invert-muted);
+    font-size: var(--fs-sm);
+    font-weight: 550;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .af__back:hover { color: #fff; }
+
+  .af__input { background: rgba(255,255,255,.07); border-color: var(--border-invert); color: #fff; }
+  .af__input::placeholder { color: rgba(255,255,255,.42); }
+  .af__input:focus { border-color: var(--clay-300); box-shadow: 0 0 0 3px rgba(174,90,47,.35); }
+
+  .af__label { color: var(--sand-200); }
+  .af__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+  .af__row .field + .field { margin-top: 0; }
+  @media (max-width: 560px) { .af__row { grid-template-columns: minmax(0, 1fr); } }
+  .af__row .input { background: rgba(255,255,255,.07); border-color: var(--border-invert); color: #fff; }
+  .af__row .input:focus { border-color: var(--clay-300); box-shadow: 0 0 0 3px rgba(174,90,47,.35); }
+
+  .af__recap { display: grid; gap: 0.3rem; margin-bottom: var(--sp-5); }
+  .af__recap li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: 0.45rem 0;
+    border-bottom: 1px dashed var(--border-invert);
+    font-size: var(--fs-sm);
+  }
+  .af__recap span { color: var(--text-invert-muted); }
+  .af__recap strong { color: #fff; text-align: right; }
+
+  .af__error { color: #FFC1BA; }
+  .af__legal { margin-top: var(--sp-4); font-size: var(--fs-xs); color: var(--text-invert-muted); line-height: 1.6; }
+
+  .af__done { text-align: center; padding: var(--sp-4) 0; }
+  .af__done[hidden] { display: none; }
+  .af__done-ico {
+    display: grid; place-items: center;
+    width: 56px; height: 56px; margin: 0 auto var(--sp-4);
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid var(--border-invert);
+    color: var(--clay-300);
+  }
+  .af__done h3 { color: #fff; font-size: var(--fs-xl); }
+  .af__done p { max-width: 46ch; margin: var(--sp-3) auto 0; color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+  .af__ref {
+    display: inline-block;
+    margin-top: var(--sp-5) !important;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,.07);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+  }
+  .af__ref strong { font-family: ui-monospace, Menlo, monospace; color: var(--clay-200); }
+  .af__done-call a { color: var(--clay-200); font-weight: 650; margin-left: 0.3rem; }
+</style>
+
+<script>
+  import { initWizard } from '@/lib/client/wizard';
+
+  document.querySelectorAll<HTMLElement>('.af[data-wz]').forEach((root) =>
+    initWizard(root, {
+      origin: 'assistant-fuite',
+      startEvent: 'leak_assistant_start',
+      completeEvent: 'leak_assistant_complete',
+      prestation: 'fuite-toiture',
+    }),
+  );
+</script>

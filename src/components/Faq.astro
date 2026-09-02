@@ -1,0 +1,123 @@
+---
+/**
+ * FAQ de page.
+ *
+ * Chaque page a SA propre FAQ, écrite pour son intention. Aucune FAQ
+ * générique n'est recopiée : ce serait du contenu dupliqué, et surtout
+ * inutile au lecteur.
+ *
+ * Présentation en registre numéroté plutôt qu'en accordéon encadré : les
+ * réponses sont dans le DOM au chargement, condition posée par Google pour
+ * qu'un balisage FAQPage soit conforme.
+ */
+interface FaqItem { q: string; a: string }
+interface Props {
+  items: FaqItem[];
+  title?: string;
+  intro?: string;
+  id?: string;
+  compact?: boolean;
+}
+const { items, title = 'Questions fréquentes', intro, id = 'faq', compact = false } = Astro.props;
+---
+
+<section class:list={['faq', compact && 'faq--compact']} id={id}>
+  <div class="faq__grid">
+    <div class="faq__head">
+      <p class="eyebrow">Questions</p>
+      <h2>{title}</h2>
+      {intro && <p class="lede faq__intro">{intro}</p>}
+    </div>
+
+    <div class="faq__list">
+      {items.map((item, i) => (
+        <details class="faq__item" open={i === 0}>
+          <summary class="faq__q">
+            <span class="faq__idx num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="faq__qt">{item.q}</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </summary>
+          <div class="faq__a"><p>{item.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  @media (max-width: 940px) { .faq__grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+
+  .faq__head { position: sticky; top: calc(var(--header-h) + 2.5rem); }
+  @media (max-width: 940px) { .faq__head { position: static; } }
+  .faq__head h2 { font-size: clamp(1.75rem, 1.9vw + 1.25rem, 2.5rem); }
+  .faq__intro { margin-top: var(--sp-4); font-size: var(--fs-base); max-width: 32ch; }
+
+  .faq__list { border-top: 1px solid var(--border); }
+  .faq__item { border-bottom: 1px solid var(--border); }
+  :global(.section--deep) .faq__list, :global(.section--deep) .faq__item { border-color: var(--border-invert); }
+
+  .faq__q {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 1.5rem;
+    align-items: start;
+    gap: var(--sp-3);
+    padding: var(--sp-5) 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__q::-webkit-details-marker { display: none; }
+
+  .faq__idx {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--zinc-300);
+    padding-top: 0.42em;
+    transition: color var(--t-fast);
+  }
+  .faq__item[open] .faq__idx, .faq__q:hover .faq__idx { color: var(--accent); }
+
+  .faq__qt {
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 640;
+    line-height: var(--lh-snug);
+    letter-spacing: -0.022em;
+    color: var(--text-strong);
+    transition: color var(--t-fast);
+  }
+  .faq__q:hover .faq__qt { color: var(--accent-ink); }
+
+  /* Signe + / − dessiné : deux filets, pas un chevron d'interface. */
+  .faq__sign { position: relative; width: 15px; height: 15px; margin-top: 0.45em; justify-self: end; }
+  .faq__sign::before, .faq__sign::after {
+    content: '';
+    position: absolute;
+    background: var(--accent);
+    transition: transform var(--t-base) var(--ease-out), opacity var(--t-fast);
+  }
+  .faq__sign::before { top: 7px; left: 0; width: 15px; height: 1.5px; }
+  .faq__sign::after { left: 7px; top: 0; width: 1.5px; height: 15px; }
+  .faq__item[open] .faq__sign::after { transform: scaleY(0); opacity: 0; }
+
+  .faq__a { padding: 0 1.5rem var(--sp-5) 3.25rem; max-width: 68ch; }
+  .faq__a p { color: var(--zinc-600); line-height: var(--lh-relaxed); }
+  :global(.section--deep) .faq__qt { color: #fff; }
+  :global(.section--deep) .faq__a p { color: var(--zinc-300); }
+
+  @media (max-width: 560px) {
+    .faq__q { grid-template-columns: minmax(0, 1fr) 1.2rem; }
+    .faq__idx { display: none; }
+    .faq__a { padding-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .faq__item[open] .faq__a { animation: faq-in 280ms var(--ease-out); }
+    @keyframes faq-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+  }
+</style>

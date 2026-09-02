@@ -1,0 +1,397 @@
+---
+/**
+ * PAGES VILLES — /couvreur-<commune>/
+ *
+ * L'URL cible directement la requête réellement tapée : « couvreur Béthune »,
+ * « couvreur Beuvry ». Le gabarit est commun, mais TOUT le contenu vient de
+ * src/data/villes.ts, où chaque commune a son propre angle : bâti dominant,
+ * toitures rencontrées, enjeux techniques locaux, secteurs, FAQ.
+ *
+ * Deux garde-fous anti-page-clone :
+ *  - l'ordre des prestations mises en avant diffère d'une commune à l'autre
+ *    (`prioritaires`), parce que la demande n'est pas la même à Lillers et à
+ *    Bully-les-Mines ;
+ *  - le bloc réalisations n'affiche QUE des chantiers réellement enregistrés
+ *    sur la commune. Aucun chantier = le bloc disparaît. On n'invente pas.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+import GalerieChantiers from '@/components/GalerieChantiers.astro';
+import GoogleReviews from '@/components/GoogleReviews.astro';
+
+import { villes, nearbyVilles, type Ville } from '@/data/villes';
+import { getService, services } from '@/data/services';
+import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { realisationsForVille } from '@/lib/realisations';
+import { breadcrumbSchema, faqSchema, webPageSchema, ID } from '@/lib/schema';
+import { site } from '@/config/site';
+
+export const getStaticPaths = (() =>
+  villes.map((v) => ({ params: { ville: v.slug }, props: { ville: v } }))) satisfies GetStaticPaths;
+
+interface Props { ville: Ville }
+const { ville } = Astro.props;
+
+const tel = telHref();
+const realisations = await realisationsForVille(ville.slug, 3);
+const prestations = ville.prioritaires.map(getService);
+const voisines = nearbyVilles(ville.slug, 4);
+const crumbs = [{ name: "Zone d'intervention", url: '/zone-intervention/' }, { name: ville.name }];
+
+/**
+ * Service local déclaré pour cette commune : rattache l'entreprise à la ville
+ * sans dupliquer l'entité principale (référencée par son @id).
+ */
+const serviceLocal = {
+  '@type': 'Service',
+  '@id': `${site.url}${ville.url}#service`,
+  name: `Couvreur à ${ville.name}`,
+  serviceType: 'Travaux de couverture, zinguerie et charpente',
+  provider: { '@id': ID.org },
+  areaServed: {
+    '@type': 'City',
+    name: ville.name,
+    address: { '@type': 'PostalAddress', postalCode: ville.postalCode, addressCountry: 'FR' },
+  },
+  description: ville.metaDescription,
+};
+---
+
+<BaseLayout
+  title={ville.metaTitle}
+  description={ville.metaDescription}
+  path={ville.url}
+  pageEvent="city_page_view"
+  pageSlug={ville.slug}
+  pageLabel={ville.name}
+  schema={[
+    webPageSchema({ path: ville.url, name: ville.metaTitle, description: ville.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceLocal,
+    faqSchema(ville.faq),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow={`${ville.name} (${ville.postalCode})`}
+    title={ville.isBase ? `Couvreur à ${ville.name}, avec un local en ville` : `Couvreur à ${ville.name}`}
+    lede={ville.intro}
+    photoAlt={`Toiture rénovée par CZIR62 ${ville.inCity}`}
+    icon="pin"
+    chips={
+      ville.isBase
+        ? ['Notre local est ici', 'Couverture, charpente, zinguerie', 'Devis gratuit']
+        : [`À ${ville.distanceKm} km de notre local de Béthune`, 'Couverture, charpente, zinguerie', 'Devis gratuit']
+    }
+  >
+    <Fragment slot="actions">
+      <a href={`/devis/?commune=${encodeURIComponent(ville.name)}`} class="btn btn--lg"
+         data-track="quote_start" data-track-label={`hero-${ville.slug}`}>
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone={`hero-${ville.slug}`}>
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- =============================================== ANCRAGE LOCAL ====== -->
+  <section class="anc">
+    <div class="container anc__in">
+      <div class="anc__item">
+        <Icon name="storefront" size={20} />
+        <div>
+          <strong>{ville.isBase ? 'Notre local est à ' + ville.name : 'Notre local est à Béthune'}</strong>
+          <span>{hasAddress() ? addressOneLine() : 'Une entreprise que vous pouvez situer'}</span>
+        </div>
+      </div>
+      <div class="anc__item">
+        <Icon name="route" size={20} />
+        <div>
+          <strong>{ville.isBase ? 'Sur place' : `${ville.distanceKm} km`}</strong>
+          <span>{ville.isBase ? 'Commune d’implantation de l’entreprise' : `Distance approximative depuis Béthune`}</span>
+        </div>
+      </div>
+      <div class="anc__item">
+        <Icon name="pin" size={20} />
+        <div>
+          <strong>Communes voisines</strong>
+          <span>{voisines.map((v) => v.name).join(', ')}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== LE BATI ========= -->
+  <section class="section">
+    <div class="container">
+      <!-- Deux colonnes éditoriales : le bâti à gauche, ce qu'on y rencontre
+           à droite. Sans photo locale, la page ne montre pas un cadre vide —
+           elle donne davantage de contenu. -->
+      <div class="bati">
+        <div class="bati__col">
+          <p class="eyebrow">Le bâti local</p>
+          <h2>Ce que nous rencontrons {ville.inCity}</h2>
+          <div class="prose prose--lead bati__prose">
+            <p>{ville.habitat}</p>
+            <p>{ville.toitures}</p>
+          </div>
+        </div>
+
+        <div class="bati__col bati__col--enjeux">
+          <p class="overline"><span class="overline__idx">→</span> Les points qui reviennent le plus souvent</p>
+          <ul class="list-signs bati__enjeux">
+            {ville.enjeux.map((e) => <li>{e}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== PRESTATIONS ========= -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Nos interventions</p>
+        <h2>Ce que nous faisons {ville.inCity}</h2>
+        <p class="lede lede--wide">
+          Chaque prestation a sa page, avec le détail technique : ce que nous regardons, comment
+          nous intervenons et ce qui fait varier le devis.
+        </p>
+      </div>
+
+      <ul class="list-clean vp">
+        {prestations.map((s, i) => (
+          <li class:list={['vp__item', i === 0 && 'vp__item--first']}>
+            <a href={s.url} class="vp__link">
+              <span class="vp__ico"><Icon name={s.icon} size={22} /></span>
+              <span class="vp__body">
+                <strong>{s.name} {ville.inCity}</strong>
+                <em>{s.cardText}</em>
+              </span>
+              <span class="vp__go" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="vp__all">
+        <a href="/prestations/" class="link-arrow">Voir les {services.length} prestations</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== REALISATIONS ======== -->
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title={`Chantiers réalisés ${ville.inCity}`}
+        intro="Des interventions réelles, avec ce qui a été constaté et ce qui a été fait."
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+
+      {realisations.length === 0 && (
+        <div class="norea">
+          <div class="section-head">
+            <p class="eyebrow">En images</p>
+            <h2>Nos chantiers en photos</h2>
+            <p class="lede lede--wide">
+              Des chantiers réellement réalisés par l'entreprise. Nous ne rattachons pas une photo
+              à une commune sans pouvoir le certifier.
+            </p>
+          </div>
+          <GalerieChantiers
+            title=""
+            intro=""
+            limit={6}
+            offset={ville.slug.length * 7 + ville.slug.charCodeAt(0)}
+          />
+          <p class="norea__more">
+            <a href="/realisations/" class="link-arrow">Voir toute la galerie, triée par prestation</a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ================================================= SECTEURS ========= -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="sect">
+        <div>
+          <p class="eyebrow">Secteurs</p>
+          <h2>Où nous intervenons {ville.inCity}</h2>
+          <p class="lede lede--wide">
+            Nous nous déplaçons sur l'ensemble de la commune. Les secteurs ci-dessous sont
+            simplement les repères les plus utilisés localement.
+          </p>
+          <ul class="list-clean sect__list">
+            {ville.secteurs.map((s) => <li class="tag tag--deep">{s}</li>)}
+          </ul>
+        </div>
+
+        <div class="sect__near">
+          <h3>Communes limitrophes</h3>
+          <ul class="list-clean sect__near-list">
+            {voisines.map((v) => (
+              <li>
+                <a href={v.url}>
+                  <Icon name="pin" size={16} />
+                  <span>{v.name}</span>
+                  <em>{v.isBase ? 'notre local' : `${v.distanceKm} km de Béthune`}</em>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="/zone-intervention/" class="link-arrow sect__all">Toute la zone d'intervention</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <GoogleReviews
+    variant="light"
+    title={`Ce que disent nos clients`}
+    intro="Les avis publiés sur notre fiche Google Business Profile."
+  />
+
+  <section class="section">
+    <div class="container">
+      <Faq items={ville.faq} title={`Questions fréquentes ${ville.inCity}`} />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow={ville.name}
+    title={`Un projet ou un problème de toiture ${ville.inCity} ?`}
+    text={
+      ville.isBase
+        ? "Notre local est dans votre commune. Décrivez votre situation, nous passons voir avant de chiffrer."
+        : `Nous intervenons ${ville.inCity} depuis notre local de Béthune. Décrivez votre situation, nous vous rappelons pour convenir d'un passage.`
+    }
+    primaryLabel="Demander un devis"
+    primaryHref={`/devis/?commune=${encodeURIComponent(ville.name)}`}
+    trackLabel={`${ville.slug}-final`}
+  />
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------------- ancrage */
+  .anc { background: var(--zinc-900); color: var(--text-invert); }
+  .anc__in {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+    padding-block: var(--sp-6);
+  }
+  @media (max-width: 880px) { .anc__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); } }
+
+  .anc__item { display: flex; gap: var(--sp-3); align-items: flex-start; }
+  .anc__item :global(svg) { color: var(--clay-300); flex: none; margin-top: 0.15rem; }
+  .anc__item strong { display: block; color: #fff; font-size: var(--fs-base); font-weight: 620; }
+  .anc__item span { display: block; margin-top: 0.2rem; font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: 1.5; }
+
+  /* ---------------------------------------------------------------- bâti */
+  .bati {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .bati { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+  .bati__prose { margin-top: var(--sp-4); }
+  .bati__col--enjeux { padding-top: var(--sp-2); }
+  .bati__enjeux { margin-top: var(--sp-5); }
+
+  /* --------------------------------------------------------- prestations */
+  .vp { display: grid; gap: var(--sp-3); }
+  .vp__link {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  }
+  .vp__link:hover {
+    border-color: var(--clay-300);
+    transform: translateX(3px);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+  }
+  .vp__item--first .vp__link { border-left: 3px solid var(--accent); }
+  .vp__ico {
+    display: grid; place-items: center;
+    width: 44px; height: 44px; flex: none;
+    border-radius: var(--r-sm);
+    background: var(--clay-50);
+    color: var(--accent);
+  }
+  .vp__body { flex: 1; min-width: 0; }
+  .vp__body strong { display: block; font-size: var(--fs-base); font-weight: 620; color: var(--text-strong); }
+  .vp__body em { display: block; font-style: normal; font-size: var(--fs-sm); color: var(--text-muted); margin-top: 0.15rem; line-height: 1.45; }
+  .vp__go { color: var(--border-strong); flex: none; transition: transform var(--t-base), color var(--t-base); }
+  .vp__link:hover .vp__go { transform: translateX(4px); color: var(--accent); }
+  .vp__all { margin-top: var(--sp-5); }
+
+  /* ------------------------ pas encore de chantier documente sur la commune */
+  .norea h2 { font-size: var(--fs-2xl); }
+  .norea__more { margin-top: var(--sp-6); }
+
+  /* ------------------------------------------------------------ secteurs */
+  .sect {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 880px) { .sect { grid-template-columns: minmax(0, 1fr); } }
+
+  .sect__list { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-5); }
+
+  .sect__near {
+    padding: var(--sp-5);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-lg);
+  }
+  .sect__near h3 {
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-4);
+  }
+  .sect__near-list { display: grid; gap: 0.15rem; }
+  .sect__near-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--r-sm);
+    text-decoration: none;
+    color: var(--sand-200);
+    transition: background var(--t-fast);
+  }
+  .sect__near-list a:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
+  .sect__near-list :global(svg) { color: var(--clay-300); flex: none; }
+  .sect__near-list span { font-weight: 600; font-size: var(--fs-sm); }
+  .sect__near-list em { margin-left: auto; font-style: normal; font-size: var(--fs-xs); color: var(--text-invert-muted); }
+  .sect__all { margin-top: var(--sp-4); color: var(--clay-200) !important; }
+</style>

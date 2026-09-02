@@ -1,0 +1,203 @@
+---
+/**
+ * Pied de page.
+ *
+ * Bloc NAP secondaire : les coordonnées y sont strictement identiques à
+ * celles de l'en-tête, de la page contact et du JSON-LD — condition de la
+ * cohérence des citations locales.
+ *
+ * Traité en ardoise texturée avec une plaque d'identité : le pied de page
+ * referme le site sur la preuve d'existence physique de l'entreprise,
+ * pas sur une grille de liens.
+ */
+import Logo from '@/components/Logo.astro';
+import Icon from '@/components/Icon.astro';
+import { servicesByOrder } from '@/data/services';
+import { villesByOrder } from '@/data/villes';
+import { nap, google, telHref, hasPhone, hasEmail, hasAddress, hasHours, addressOneLine, site } from '@/config/site';
+
+const year = new Date().getFullYear();
+const tel = telHref();
+
+const JOURS: Record<string, string> = {
+  Monday: 'Lundi', Tuesday: 'Mardi', Wednesday: 'Mercredi',
+  Thursday: 'Jeudi', Friday: 'Vendredi', Saturday: 'Samedi', Sunday: 'Dimanche',
+};
+const fmtJours = (d: string[]) =>
+  d.length > 1 ? `${JOURS[d[0]] ?? d[0]} – ${JOURS[d[d.length - 1]] ?? d[d.length - 1]}` : (JOURS[d[0]] ?? d[0]);
+---
+
+<footer class="ftr tex tex--tuiles">
+  <div class="container ftr__in">
+    <!-- Identité + coordonnées, traitées en plaque -->
+    <div class="ftr__brand">
+      <Logo variant="invert" />
+      <p class="ftr__pitch">
+        Entreprise générale de couverture installée à Béthune. Couverture, rénovation
+        et réparation de toiture, zinguerie, charpente et travaux d'agrandissement
+        dans le bassin béthunois.
+      </p>
+
+      <address class="ftr__nap">
+        {hasAddress() && (
+          <p><Icon name="pin" size={16} /><span>{addressOneLine()}</span></p>
+        )}
+        {hasPhone() && tel && (
+          <p><Icon name="phone" size={16} /><a href={tel} class="num" data-track-zone="footer">{nap.phone}</a></p>
+        )}
+        {hasEmail() && (
+          <p><Icon name="mail" size={16} /><a href={`mailto:${nap.email}`}>{nap.email}</a></p>
+        )}
+        {hasHours() && (
+          <div class="ftr__hours"><Icon name="clock" size={16} /><span>
+            {nap.openingHours.map((h) => <span>{fmtJours(h.days)} : {h.opens} – {h.closes}</span>)}
+          </span></div>
+        )}
+      </address>
+
+      <div class="ftr__gbtns">
+        {google.directionsUrl && (
+          <a href={google.directionsUrl} class="ftr__gbtn" target="_blank" rel="noopener"
+             data-track="directions_click" data-track-label="footer">
+            <Icon name="route" size={15} /> Itinéraire
+          </a>
+        )}
+        {google.reviewsUrl && (
+          <a href={google.reviewsUrl} class="ftr__gbtn" target="_blank" rel="noopener"
+             data-track="google_reviews_click" data-track-label="footer">
+            <Icon name="star" size={15} /> Avis Google
+          </a>
+        )}
+      </div>
+    </div>
+
+    <nav class="ftr__col" aria-label="Prestations">
+      <p class="ftr__title">Prestations</p>
+      <ul class="list-clean ftr__links">
+        {servicesByOrder.map((s) => <li><a href={s.url}>{s.navLabel ?? s.name}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav class="ftr__col" aria-label="Zone d'intervention">
+      <p class="ftr__title">Zone d'intervention</p>
+      <ul class="list-clean ftr__links">
+        {villesByOrder.map((v) => <li><a href={v.url}>{v.name}</a></li>)}
+        <li><a href="/zone-intervention/" class="ftr__more">Toutes les communes</a></li>
+      </ul>
+    </nav>
+
+    <nav class="ftr__col" aria-label="CZIR62">
+      <p class="ftr__title">CZIR62</p>
+      <ul class="list-clean ftr__links">
+        <li><a href="/entreprise/">L'entreprise</a></li>
+        <li><a href="/realisations/">Nos réalisations</a></li>
+        <li><a href="/avis/">Avis clients</a></li>
+        <li><a href="/outils/">Outils de diagnostic</a></li>
+        <li><a href="/prix-toiture/">Prix des travaux</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/devis/" class="ftr__more">Demander un devis</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="ftr__bottom">
+    <div class="container ftr__bottom-in">
+      <p>© {year} {site.legalName}{nap.siret ? ` — SIRET ${nap.siret}` : ''}</p>
+      <ul class="list-clean ftr__legal">
+        <li><a href="/mentions-legales/">Mentions légales</a></li>
+        <li><a href="/politique-de-confidentialite/">Confidentialité</a></li>
+        <li><a href="/plan-du-site/">Plan du site</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    position: relative;
+    background: var(--zinc-950);
+    color: var(--zinc-400);
+    margin-top: var(--sp-10);
+    border-top: 3px solid var(--clay-600);
+  }
+
+  .ftr__in {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: var(--sp-8) var(--sp-6);
+    padding-block: var(--sp-9) var(--sp-8);
+  }
+  @media (max-width: 1000px) {
+    .ftr__in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ftr__brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) { .ftr__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
+
+  .ftr__pitch {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    max-width: 36ch;
+    color: var(--zinc-400);
+  }
+
+  .ftr__nap { margin-top: var(--sp-6); font-style: normal; display: grid; gap: var(--sp-3); }
+  .ftr__nap p, .ftr__hours { display: flex; gap: 0.6rem; align-items: flex-start; font-size: var(--fs-sm); }
+  .ftr__nap :global(svg) { color: var(--clay-400); flex: none; margin-top: 0.15rem; }
+  .ftr__nap a { color: #fff; font-weight: 600; text-decoration: none; }
+  .ftr__nap a:hover { color: var(--clay-200); }
+  .ftr__hours span span { display: block; }
+
+  .ftr__gbtns { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-6); }
+  .ftr__gbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-xs);
+    color: var(--zinc-300);
+    font-size: var(--fs-xs);
+    font-weight: 620;
+    text-decoration: none;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+  .ftr__gbtn:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.28); color: #fff; }
+  .ftr__gbtn :global(svg) { color: var(--clay-400); }
+
+  .ftr__title {
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 680;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-4);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--border-invert);
+  }
+  .ftr__links { display: grid; gap: 0.62rem; }
+  .ftr__links a {
+    color: var(--zinc-400);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+    transition: color var(--t-fast), padding-left var(--t-fast);
+  }
+  .ftr__links a:hover { color: #fff; padding-left: 3px; }
+  .ftr__more { color: var(--clay-300) !important; font-weight: 620; }
+
+  .ftr__bottom { border-top: 1px solid var(--border-invert); position: relative; z-index: 1; }
+  .ftr__bottom-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    padding-block: var(--sp-5);
+    font-size: var(--fs-xs);
+  }
+  .ftr__legal { display: flex; flex-wrap: wrap; gap: var(--sp-4); }
+  .ftr__legal a { color: var(--zinc-400); text-decoration: none; }
+  .ftr__legal a:hover { color: #fff; }
+</style>

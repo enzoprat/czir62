@@ -1,0 +1,344 @@
+---
+/**
+ * PAGE AGRANDISSEMENT & REHAUSSEMENT
+ * Intention : projet de gain de surface. Le visiteur hésite souvent entre
+ * plusieurs solutions sans savoir laquelle son bien permet.
+ *
+ * Structure propre : un comparatif frontal des trois façons de gagner de la
+ * surface, la règle de hauteur qui décide de tout dans les combles, le
+ * raccordement à l'existant, et un tableau des démarches d'urbanisme —
+ * l'information la plus recherchée et la plus rarement donnée clairement.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import PhotoSlot from '@/components/PhotoSlot.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('agrandissement-rehaussement');
+const tel = telHref();
+const realisations = await realisationsForService('agrandissement-rehaussement', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Agrandissement & réhaussement' }];
+
+const solutions = [
+  {
+    t: 'Extension de plain-pied',
+    icon: 'extension' as const,
+    quand: "Vous disposez de terrain, et le PLU autorise l'emprise supplémentaire.",
+    pour: ['Pas de reprise de la structure existante', "Chantier le moins perturbant pour l'occupation du logement", 'Liberté sur la forme et l’orientation'],
+    contre: ['Consomme du terrain et de l’emprise au sol', 'Fondations à réaliser', 'Raccordement à traiter en toiture et en façade'],
+  },
+  {
+    t: 'Surélévation',
+    icon: 'frame' as const,
+    quand: "Le terrain est contraint, mais la structure et le PLU permettent de monter.",
+    pour: ['Aucune emprise au sol supplémentaire', 'Surface créée importante', 'Souvent la seule option en centre-ville'],
+    contre: ['La structure existante doit reprendre les nouvelles charges', 'Hauteur maximale imposée par le PLU', 'Chantier lourd, logement fortement impacté'],
+  },
+  {
+    t: 'Réhaussement de toiture',
+    icon: 'roof' as const,
+    quand: "Vos combles existent mais sont trop bas pour être habitables.",
+    pour: ['Rend habitable une surface déjà là', 'Moins lourd qu’une surélévation complète', 'Souvent combiné à une rénovation de couverture'],
+    contre: ['Modifie l’aspect extérieur, donc soumis à autorisation', 'Charpente entièrement reprise ou remplacée', 'Contrainte de hauteur du PLU également'],
+  },
+];
+
+const demarches = [
+  { s: 'Jusqu’à 5 m² créés', f: 'En général aucune formalité', n: "Hors secteur protégé et sous réserve du PLU." },
+  { s: 'De 5 à 20 m²', f: 'Déclaration préalable', n: "C'est le cas le plus fréquent pour une petite extension." },
+  { s: 'De 20 à 40 m², en zone urbaine avec PLU', f: 'Déclaration préalable', n: "Le seuil est relevé en zone U d'une commune couverte par un PLU." },
+  { s: 'Au-delà de ces seuils', f: 'Permis de construire', n: "Le délai d'instruction est plus long : à anticiper dans le calendrier." },
+  { s: 'Plus de 150 m² au total après travaux', f: 'Architecte obligatoire', n: "Le recours à un architecte s'impose pour une personne physique." },
+];
+
+const faqItems = [
+  {
+    q: 'Mes combles sont bas : peut-on les rendre habitables ?',
+    a: "Cela dépend de la hauteur disponible sous la charpente. Une surface n'est comptée comme habitable qu'au-delà d'une certaine hauteur sous plafond — autour de 1,80 m. En dessous, la surface existe physiquement mais ne compte ni dans la surface habitable ni dans la surface de plancher. Le réhaussement de toiture consiste précisément à gagner cette hauteur en remontant la charpente : c'est souvent la solution la plus efficace quand il ne manque que quelques dizaines de centimètres.",
+  },
+  {
+    q: 'Ma maison peut-elle supporter une surélévation ?',
+    a: "C'est la première question à trancher, et elle se pose avant toute autre. Les murs porteurs et les fondations existants ont été dimensionnés pour la charge d'origine. Ajouter un niveau demande de vérifier leur capacité, ce qui relève d'une étude structure. Nous ne partons jamais du principe que « ça devrait tenir » : soit c'est vérifié, soit ce n'est pas engagé.",
+  },
+  {
+    q: 'Quelle est la partie la plus délicate d’un agrandissement ?',
+    a: "Le raccordement à l'existant, presque toujours. C'est là que se rencontrent deux constructions d'âges, de matériaux et de comportements différents. La jonction des toitures, la reprise de l'étanchéité, le traitement du point où l'ancienne façade devient un mur intérieur : ce sont ces détails qui font la différence entre une extension qui vieillit bien et une extension qui prend l'eau au bout de trois hivers.",
+  },
+  {
+    q: 'Faut-il un permis de construire ?',
+    a: "Cela dépend de la surface créée et de la situation de votre bien. En résumé : les très petites surfaces sont souvent dispensées, l'intermédiaire relève de la déclaration préalable, le reste du permis de construire — avec un seuil relevé à 40 m² en zone urbaine couverte par un PLU. Un point à ne pas oublier : si la surface totale dépasse 150 m² après travaux, le recours à un architecte devient obligatoire. Ces règles se confirment auprès du service urbanisme de votre commune.",
+  },
+  {
+    q: 'Peut-on habiter la maison pendant les travaux ?',
+    a: "Sur une extension de plain-pied, généralement oui, avec les nuisances d'un chantier. Sur une surélévation ou un réhaussement, la toiture est ouverte pendant une période : cela demande une organisation particulière et, selon l'ampleur, une solution de repli. Nous en parlons dès l'étude, parce que c'est un paramètre concret de votre décision.",
+  },
+  {
+    q: 'Combien de temps entre le premier contact et le début des travaux ?',
+    a: "Le temps technique est rarement le facteur limitant : ce sont les délais d'instruction de l'autorisation d'urbanisme qui déterminent le calendrier, et ils se comptent en semaines voire en mois selon le type de dossier. Notre conseil : engagez la démarche en mairie tôt, en parallèle des devis, plutôt qu'après.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  ogImage="/images/services/agrandissement-rehaussement-czir62.jpg"
+  pageEvent="service_view"
+  pageSlug={service.slug}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Agrandissement & réhaussement"
+    title="Agrandissement et réhaussement à Béthune"
+    lede="Gagner de la surface sans déménager. Trois solutions existent — s'étendre, surélever, réhausser la toiture — et votre bien n'en permet pas forcément trois. Nous commençons toujours par ce constat."
+    photo="/images/services/agrandissement-rehaussement-czir62.jpg"
+    photoAlt="Charpente bois montée par CZIR62 sur une toiture-terrasse existante pour une surélévation"
+    photoNeed="Photo d'un chantier d'agrandissement ou de réhaussement : charpente remontée, ou extension en cours de raccordement."
+    photoRatio="3 / 2"
+    icon="extension"
+    chips={['Extension, surélévation, réhaussement', 'Faisabilité vérifiée d’abord', 'Raccordement à l’existant']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=agrandissement-rehaussement" class="btn btn--lg" data-track="quote_start" data-track-label="hero-agrandissement">
+        Étudier la faisabilité
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-agrandissement">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== 3 SOLUTIONS ========= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Comparatif</p>
+        <h2>Trois façons de gagner de la surface</h2>
+        <p class="lede lede--wide">
+          Elles n'ont ni le même coût, ni la même lourdeur, ni les mêmes conditions.
+          Voici de quoi comprendre laquelle correspond à votre situation avant même
+          notre passage.
+        </p>
+      </div>
+
+      <div class="sol">
+        {solutions.map((s) => (
+          <article class="sol__card reveal">
+            <span class="sol__ico"><Icon name={s.icon} size={24} /></span>
+            <h3>{s.t}</h3>
+            <p class="sol__quand">{s.quand}</p>
+
+            <p class="sol__lbl sol__lbl--pour">Ce qui joue en sa faveur</p>
+            <ul class="list-check">{s.pour.map((p) => <li>{p}</li>)}</ul>
+
+            <p class="sol__lbl sol__lbl--contre">Les conditions à remplir</p>
+            <ul class="list-clean sol__contre">{s.contre.map((c) => <li>{c}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================== HAUTEUR ============ -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow">Le point qui décide</p>
+          <h2>La hauteur sous plafond, et pourquoi elle change tout</h2>
+          <p class="lede">
+            Beaucoup de projets de combles se jouent à quelques dizaines de centimètres.
+          </p>
+          <div class="prose haut__prose">
+            <p>
+              Une surface n'est comptabilisée comme <strong>habitable</strong> qu'au-delà d'une
+              hauteur sous plafond d'environ 1,80 m. En dessous, le volume existe, on peut y
+              ranger des affaires, mais il ne compte ni dans la surface habitable de votre bien,
+              ni dans la surface de plancher retenue par l'urbanisme.
+            </p>
+            <p>
+              Conséquence pratique : des combles de 1,60 m au faîtage ne deviendront pas
+              habitables en y posant un plancher et de l'isolation. Il faut gagner de la hauteur,
+              donc remonter la charpente — c'est exactement ce qu'est un réhaussement de toiture.
+            </p>
+            <p>
+              Cette mesure se prend en cinq minutes, au mètre, depuis vos combles. C'est toujours
+              par là que nous commençons : elle oriente tout le reste du projet, et elle évite de
+              faire rêver sur une solution que la configuration n'autorise pas.
+            </p>
+          </div>
+        </div>
+
+        <PhotoSlot
+          src="/images/services/agrandissement-rehaussement-combles-czir62.jpg"
+          alt="Ossature bois montée au-dessus de la couverture existante pour gagner de la hauteur"
+          need="Photo de combles bas avant réhaussement, ou charpente remontée après réhaussement."
+          ratio="4 / 3"
+          icon="truss"
+          sizes="(max-width: 900px) 100vw, 48vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== RACCORDEMENT ======== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="racco">
+        <div class="racco__text">
+          <p class="eyebrow">Le point technique</p>
+          <h2>Le raccordement à l’existant fait le chantier</h2>
+          <p class="lede lede--wide">
+            C'est la partie qu'on ne voit pas sur les photos, et c'est celle qui décide si
+            l'extension vieillira bien.
+          </p>
+        </div>
+
+        <div class="racco__grid">
+          <article><h3>La jonction des toitures</h3><p>Deux versants qui se rencontrent créent une noue ou un raccord contre mur. C'est le point de plus fort débit d'eau de tout le bâtiment, et le premier endroit où les mauvaises exécutions se manifestent.</p></article>
+          <article><h3>L’ancienne façade devenue mur intérieur</h3><p>Un mur extérieur n'a pas été conçu pour être à l'intérieur. Enduits, appuis, seuils et anciennes ouvertures demandent un traitement spécifique — notamment vis-à-vis de l'humidité.</p></article>
+          <article><h3>Les différences de comportement</h3><p>Une structure neuve et une maçonnerie ancienne ne travaillent pas au même rythme. La jonction doit accepter ce mouvement différentiel plutôt que de le contrarier.</p></article>
+          <article><h3>Les eaux pluviales</h3><p>Une surface de toiture supplémentaire, c'est un volume d'eau supplémentaire à évacuer. Les gouttières et descentes existantes ne sont pas toujours dimensionnées pour l'absorber.</p></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== DEMARCHES =========== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Urbanisme</p>
+        <h2>Quelle autorisation pour quelle surface ?</h2>
+        <p class="lede lede--wide">
+          Repères généraux, à confirmer impérativement auprès du service urbanisme de votre
+          commune : le PLU local peut être plus restrictif, et les règles diffèrent en secteur
+          protégé.
+        </p>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <caption class="visually-hidden">Autorisations d'urbanisme selon la surface créée</caption>
+          <thead>
+            <tr><th scope="col">Surface créée</th><th scope="col">Formalité</th><th scope="col">À noter</th></tr>
+          </thead>
+          <tbody>
+            {demarches.map((d) => (
+              <tr>
+                <th scope="row">{d.s}</th>
+                <td><strong>{d.f}</strong></td>
+                <td>{d.n}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="note tbl__note">
+        <strong>Notre conseil pratique :</strong> déposez le dossier tôt. Le délai d'instruction
+        est presque toujours le facteur qui détermine la date de démarrage — pas la disponibilité
+        de l'entreprise. Engager la démarche en parallèle des devis fait gagner des semaines.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <RealisationsBlock items={realisations} title="Agrandissements réalisés" moreHref="/realisations/" hideIfEmpty />
+      <Faq items={faqItems} title="Questions sur l'agrandissement et le réhaussement" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container"><CityLinks service="agrandissement-rehaussement" /></div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices service="agrandissement-rehaussement" title="Les métiers mobilisés" intro="Un agrandissement touche à la structure, à la couverture et à l'enveloppe." />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Faisabilité"
+    title="Savoir ce que votre bien permet"
+    text="Une visite, un relevé de hauteur, un coup d'œil sur la structure et le PLU : c'est ce qui permet de dire quelle solution est réellement envisageable chez vous."
+    primaryLabel="Étudier la faisabilité"
+    service="agrandissement-rehaussement"
+    trackLabel="agrandissement-final"
+  />
+</BaseLayout>
+
+<style>
+  .sol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 940px) { .sol { grid-template-columns: minmax(0, 1fr); } }
+
+  .sol__card { padding: var(--sp-6); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-xs); }
+  .sol__ico {
+    display: grid; place-items: center; width: 46px; height: 46px;
+    border-radius: var(--r-md); background: var(--clay-50); border: 1px solid var(--clay-100);
+    color: var(--accent); margin-bottom: var(--sp-4);
+  }
+  .sol__card h3 { font-size: var(--fs-xl); }
+  .sol__quand { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--accent-ink); font-weight: 550; line-height: var(--lh-normal); }
+  .sol__lbl { margin-top: var(--sp-5); font-size: 0.68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; margin-bottom: var(--sp-3); }
+  .sol__lbl--pour { color: var(--ok-ink); }
+  .sol__lbl--contre { color: var(--clay-600); }
+  .sol__card .list-check li { font-size: var(--fs-sm); }
+  .sol__contre { display: grid; gap: var(--sp-2); }
+  .sol__contre li { position: relative; padding-left: 1.3rem; font-size: var(--fs-sm); color: var(--zinc-600); }
+  .sol__contre li::before { content: '—'; position: absolute; left: 0; color: var(--clay-400); }
+
+  .haut__prose { margin-top: var(--sp-5); }
+
+  .racco { display: grid; gap: var(--sp-7); }
+  .racco__text { max-width: 52rem; }
+  .racco__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-5); }
+  @media (max-width: 1000px) { .racco__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .racco__grid { grid-template-columns: minmax(0, 1fr); } }
+  .racco__grid article { padding-top: var(--sp-4); border-top: 2px solid var(--clay-600); }
+  .racco__grid h3 { color: #fff; font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 650; }
+  .racco__grid p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: var(--lh-relaxed); }
+
+  /* ---------------------------------------------------------------- table */
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); }
+  .tbl { width: 100%; border-collapse: collapse; min-width: 42rem; }
+  .tbl th, .tbl td { padding: var(--sp-4) var(--sp-5); text-align: left; vertical-align: top; }
+  .tbl thead th {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 650;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-sunk);
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl tbody tr + tr { border-top: 1px solid var(--border); }
+  .tbl tbody th { font-weight: 600; color: var(--text-strong); font-size: var(--fs-sm); }
+  .tbl tbody td { font-size: var(--fs-sm); color: var(--zinc-600); }
+  .tbl tbody td strong { color: var(--accent-ink); }
+  .tbl__note { margin-top: var(--sp-5); }
+</style>

@@ -1,0 +1,223 @@
+---
+/**
+ * HUB PRESTATIONS
+ * Raison d'être : orienter quelqu'un qui ne connaît pas le vocabulaire du
+ * métier. La table « symptôme -> prestation » est ce que cette page apporte
+ * de plus qu'une simple liste de liens.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import DiagnosticToiture from '@/components/DiagnosticToiture.astro';
+import { serviceFamilies, servicesOfFamily, subServices, servicesByOrder } from '@/data/services';
+import { serviceListSchema, breadcrumbSchema, webPageSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Prestations' }];
+
+/** Le langage du client, traduit vers la bonne page */
+const symptomes = [
+  { s: 'Une tache brune est apparue au plafond', p: 'fuite-toiture', l: 'Fuite de toiture' },
+  { s: 'Des tuiles sont tombées après un coup de vent', p: 'reparation-toiture', l: 'Réparation de toiture' },
+  { s: 'La gouttière déborde à chaque orage', p: 'zinguerie', l: 'Zinguerie & gouttières' },
+  { s: 'Le toit est vert de mousse', p: 'couverture', l: 'Entretien de toiture' },
+  { s: 'La couverture a plus de cinquante ans', p: 'renovation-toiture', l: 'Rénovation de toiture' },
+  { s: 'La ligne de faîtage n’est plus droite', p: 'charpente', l: 'Charpente' },
+  { s: 'Les combles sont sombres', p: 'pose-velux', l: 'Pose de Velux' },
+  { s: 'Le pignon est abîmé et prend la pluie', p: 'bardage', l: 'Bardage' },
+  { s: 'Il manque une pièce dans la maison', p: 'agrandissement-rehaussement', l: 'Agrandissement' },
+  { s: 'Je veux un garage ou un atelier', p: 'ossature-bois', l: 'Ossature bois' },
+];
+---
+
+<BaseLayout
+  title="Nos prestations — Couverture, charpente, zinguerie | CZIR62"
+  description="Les treize prestations de CZIR62 à Béthune : couverture, rénovation, réparation, fuite, démoussage, zinguerie, charpente, Velux, bardage, ossature bois."
+  path="/prestations/"
+  schema={[
+    webPageSchema({
+      path: '/prestations/',
+      name: 'Prestations CZIR62',
+      description: "Toutes les prestations de couverture, charpente et enveloppe réalisées par CZIR62 à Béthune.",
+    }),
+    breadcrumbSchema(crumbs),
+    serviceListSchema(),
+  ]}
+>
+  <section class="hub-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Nos prestations</h1>
+      <p class="lede lede--wide">
+        {servicesByOrder.length} prestations, regroupées en trois familles. Si vous ne savez pas dans quelle
+        catégorie tombe votre situation, la table ci-dessous part de ce que vous constatez
+        plutôt que du vocabulaire du métier.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================== SYMPTOME -> PRESTATION == -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Par où commencer</p>
+        <h2>Ce que vous constatez, et la page qui y répond</h2>
+      </div>
+
+      <ul class="list-clean symp">
+        {symptomes.map((s) => (
+          <li>
+            <a href={`/${s.p}/`} class="symp__row">
+              <span class="symp__s">« {s.s} »</span>
+              <span class="symp__arrow" aria-hidden="true">→</span>
+              <span class="symp__p">{s.l}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================== FAMILLES ======== -->
+  {serviceFamilies.map((fam, idx) => (
+    <section class:list={['section', idx % 2 === 1 && 'section--alt']}>
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">{fam.label}</p>
+          <h2>
+            {fam.key === 'toiture' && 'Tout ce qui touche à la toiture'}
+            {fam.key === 'structure' && 'La structure et le bois'}
+            {fam.key === 'enveloppe' && "L'enveloppe extérieure"}
+          </h2>
+          <p class="lede lede--wide">
+            {fam.key === 'toiture' && "De la tuile remplacée à la couverture entièrement reprise, en passant par tout ce qui conduit l'eau."}
+            {fam.key === 'structure' && "Ce qui porte la toiture, et ce qui permet d'agrandir sans déménager."}
+            {fam.key === 'enveloppe' && "La protection et la finition des façades et des pignons."}
+          </p>
+        </div>
+
+        <div class="fam-grid">
+          {servicesOfFamily(fam.key).map((s) => (
+            <article class="card card--link fam-card reveal">
+              <span class="fam-card__ico"><Icon name={s.icon} size={24} /></span>
+              <h3><a href={s.url} class="stretch">{s.name}</a></h3>
+              <p>{s.cardText}</p>
+              <span class="link-arrow">Voir la page</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- =============================================== SOUS-PRESTATIONS === -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Interventions ponctuelles</p>
+        <h2>Ce qui n’a pas sa propre page</h2>
+        <p class="lede lede--wide">
+          Certaines demandes reviennent souvent sans justifier une page entière. Nous les
+          traitons dans la section adaptée de la prestation concernée, plutôt que de créer des
+          pages presque identiques pour occuper le terrain.
+        </p>
+      </div>
+
+      <ul class="list-clean subs">
+        {subServices.map((s) => (
+          <li>
+            <a href={s.url} class="subs__link">
+              <strong>{s.label}</strong>
+              <span>{s.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <DiagnosticToiture
+        title="Toujours pas sûr ?"
+        intro="Indiquez ce que vous constatez : nous vous orientons vers la bonne prestation, avec ce qu'il est utile de vérifier avant notre passage."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Devis gratuit"
+    title="Décrivez votre situation"
+    text="Si vous hésitez entre deux prestations, ce n'est pas un problème : dites-nous ce que vous constatez, nous ferons le tri."
+    primaryLabel="Demander un devis"
+    trackLabel="prestations-final"
+  />
+</BaseLayout>
+
+<style>
+  .hub-hero {
+    background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  .hub-hero h1 { margin-top: var(--sp-5); }
+  .hub-hero .lede { margin-top: var(--sp-4); }
+
+  .symp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--sp-6); }
+  @media (max-width: 880px) { .symp { grid-template-columns: minmax(0, 1fr); } }
+
+  .symp__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 11rem);
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    transition: color var(--t-fast);
+  }
+  .symp__s { font-size: var(--fs-sm); color: var(--zinc-600); font-style: italic; }
+  .symp__arrow { color: var(--border-strong); transition: transform var(--t-base), color var(--t-base); }
+  .symp__p { font-size: var(--fs-sm); font-weight: 620; color: var(--accent-ink); }
+  .symp__row:hover .symp__arrow { transform: translateX(4px); color: var(--accent); }
+  .symp__row:hover .symp__s { color: var(--text-strong); }
+  @media (max-width: 480px) {
+    .symp__row { grid-template-columns: minmax(0, 1fr); gap: 0.35rem; }
+    .symp__arrow { display: none; }
+  }
+
+  .fam-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 1000px) { .fam-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .fam-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .fam-card { padding: var(--sp-5); }
+  .fam-card__ico {
+    display: grid; place-items: center;
+    width: 46px; height: 46px;
+    border-radius: var(--r-md);
+    background: var(--clay-50);
+    border: 1px solid var(--clay-100);
+    color: var(--accent);
+    margin-bottom: var(--sp-4);
+  }
+  .fam-card h3 { font-size: var(--fs-lg); }
+  .fam-card h3 a { color: inherit; text-decoration: none; }
+  .fam-card p { font-size: var(--fs-sm); line-height: var(--lh-normal); flex: 1; }
+  .fam-card .link-arrow { margin-top: var(--sp-4); font-size: var(--fs-sm); }
+
+  .subs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+  @media (max-width: 1000px) { .subs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .subs { grid-template-columns: minmax(0, 1fr); } }
+  .subs__link {
+    display: block;
+    padding: var(--sp-5);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-invert);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+  .subs__link:hover { background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.28); }
+  .subs__link strong { display: block; color: #fff; font-size: var(--fs-base); }
+  .subs__link span { display: block; margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-invert-muted); line-height: 1.55; }
+</style>
