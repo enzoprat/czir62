@@ -392,6 +392,225 @@ utiles à savoir avant de s'y lancer :
 
 ---
 
+## 3 quater. Les produits — le module le plus rentable de la fiche
+
+« Produits » est présenté comme une vitrine de marchandises, mais pour une
+entreprise de services c'est le module le plus efficace de la fiche. La
+comparaison avec « Services » est sans appel :
+
+| | Services | **Produits** |
+|---|---|---|
+| Photo | non | **oui** |
+| Description | 300 caractères | **1 000 caractères** |
+| Bouton avec lien | non | **oui** |
+| Affichage | liste de texte | **carrousel visuel** |
+
+C'est donc le seul module de la fiche qui **renvoie du trafic vers le site**.
+Chaque produit est une porte d'entrée vers la page correspondante.
+
+**Le prix reste vide.** Il est facultatif, et le renseigner contredirait
+frontalement ce que dit le site : « nous ne chiffrons jamais un chantier sans
+être passés le voir ». Un tarif affiché sur la fiche et refusé au téléphone est
+une incohérence qu'un prospect remarque. Le lien vers la page prix joue ce rôle
+bien mieux.
+
+### Les 8 produits à créer
+
+Bouton : **« En savoir plus »** dans tous les cas, avec le lien indiqué.
+
+#### Recherche de fuite de toiture
+
+- **Photo** : une trace d'humidité en sous-face, ou un couvreur sur un versant après la pluie
+- **Bouton** : En savoir plus → `https://www.czir62.fr/fuite-toiture/`
+- **Description** (642 caractères) :
+
+```
+Une auréole au plafond n'apparaît presque jamais sous le point d'entrée de l'eau. Celle-ci passe par un défaut en partie haute, longe un chevron ou une panne sur plusieurs mètres, puis tombe là où quelque chose l'arrête.
+
+Nous remontons ce trajet : d'abord depuis les combles quand ils sont accessibles, en repérant les traces fraîches sur les bois, puis sur la toiture au niveau des points singuliers situés en amont — solins, noues, faîtage, abords de fenêtre de toit. Si rien n'est concluant, nous procédons à une mise en eau méthodique.
+
+Vous voyez ce que nous avons trouvé, en photo si l'accès est difficile, avant que nous intervenions.
+```
+
+#### Rénovation de toiture
+
+- **Photo** : couverture-deposee-czir62 — une toiture ouverte, charpente visible
+- **Bouton** : En savoir plus → `https://www.czir62.fr/renovation-toiture/`
+- **Description** (614 caractères) :
+
+```
+Refaire une toiture, c'est déposer, vérifier ce qu'il y a dessous et reposer un ensemble cohérent.
+
+Dépose de l'ancienne couverture et évacuation, contrôle du voligeage et de la charpente une fois découverts, écran sous-toiture, liteaunage au pureau calculé pour le modèle posé, couverture neuve, puis reprise de la zinguerie et des points singuliers.
+
+Ce qu'on ne peut pas voir avant d'ouvrir figure noir sur blanc dans le devis : nous écrivons ce qui a été supposé et comment se traite une pièce trouvée hors d'usage. Un devis qui présente un forfait ferme sur une charpente qu'il n'a pas vue prépare un avenant.
+```
+
+#### Démoussage de toiture
+
+- **Photo** : un versant nord chargé en mousse, avant intervention
+- **Bouton** : En savoir plus → `https://www.czir62.fr/demoussage-toiture/`
+- **Description** (610 caractères) :
+
+```
+La mousse ne perce pas une tuile. Elle empêche la couverture de sécher, retient l'eau contre un matériau poreux, se retrouve dans les gouttières et masque les défauts qu'il faudrait voir.
+
+Retrait mécanique et rinçage à faible pression, toujours dans le sens de l'écoulement : une lance haute pression dirigée vers le haut passe sous le recouvrement des tuiles, et décape la couche de surface qui les protège.
+
+Surtout, nous vous dirons si l'intervention se justifie. Sur une couverture en fin de vie, un démoussage est une dépense qui sera déposée avec le reste — et le brossage casse ce qui est déjà fragile.
+```
+
+#### Zinguerie et gouttières
+
+- **Photo** : faitage-metallique-czir62, ou un gros plan de gouttière zinc en pose
+- **Bouton** : En savoir plus → `https://www.czir62.fr/zinguerie/`
+- **Description** (582 caractères) :
+
+```
+La couverture arrête la pluie ; la zinguerie décide où elle va.
+
+Gouttières pendantes, chéneaux encaissés, descentes, noues, solins contre mur ou souche de cheminée, bandes de rive et habillages, en zinc, cuivre ou aluminium laqué. Remplacement d'éléments corrodés et reprise des raccords qui laissent passer l'eau.
+
+Un débordement vient rarement d'un manque de capacité : le plus souvent d'une pente perdue par des crochets descendus, d'une jonction disjointe ou d'une descente partiellement bouchée. Nous regardons la gouttière en charge avant de proposer un remplacement complet.
+```
+
+#### Couverture en tuiles et en ardoises
+
+- **Photo** : maison-de-maitre-toiture-czir62 — la plus valorisante de la galerie
+- **Bouton** : En savoir plus → `https://www.czir62.fr/couverture/`
+- **Description** (522 caractères) :
+
+```
+Pose, remplacement et entretien de couverture en tuile mécanique, tuile plate, tuile béton ou ardoise.
+
+Le travail se juge sur ce qui ne se voit plus une fois posé : le recouvrement de l'écran sous-toiture, la régularité du liteaunage, le traitement des points singuliers en zinc façonné plutôt qu'au mastic, et la ventilation en égout et en faîtage — une toiture qui ne respire pas fait vieillir la charpente sans que rien ne se voie de l'intérieur.
+
+Faîtage, rives, arêtiers et raccords traités dans les règles de l'art.
+```
+
+#### Charpente bois et fermettes
+
+- **Photo** : croupe-liteaunage-czir62 ou charpente-immeuble-czir62
+- **Bouton** : En savoir plus → `https://www.czir62.fr/charpente/`
+- **Description** (591 caractères) :
+
+```
+Charpente traditionnelle et fermettes industrielles : reprise de pièces fragilisées, moisage, greffe d'about, renforcement, modification pour aménager des combles.
+
+Une reprise en sous-œuvre conserve la structure d'origine et coûte bien moins cher qu'un remplacement — à condition d'intervenir avant que la section restante ne soit trop entamée. Au-delà, la pièce ne peut plus servir d'appui.
+
+Nous diagnostiquons l'état réel du bois avant de chiffrer. Le traitement curatif contre les insectes et les champignons relève d'une autre spécialité : nous le signalons, nous ne le pratiquons pas.
+```
+
+#### Étanchéité de toiture-terrasse
+
+- **Photo** : etancheite-membrane-czir62
+- **Bouton** : En savoir plus → `https://www.czir62.fr/etancheite-toiture-terrasse/`
+- **Description** (515 caractères) :
+
+```
+Une toiture-terrasse ne conduit pas l'eau, elle la contient. Tout s'y joue sur les points singuliers, pas sur la surface courante.
+
+Membrane bitumineuse ou EPDM, relevés d'acrotère, évacuations et trop-pleins, traversées. Reprise ponctuelle quand le complexe est encore sain, réfection complète quand il ne l'est plus — nous vous disons franchement dans quel cas vous êtes, parce que reprendre une étanchéité en fin de vie revient à repousser le problème d'une saison.
+
+Garages, annexes et petites surfaces compris.
+```
+
+#### Surélévation et agrandissement
+
+- **Photo** : charpente-sur-terrasse-czir62 ou ossature-extension-czir62
+- **Bouton** : En savoir plus → `https://www.czir62.fr/agrandissement-rehaussement/`
+- **Description** (611 caractères) :
+
+```
+Réhaussement, extension, création de surface habitable : étude de faisabilité, structure, raccordement à l'existant et mise hors d'eau.
+
+La partie la plus délicate n'est pas la charpente, c'est le raccord entre l'ancien et le neuf — c'est là que l'eau cherche à passer, et c'est ce qui distingue un chantier tenu d'un chantier qui fuira dans deux ans.
+
+Nous vous accompagnons avec un architecte pour la faisabilité et le dossier d'autorisation en mairie, préparés en même temps que l'étude technique et non une fois le chantier calé. Attention : une surélévation bascule l'ensemble des travaux à la TVA de 20 %.
+```
+
+> Deux produits n'ont pas encore de photo dans la galerie du site : la
+> recherche de fuite et le démoussage. À prendre dans la réserve de 150
+> fichiers — pour la fuite, une trace d'humidité en sous-face ou un couvreur
+> sur un versant ; pour le démoussage, un versant nord chargé, avant
+> intervention.
+
+---
+
+## 3 quinquies. Huit posts prêts à publier
+
+Un post disparaît au bout de 7 jours : préparer d'avance est ce qui permet de
+tenir le rythme hebdomadaire les semaines où le chantier prend tout le temps.
+Huit posts, c'est deux mois de réserve.
+
+**Seuls les 100 premiers caractères s'affichent** dans le carrousel : la
+première phrase doit se suffire à elle-même. Toutes celles ci-dessous sont
+écrites pour cela.
+
+Ajouter une photo à chaque post et le bouton « En savoir plus » vers le lien
+indiqué.
+
+#### Chantier terminé → `https://www.czir62.fr/realisations/`
+
+```
+Réfection complète d'une toiture en ardoise, terminée cette semaine dans le secteur de Béthune. Dépose de l'ancienne couverture, contrôle du voligeage une fois découvert, écran sous-toiture, liteaunage et pose. Les photos prises pendant les travaux montrent ce qui ne se voit plus une fois le chantier fini — et c'est précisément là que se juge une toiture.
+```
+
+#### Le désordre du mois → `https://www.czir62.fr/fuite-toiture/`
+
+```
+Un solin fissuré ne fuit pas tout de suite : il laisse passer un peu d'eau à chaque pluie, sur des mois. Quand la tache apparaît au plafond, le voligeage a souvent déjà travaillé. C'est la réparation la plus fréquente que nous faisons, et l'une des moins chères quand elle est prise à temps.
+```
+
+#### Rappel de saison — automne → `https://www.czir62.fr/zinguerie/`
+
+```
+Avant les pluies d'automne, un contrôle de gouttières évite bien des dégâts de façade. Les feuilles et les mousses descendues du versant bouchent les crapaudines et les coudes de descente ; l'eau déborde alors contre la maçonnerie, à chaque orage. Un passage suffit à savoir si le remplacement se justifie ou non.
+```
+
+#### Rappel de saison — sortie d'hiver → `https://www.czir62.fr/demoussage-toiture/`
+
+```
+En sortie d'hiver, les versants nord sortent chargés en mousse. Avant de faire démousser, une question : votre couverture est-elle en état de le supporter ? Sur une toiture en fin de vie, le brossage casse plus de tuiles qu'il n'en nettoie. Nous vous le dirons sur place, quitte à ne pas faire l'intervention.
+```
+
+#### Le showroom → `https://www.czir62.fr/contact/`
+
+```
+Notre bureau et notre showroom sont au centre de Béthune, 100 rue Sainte-Pry. Vous pouvez passer voir des échantillons de tuiles et d'ardoises, comparer les teintes en vrai plutôt que sur un écran, et parler de votre projet sans rendez-vous préalable.
+```
+
+#### Comment nous travaillons → `https://www.czir62.fr/entreprise/`
+
+```
+Tous nos travaux sont réalisés par nos soins, sans aucune sous-traitance. L'équipe qui établit le devis est celle qui monte sur le toit : personne ne découvre votre toiture le jour où le chantier commence, et vous avez un seul interlocuteur du début à la fin.
+```
+
+#### Le prix d'une toiture → `https://www.czir62.fr/prix-toiture/`
+
+```
+Combien coûte une réfection de toiture ? La vraie réponse tient en une phrase : cela dépend de l'accès, pas du mètre carré. Nous publions les fourchettes du marché et les sept postes qui expliquent presque tous les écarts entre deux devis — échafaudage, dépose, ce qu'on trouve sous la couverture.
+```
+
+#### Après un coup de vent → `https://www.czir62.fr/reparation-toiture/`
+
+```
+Après une tempête, ne montez pas vérifier vous-même : une tuile déjà descellée casse sous un appui mal placé. Photographiez ce que vous voyez depuis le sol, avant toute bâche — c'est ce qui servira à votre déclaration. Nous passons constater et fournissons un devis détaillé pour votre assurance.
+```
+
+### Ordre de publication conseillé
+
+Les deux rappels de saison se publient au bon moment, pas dans l'ordre de la
+liste. Les six autres se font tourner. Un jour fixe dans la semaine — le
+vendredi par exemple — vaut mieux qu'une bonne intention : c'est ce qui évite
+de découvrir trois semaines plus tard que le dernier post a expiré.
+
+Ces huit-là servent d'amorce. Le vrai gisement, ce sont les chantiers en cours :
+un chantier terminé fait un post, et il en reste une photo pour la galerie.
+
+---
+
 ## 4. Ce que les zones desservies font — et ne font pas
 
 À savoir avant d'y passer du temps.
