@@ -53,6 +53,69 @@ attire des demandes qu'il faudra refuser, et Google apprend de ces refus.
 
 ---
 
+## 2 bis. La description — 750 caractères
+
+Google affiche **environ 250 caractères** avant le lien « plus ». Presque
+personne ne clique dessus : le texte ci-dessous est donc écrit pour qu'une
+phrase complète et différenciante tienne dans cette fenêtre, et que la coupure
+ne tombe pas au milieu d'un argument.
+
+**737 caractères sur 750.** À copier tel quel, sauts de ligne compris.
+
+```
+Entreprise générale de couverture à Béthune, avec bureau et showroom en centre-ville où vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance : l'équipe qui chiffre est celle qui monte sur le toit.
+
+Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation et agrandissement.
+
+Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Nous intervenons dans un rayon de 40 km autour de Béthune et montons voir avant de chiffrer : devis gratuit, détaillé poste par poste.
+```
+
+### Ce qui se lit sans cliquer
+
+> Entreprise générale de couverture à Béthune, avec bureau et showroom en
+> centre-ville où vous pouvez passer nous voir. Tous les travaux sont réalisés
+> par nos soins, sans aucune sous-traitance : l'équipe qui chiffre est celle qui
+> monte sur le toit.
+
+246 caractères, la phrase se termine avant la coupure. Elle porte les deux
+seuls arguments que la concurrence locale ne peut pas reprendre : un local
+ouvert au public en centre-ville, et l'absence de sous-traitance. Les
+concurrents du secteur sont soit des réseaux nationaux à sous-domaines, soit
+des artisans domiciliés dans une autre commune.
+
+### Les règles respectées
+
+Google refuse ou tronque les descriptions qui contiennent certains éléments.
+Vérifié sur ce texte :
+
+| Interdit | État |
+|---|---|
+| URL ou lien | ✓ aucun |
+| Numéro de téléphone | ✓ aucun — il a son propre champ |
+| Balises HTML | ✓ aucune |
+| Offre promotionnelle, remise, pourcentage | ✓ aucune |
+| Superlatif ou ancienneté invérifiable | ✓ aucun |
+| Suites de capitales | ✓ aucune |
+
+Le texte ne contient aucune affirmation qui ne figure pas déjà sur le site :
+c'est la même entreprise qui parle au même endroit, ce que Google recoupe.
+
+### À réviser plus tard
+
+Trois éléments amélioreraient nettement cette description, mais ne peuvent pas
+y figurer tant qu'ils ne sont pas confirmés :
+
+- **l'assurance décennale** — c'est l'argument de réassurance le plus utilisé
+  par les concurrents locaux ;
+- **l'année de création** — « depuis 20XX » vaut mieux que n'importe quel
+  adjectif ;
+- **la qualification RGE**, si elle existe, qui ouvrirait le volet isolation.
+
+La description se modifie à tout moment : autant partir avec un texte exact et
+l'enrichir ensuite, plutôt que d'écrire une promesse à corriger.
+
+---
+
 ## 3. Les zones desservies — 20 maximum
 
 Google plafonne à **20 zones**. On ne peut plus définir un rayon : il faut
