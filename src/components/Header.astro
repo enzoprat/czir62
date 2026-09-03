@@ -16,7 +16,7 @@
 import Logo from '@/components/Logo.astro';
 import Icon from '@/components/Icon.astro';
 import { servicesByOrder, serviceFamilies, servicesOfFamily } from '@/data/services';
-import { nap, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { nap, telHref, hasPhone, hasEmail, hasAddress, addressOneLine } from '@/config/site';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
@@ -38,11 +38,21 @@ const mainNav = [
     <div class="container hdr__top-in">
       <span class="hdr__loc">
         <Icon name="storefront" size={15} />
-        <strong>Local à Béthune</strong>
+        {/* Deux formulations plutot qu'un mot masque : tronquer « au centre »
+            laissait lire « showroom de Béthune ». */}
+        <strong class="hdr__long">Bureau &amp; showroom au centre de Béthune</strong>
+        <strong class="hdr__court">Bureau &amp; showroom à Béthune</strong>
+        {/* Segments degressifs : la phrase complete sur grand ecran, l'adresse
+            seule sur ecran moyen, l'accroche seule sur telephone. */}
+        <span class="hdr__accueil">nous vous accueillons selon la nature de vos travaux</span>
         {hasAddress() && <span class="hdr__addr">{addressOneLine()}</span>}
       </span>
       <span class="hdr__top-right">
-        <span class="hdr__zone">Bassin béthunois · Pas-de-Calais</span>
+        {hasEmail() && (
+          <a href={`mailto:${nap.email}`} class="hdr__mail" data-track-zone="header-top">
+            <Icon name="mail" size={14} />{nap.email}
+          </a>
+        )}
         {hasPhone() && tel && (
           <a href={tel} class="hdr__tel num" data-track-zone="header-top">
             <Icon name="phone" size={14} />{nap.phone}
@@ -200,14 +210,34 @@ const mainNav = [
   .hdr__loc strong { color: #fff; font-weight: 620; }
   .hdr__addr { color: var(--zinc-400); }
   .hdr__addr::before { content: '·'; margin: 0 0.4rem; }
+  .hdr__accueil { color: var(--zinc-400); }
+  .hdr__accueil::before { content: '—'; margin: 0 0.4rem; }
+  .hdr__mail { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--zinc-300); text-decoration: none; }
+  .hdr__mail :global(svg) { color: var(--clay-400); }
+  .hdr__mail:hover { color: #fff; }
 
   .hdr__top-right { display: inline-flex; align-items: center; gap: var(--sp-5); }
   .hdr__zone { letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.68rem; color: var(--zinc-400); }
   .hdr__tel { display: inline-flex; align-items: center; gap: 0.35rem; color: #fff; font-weight: 640; text-decoration: none; }
   .hdr__tel :global(svg) { color: var(--clay-400); }
   .hdr__tel:hover { color: var(--clay-200); }
-  @media (max-width: 900px) { .hdr__top { display: none; } }
-  @media (max-width: 1180px) { .hdr__zone, .hdr__addr { display: none; } }
+  /* Degressif, du plus accessoire au plus utile. Le bandeau ne disparait
+     jamais : sur telephone il ne reste que « Bureau & showroom à Béthune »,
+     qui est le seul element que la concurrence locale ne peut pas afficher.
+     Le numero est ailleurs sur mobile — barre basse persistante et menu. */
+  .hdr__top-in > span { white-space: nowrap; }
+  /* Seuils mesures sur le rendu reel, pas estimes : titre 338 px, accroche
+     424, adresse 287, e-mail 205, telephone 140, gouttieres 200. */
+  @media (max-width: 1700px) { .hdr__addr { display: none; } }
+  @media (max-width: 1400px) { .hdr__mail { display: none; } }
+  @media (max-width: 1200px) { .hdr__accueil { display: none; } }
+  .hdr__court { display: none; }
+  @media (max-width: 620px) {
+    .hdr__tel { display: none; }
+    .hdr__long { display: none; }
+    .hdr__court { display: inline; }
+    .hdr__top-in { justify-content: center; height: 30px; font-size: 0.72rem; }
+  }
 
   /* ───────────────────────── barre principale ───────────────────────── */
   .hdr__bar { border-bottom: 1px solid var(--border); background: var(--bone); transition: box-shadow var(--t-base); }
@@ -340,7 +370,7 @@ const mainNav = [
   .hdr__call :global(svg) { color: var(--accent); }
   .hdr__call:hover { color: var(--accent-ink); }
   @media (max-width: 1240px) { .hdr__call { display: none; } }
-  @media (max-width: 980px) { .hdr__nav { display: none; } }
+  @media (max-width: 1020px) { .hdr__nav { display: none; } }
 
   /* ───────────────────────────── burger ─────────────────────────────── */
   .burger {
@@ -365,7 +395,7 @@ const mainNav = [
   .burger[aria-expanded='true'] .burger__box span:nth-child(2) { opacity: 0; }
   .burger[aria-expanded='true'] .burger__box span:nth-child(3) { width: 18px; transform: translateY(-6px) rotate(-45deg); }
 
-  @media (max-width: 980px) {
+  @media (max-width: 1020px) {
     .burger { display: grid; place-items: center; }
     .hdr__actions { margin-left: auto; }
     .hdr__quote { display: none; }

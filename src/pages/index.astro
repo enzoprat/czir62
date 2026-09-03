@@ -275,6 +275,22 @@ const etapes = [
           </li>
         ))}
       </ol>
+
+      <aside class="soust">
+        <p class="soust__k"><Icon name="shield" size={19} /> Qui monte sur votre toit</p>
+        <p>
+          <strong>Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance</strong>,
+          dans les règles de l'art et le respect des normes en vigueur. L'équipe qui établit le
+          devis est celle qui exécute le chantier.
+        </p>
+        <p>
+          Pour un réhaussement, un agrandissement ou une autorisation en mairie, nous vous
+          accompagnons avec un architecte.
+        </p>
+        <p class="soust__more">
+          <a href="/entreprise/" class="link-arrow">Comment nous travaillons</a>
+        </p>
+      </aside>
     </div>
   </section>
 
@@ -328,6 +344,19 @@ const etapes = [
 </BaseLayout>
 
 <style>
+  /* ------------------------------------------------- sans sous-traitance */
+  .soust {
+    margin-top: var(--sp-9);
+    padding: var(--sp-6) var(--sp-7);
+    max-width: 68ch;
+    background: rgba(255, 255, 255, 0.55);
+    border-left: 3px solid var(--clay-500);
+    backdrop-filter: blur(2px);
+  }
+  .soust__k { display: flex; align-items: center; gap: var(--sp-3); font-weight: 620; color: var(--clay-700); }
+  .soust p + p { margin-top: var(--sp-4); }
+  .soust__more { margin-top: var(--sp-5) !important; }
+
   /* ═══════════════════════════ 1 · HERO ════════════════════════════════ */
   .hero {
     position: relative;
@@ -335,6 +364,11 @@ const etapes = [
     color: var(--text-invert);
     padding-block: clamp(2.5rem, 5vw, 4.5rem) 0;
     /* La couture est portée par la section suivante : le hero reste net. */
+
+    /* Le halo ::after deborde de 10 % a droite : sans rognage il ajoutait
+       140 px de defilement horizontal a toute la page. `clip` le contient
+       sans creer de conteneur de defilement, contrairement a `hidden`. */
+    overflow-x: clip;
   }
   .hero::after {
     /* Halo terre cuite très bas, côté photo : la chaleur du matériau. */

@@ -15,22 +15,20 @@ n'annoncent rien.
 
 ## 🔴 Bloquant — sans ça, le site ne convertit pas
 
-### 1. Le numéro de téléphone
-`src/config/site.ts` → `nap.phone` et `nap.phoneE164`
+### ~~1. Le numéro de téléphone~~ ✅ fourni le 3 septembre 2026
+`src/config/site.ts` → `07 86 70 41 34` / `+33786704134`
 
-C'est de loin le manque le plus coûteux. Aujourd'hui, **tous les boutons
-d'appel du site basculent en « Être rappelé »** : la barre mobile persistante,
-l'en-tête, chaque hero de prestation, la page contact, la page devis.
+Les liens d'appel sont actifs sur **36 pages** : barre mobile persistante,
+en-tête, bandeau haut de page, menu mobile, pied de page, hero de l'accueil,
+écran de confirmation du devis. Le numéro est déclaré dans les données
+structurées (`telephone`), ce qui permettra à Google de rapprocher le site de
+la fiche Business Profile.
 
-Sur un métier de dépannage, la moitié des prises de contact se font par appel
-direct depuis un téléphone. Le formulaire ne remplace pas un bouton d'appel
-quand quelqu'un a de l'eau qui tombe dans son salon.
+**E-mail également fourni** : `Ent.czir62@hotmail.com`, présent dans le bandeau
+haut de page, la page contact et le champ `email` des données structurées.
 
-Le téléphone conditionne aussi :
-- la balise `telephone` des données structurées, que Google utilise pour
-  rapprocher le site de la fiche Google Business Profile ;
-- la cohérence NAP entre le site, la fiche Google et les annuaires — c'est
-  l'un des critères les plus établis du référencement local.
+> ⚠️ Vérifier que ce numéro est **exactement** celui de la fiche Google. Une
+> divergence, même de format, casse la cohérence NAP.
 
 ### 2. La fiche Google Business Profile
 `src/config/site.ts` → `google.placeId`, `google.cid`, `google.profileUrl`

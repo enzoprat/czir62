@@ -26,21 +26,34 @@ mentions légales.
 | Champ | État | Remarque |
 |---|---|---|
 | `nap.address.street` | ✅ `100 rue Sainte-Pry` | Vérifier que l'orthographe est **identique** à la fiche Google |
-| `nap.phone` | ⛔ manquant | `'03 21 00 00 00'` — format d'affichage |
-| `nap.phoneE164` | ⛔ manquant | `'+33321000000'` — pour les liens `tel:` |
-| `nap.email` | ⛔ manquant | Adresse de réception des demandes |
+| `nap.phone` | ✅ `07 86 70 41 34` | Vérifier l'identité avec la fiche Google |
+| `nap.phoneE164` | ✅ `+33786704134` | Utilisé par tous les liens `tel:` |
+| `nap.email` | ✅ `Ent.czir62@hotmail.com` | Affichée dans le bandeau et sur la page contact |
 | `nap.geo.lat` / `lng` | ⛔ manquant | Clic droit sur Google Maps → copier les coordonnées. Active la carte de la page contact |
 | `nap.openingHours` | ⛔ manquant | Tableau vide = aucun horaire affiché ni déclaré |
 | `nap.siret` | ⛔ manquant | Affiché en mentions légales |
 | `nap.foundingYear` | ⛔ manquant | Alimente `foundingDate` du JSON-LD |
 
-**Le téléphone est le manque le plus coûteux.** Sans lui, tous les boutons
-d'appel du site basculent en « Être rappelé » — y compris la barre mobile
-persistante, qui est le premier point de conversion sur téléphone.
+Le téléphone et l'e-mail ont été fournis le 3 septembre 2026 : tous les boutons
+d'appel du site sont actifs. Restent les horaires, les coordonnées GPS, le
+SIRET et l'année de création.
 
 > ⚠️ Le NAP (nom, adresse, téléphone) doit être **strictement identique** à
 > celui de la fiche Google Business Profile, à la virgule et à l'abréviation
 > près. Une divergence dégrade la cohérence des citations locales.
+
+## 1 bis. Messages d'entreprise en ligne
+
+Trois éléments fournis par le client sont désormais publiés :
+
+- **Bandeau haut de page**, sur les 36 pages : « Bureau & showroom au centre de
+  Béthune — nous vous accueillons selon la nature de vos travaux », avec
+  l'adresse, l'e-mail et le téléphone. Le bandeau se réduit progressivement et
+  ne disparaît jamais : sur téléphone il conserve « Bureau & showroom à
+  Béthune », le seul argument que la concurrence locale ne peut pas afficher.
+- **Aucune sous-traitance** — page d'accueil et page entreprise.
+- **Accompagnement par un architecte** pour les réhaussements, agrandissements
+  et autorisations en mairie — accueil, entreprise, agrandissement, ossature bois.
 
 ## 2. Fiche Google Business Profile — `src/config/site.ts` ⛔ BLOQUANT
 

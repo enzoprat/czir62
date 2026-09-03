@@ -103,6 +103,48 @@ const engagements = [
   </section>
 
   <!-- ============================================== CE QUE NOUS FAISONS = -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Exécution</p>
+          <h2>Les compagnons qui montent sur votre toit sont les nôtres</h2>
+        </div>
+        <p class="lede">
+          Deux engagements qui décident de la façon dont un chantier se déroule, et sur lesquels
+          il vaut mieux être clair avant de signer plutôt qu'après.
+        </p>
+      </div>
+
+      <div class="exec">
+        <article class="exec__item">
+          <span class="exec__ico"><Icon name="shield" size={22} /></span>
+          <h3>Aucune sous-traitance</h3>
+          <p>
+            Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance, dans les
+            règles de l'art et le respect des normes en vigueur. L'équipe qui établit le devis
+            est celle qui exécute le chantier : personne ne découvre votre toiture le jour où
+            elle commence, et il n'y a qu'un seul interlocuteur du début à la fin.
+          </p>
+        </article>
+
+        <article class="exec__item">
+          <span class="exec__ico"><Icon name="ruler" size={22} /></span>
+          <h3>Un architecte quand le projet l'exige</h3>
+          <p>
+            Pour toute demande de réhaussement, d'agrandissement ou d'autorisation en mairie, nous
+            vous accompagnons avec un architecte. C'est souvent le point où un projet s'enlise :
+            la partie administrative se prépare en amont, en même temps que la faisabilité
+            technique, et pas une fois le chantier calé.
+          </p>
+          <p class="exec__more">
+            <a href="/agrandissement-rehaussement/" class="link-arrow">Agrandissement &amp; réhaussement</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section class="section section--alt">
     <div class="container">
       <div class="section-head">
@@ -210,6 +252,15 @@ const engagements = [
 </BaseLayout>
 
 <style>
+  /* ------------------------------------------------------------ execution */
+  .exec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-8); margin-top: var(--sp-8); }
+  @media (max-width: 860px) { .exec { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
+  .exec__item { padding-top: var(--sp-5); border-top: 2px solid var(--clay-400); }
+  .exec__ico { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--clay-50); border: 1px solid var(--clay-200); color: var(--accent); }
+  .exec__item h3 { margin-top: var(--sp-4); font-size: var(--fs-xl); }
+  .exec__item p { margin-top: var(--sp-3); color: var(--text-muted); line-height: var(--lh-relaxed); }
+  .exec__more { margin-top: var(--sp-4) !important; }
+
   .gal-more { margin-top: var(--sp-7); }
   .en-hero {
     background: linear-gradient(180deg, var(--sand-50), var(--bone) 70%);

@@ -34,12 +34,12 @@ export const nap = {
   name: 'CZIR62 — Entreprise Générale de Couverture',
 
   /** TODO Numero principal. Format d'affichage francais : '03 21 00 00 00' */
-  phone: null as string | null,
-  /** TODO Meme numero au format E.164 pour les liens tel: — '+33321000000' */
-  phoneE164: null as string | null,
+  phone: '07 86 70 41 34' as string | null,
+  /** Meme numero au format E.164 pour les liens tel: */
+  phoneE164: '+33786704134' as string | null,
 
-  /** TODO Email de reception des demandes */
-  email: null as string | null,
+  /** Email de reception des demandes */
+  email: 'Ent.czir62@hotmail.com' as string | null,
 
   address: {
     /**

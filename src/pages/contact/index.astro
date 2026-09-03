@@ -227,7 +227,10 @@ const canaux = [
   .ct-todo { margin-top: var(--sp-6); }
   .ct-todo code { background: rgba(0,0,0,.06); padding: .1em .35em; border-radius: 4px; font-size: .85em; }
 
-  .ct-local { display: grid; gap: var(--sp-4); }
+  /* Sans colonne declaree, la colonne implicite se dimensionne sur le
+     contenu (max-content) et non sur le conteneur : a 320 px le bloc
+     debordait de 36 px. `minmax(0, 1fr)` la borne a la largeur disponible. */
+  .ct-local { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
   .ct-map {
     width: 100%;
     aspect-ratio: 16 / 10;
