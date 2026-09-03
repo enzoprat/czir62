@@ -229,20 +229,24 @@ Pas de limite stricte au nombre, mais rester autour de **20 à 25** garde la
 liste lisible. Chaque service accepte une **description de 300 caractères** :
 presque personne ne la remplit, c'est du contenu indexable laissé libre.
 
-### a. Suggestions de Google — à cocher
+### a. Suggestions de Google — à cocher, avec leur description
 
-```
-Inspection de toitures
-Installation de toitures
-Réparation de toitures
-Réparation de dommages aux toitures
-Réparation de toitures à la suite de dommages causés par le vent
-Installation de gouttières
-Réparation de gouttières
-Nettoyage de gouttières
-Installation de velux
-Réparation de velux
-```
+Les services de la taxonomie acceptent eux aussi une description de 300
+caractères. Chacune dit autre chose que les voisines : recopier le même bloc
+sur trois services proches ne remplit rien et se voit.
+
+| Service à cocher | Description (à coller) |
+|---|---|
+| **Inspection de toitures** | Nous montons voir avant de chiffrer, avec constat photo. Contrôle du faîtage, des rives, des solins, des noues et de l'état réel des tuiles, puis passage dans les combles quand ils sont accessibles. Le déplacement n'est pas facturé dans notre zone. |
+| **Installation de toitures** | Couverture neuve sur construction ou après dépose complète : support, écran sous-toiture, liteaunage au pureau calculé, couverture et zinguerie. Ventilation en égout et en faîtage traitée, parce qu'une toiture qui ne respire pas vieillit de l'intérieur. |
+| **Réparation de toitures** | Intervention ciblée sur un désordre localisé : tuiles déplacées ou cassées, faîtage descellé, solin fissuré, rive abîmée. Nous cherchons d'abord pourquoi l'élément a bougé — remplacer sans comprendre revient à repasser l'année suivante. |
+| **Réparation de dommages aux toitures** | Toiture endommagée par un choc, une chute de branche, le poids de la neige ou un défaut d'entretien ancien. Mise en sécurité si nécessaire, constat photo détaillé pour votre dossier, puis réparation ou réfection selon l'étendue réelle des dégâts. |
+| **Réparation de toitures à la suite de dommages causés par le vent** | Après un coup de vent : tuiles envolées, faîtage soulevé, rive arrachée, plaque déplacée. Nous bâchons pour arrêter l'eau, puis nous établissons un devis et des photos exploitables pour votre déclaration à l'assurance. |
+| **Installation de gouttières** | Pose de gouttières pendantes, descentes et dauphins en zinc, aluminium laqué ou PVC. Section et nombre de descentes calculés selon la surface de toiture réellement collectée, pas au jugé : c'est ce qui évite les débordements d'orage. |
+| **Réparation de gouttières** | Crochets descendus, pente perdue, jonction disjointe, descente partiellement bouchée. Un débordement est rarement un manque de capacité. Nous regardons la gouttière en charge, pendant ou juste après la pluie, avant de proposer un remplacement complet. |
+| **Nettoyage de gouttières** | Retrait des mousses, feuilles et graviers de toiture accumulés dans les gouttières, chéneaux, crapaudines et descentes. Contrôle de l'écoulement et des fixations dans la foulée : c'est le moment où l'on voit ce qui commence à lâcher. |
+| **Installation de velux** | Création d'ouverture ou remplacement d'un modèle ancien : adaptation du chevêtre, raccord d'étanchéité périphérique adapté au type de couverture, habillage intérieur et finitions. Rotation ou projection selon la hauteur d'allège et l'usage de la pièce. |
+| **Réparation de velux** | Une fenêtre de toit qui fuit vient presque toujours du raccord d'étanchéité périphérique, pas de la fenêtre. Nous vérifions le raccord, les abergements et l'écran sous-toiture avant de conclure au remplacement, qui est rarement la première réponse. |
 
 **À laisser décochées :** « Pose de ventilations de grenier », « Réparation de
 ventilations de grenier » et « Ventilation de greniers ». Le couvreur pose bien
@@ -266,13 +270,12 @@ caractères, elles se collent telles quelles.
 | **Charpente bois et fermettes** | Reprise de pièces fragilisées, moisage, greffe d'about, renforcement, modification de charpente à fermettes pour aménager des combles. Diagnostic de l'état réel du bois avant chiffrage. |
 | **Étanchéité de toiture-terrasse** | Membrane bitume ou EPDM, relevés d'acrotère, évacuations et points singuliers. Reprise ponctuelle ou réfection complète du complexe : une terrasse ne conduit pas l'eau, elle la contient. |
 | **Couverture métallique bac acier et joint debout** | Bac acier et zinc à joint debout pour faibles pentes, annexes et bâtiments professionnels. Condensation et dilatation traitées dès la conception, pas rattrapées après coup. |
-| **Pose et réparation de fenêtre de toit Velux** | Création d'ouverture, remplacement d'un modèle ancien, reprise d'un raccord d'étanchéité qui fuit. Adaptation de la charpente, raccord périphérique et finitions intérieures. |
 | **Pose de bardage de façade et de pignon** | Bardage bois, composite ou métallique : ossature, pare-pluie, lame d'air ventilée et finitions. Habillage de pignon, protection de façade exposée, finition d'agrandissement. |
 | **Surélévation et agrandissement de toiture** | Réhaussement, extension, création de surface habitable. Étude de faisabilité, structure, raccordement à l'existant et mise hors d'eau. Nous vous accompagnons avec un architecte pour l'autorisation en mairie. |
 | **Construction à ossature bois** | Extension, annexe, garage ou abri en ossature bois : montage de la structure, contreventement, mise hors d'eau et hors d'air. Accompagnement architecte pour le dossier d'urbanisme. |
 | **Diagnostic et devis de toiture gratuit** | Nous montons voir avant de chiffrer : aucun prix n'est donné au téléphone. Constat photo, explication de ce qui est constaté, puis devis détaillé ligne par ligne. Déplacement non facturé dans notre zone. |
 
-**Total : 23 services.** Chacun correspond à une prestation réellement
+**Total : 22 services** — 10 de la taxonomie, 12 personnalisés. Chacun correspond à une prestation réellement
 pratiquée et à une page du site — la fiche et le site décrivent le même
 métier, ce que Google recoupe.
 
@@ -297,21 +300,68 @@ métier, ce que Google recoupe.
 Google refuse les images fortement retouchées ou filtrées. Les photos de
 chantier brutes passent sans problème — c'est même ce qu'il préfère.
 
-### La cadence compte plus que le volume
+### La cadence — avec 150 fichiers, tenir un an
 
-Avec plus de 150 fichiers, la tentation est de tout verser d'un coup. C'est le
-contraire qu'il faut faire : **une fiche alimentée chaque semaine est une fiche
-active**, et l'activité est un signal en soi. Quelques photos par semaine,
-étalées, valent mieux qu'un versement unique suivi de six mois de silence.
+La tentation est de tout verser d'un coup. C'est exactement ce qu'il ne faut
+pas faire, pour deux raisons : une fiche neuve qui passe de 10 à 160 photos en
+une semaine ressemble à un import automatique, et surtout la réserve est brûlée
+d'un coup. **Une fiche alimentée toutes les semaines est une fiche active**, et
+l'activité est un signal en soi.
 
-Ordre de priorité pour les premières :
+150 fichiers à trois par semaine, c'est **un an de présence** — et les
+chantiers en cours reconstituent le stock au fur et à mesure.
 
-1. La **devanture** vue de la rue — c'est la photo de couverture, celle qui
-   prouve l'existence physique.
-2. L'intérieur du **showroom**, puisqu'il accueille des clients.
-3. Les **véhicules** siglés.
-4. Les chantiers, en **avant / après** quand les deux existent.
-5. L'**équipe** au travail.
+| Période | Photos | Vidéos | Post / actualité |
+|---|---|---|---|
+| Semaines 1 à 4 | **5 par semaine** | 1 la 2ᵉ semaine | 1 par semaine |
+| Ensuite, en continu | **3 par semaine** | 1 toutes les 2 semaines | 1 par semaine |
+
+Au bout d'un mois la fiche affiche une trentaine de photos : c'est le seuil où
+elle cesse de paraître neuve. Ensuite, la régularité compte plus que le volume.
+
+**Ne jamais publier toute la réserve.** Garder une avance de plusieurs semaines
+est ce qui permet de ne pas tomber en silence pendant les périodes creuses.
+
+### Les posts sont un canal distinct des photos
+
+Les deux ne fonctionnent pas pareil, et c'est la confusion la plus courante :
+
+- une **photo** rejoint la galerie et y reste ;
+- un **post** n'est visible que **7 jours**, puis il disparaît du carrousel.
+
+D'où la cadence hebdomadaire à jour fixe : c'est le seul rythme qui ne laisse
+jamais de trou. Un post peut porter un appel à l'action et un lien vers le
+site, ce qu'une photo ne fait pas — à ce titre il vaut souvent davantage.
+
+Format : image en **1200 × 900 px** (4:3), et surtout **seuls les 100 premiers
+caractères s'affichent** dans le carrousel. La première phrase doit se suffire.
+
+Quatre angles à faire tourner, tous alimentés par les chantiers en cours :
+
+1. **Un chantier terminé** — « Réfection complète en ardoise terminée cette
+   semaine à … » + 2 photos.
+2. **Un désordre expliqué** — une photo de solin fissuré, ce que ça provoque,
+   ce que ça coûte d'attendre.
+3. **Un rappel de saison** — gouttières avant les pluies d'automne, contrôle
+   après un coup de vent, mousses sur les versants nord en sortie d'hiver.
+4. **Le showroom** — ce qu'on peut venir y voir, échantillons de tuiles et
+   d'ardoises.
+
+### Quelles photos publier en priorité
+
+L'ordre compte plus que la quantité. Google classe les photos par catégorie, et
+une fiche qui couvre plusieurs catégories est mieux remplie qu'une fiche de
+150 gros plans de toiture.
+
+1. **La devanture vue de la rue** — c'est la photo de couverture et la preuve
+   d'existence physique. Aucun réseau national ni artisan domicilié ailleurs ne
+   peut en publier une à Béthune.
+2. **L'intérieur du showroom**, puisqu'il accueille du public.
+3. **Les véhicules siglés**, de préférence sur un chantier.
+4. **L'équipe au travail** — les photos avec des personnes en action
+   convertissent mieux que les toitures finies, qui se ressemblent toutes.
+5. **Les avant / après**, quand les deux prises de vue existent.
+6. Les chantiers en cours : dépose, écran, liteaunage, zinguerie.
 
 ### Deux points qui font perdre du temps
 
