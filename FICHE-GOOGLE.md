@@ -55,64 +55,114 @@ attire des demandes qu'il faudra refuser, et Google apprend de ces refus.
 
 ## 2 bis. La description — 750 caractères
 
-Google affiche **environ 250 caractères** avant le lien « plus ». Presque
-personne ne clique dessus : le texte ci-dessous est donc écrit pour qu'une
-phrase complète et différenciante tienne dans cette fenêtre, et que la coupure
-ne tombe pas au milieu d'un argument.
+Google affiche **environ 250 caractères** avant le lien « plus », et presque
+personne ne clique dessus. Le texte est donc écrit pour qu'une phrase complète
+et différenciante tienne dans cette fenêtre.
 
-**737 caractères sur 750.** À copier tel quel, sauts de ligne compris.
+### Version à publier maintenant — 725 caractères
 
 ```
-Entreprise générale de couverture à Béthune, avec bureau et showroom en centre-ville où vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance : l'équipe qui chiffre est celle qui monte sur le toit.
+Entreprise générale de couverture à Béthune, fondée par un couvreur fort de 25 ans de métier. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance.
 
 Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation et agrandissement.
 
 Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Nous intervenons dans un rayon de 40 km autour de Béthune et montons voir avant de chiffrer : devis gratuit, détaillé poste par poste.
 ```
 
+### Version à substituer le jour de l'attestation décennale — 722 caractères
+
+Une seule phrase change, en tête du troisième paragraphe.
+
+```
+Entreprise générale de couverture à Béthune, fondée par un couvreur fort de 25 ans de métier. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance.
+
+Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation.
+
+Nos travaux sont couverts par une assurance décennale. Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Intervention dans un rayon de 40 km autour de Béthune, devis gratuit et détaillé après visite.
+```
+
+---
+
+### Les 25 ans : comment ils s'écrivent, et pourquoi
+
+L'entreprise a été créée en **2026**. L'artisan qui la dirige exerce depuis
+**25 ans**. Les deux sont vrais, ils ne disent pas la même chose, et la
+formulation doit le refléter.
+
+| Formulation | Statut |
+|---|---|
+| « fondée par un couvreur fort de 25 ans de métier » | ✅ exact |
+| « 25 ans d'expérience à votre service » | ⚠️ ambigu, laisse croire à l'entreprise |
+| « entreprise de couverture depuis 25 ans » | ❌ faux |
+
+Ce n'est pas de la prudence excessive. La fiche Google comporte un champ
+**date d'ouverture** : en y saisissant 2026, une description qui annoncerait
+« depuis 25 ans » se contredirait à deux centimètres d'écart, sur le même
+écran. Un concurrent peut le signaler, et un client qui s'en aperçoit après
+signature a un vrai grief.
+
+Bien écrite, la phrase est d'ailleurs **plus forte** : ce n'est pas une société
+qui apprend, c'est un artisan installé qui a monté la sienne. C'est exactement
+ce que Google appelle l'expérience de première main, et c'est ce que ni les
+réseaux nationaux à sous-domaines ni les plateformes de mise en relation ne
+peuvent revendiquer.
+
+La distinction est inscrite dans le code, avec le commentaire qui l'explique :
+`foundingYear: 2026` et `experienceYears: 25` sont deux champs séparés de
+`src/config/site.ts`.
+
+---
+
+### Décennale et RGE : attendre l'attestation
+
+Les deux sont en cours. **Ne les publiez pas avant d'avoir le document en
+main**, et pas pour les mêmes raisons.
+
+**L'assurance décennale** est obligatoire avant même de commencer un chantier.
+Le délai est administratif, court, et l'annonce sera exacte dès que
+l'attestation arrivera. La version 2 ci-dessus est prête : il suffira de
+remplacer le texte et de renseigner `nap.assurance` dans
+`src/config/site.ts` — les mentions apparaîtront alors automatiquement en
+mentions légales, sous la forme exigée par la loi du 18 juin 2014.
+
+**Le RGE est un cas différent, et plus risqué.** C'est une qualification
+délivrée par un organisme après audit. L'annoncer avant de l'obtenir n'est pas
+une approximation commerciale : c'est ce qui déclenche l'éligibilité du client
+à MaPrimeRénov' et aux CEE. Un particulier qui signe en croyant l'entreprise
+qualifiée et découvre ensuite qu'il n'a droit à aucune aide subit une perte
+financière directe. C'est un motif de sanction suivi par la DGCCRF, et l'un des
+rares sujets où un concurrent local a un intérêt concret à faire un
+signalement.
+
+Le champ `nap.assurance.rge` existe et reste vide : le jour où la
+qualification est obtenue, elle s'affiche partout d'un coup, et la page prix
+pourra ouvrir le volet isolation et MaPrimeRénov'.
+
+---
+
 ### Ce qui se lit sans cliquer
 
-> Entreprise générale de couverture à Béthune, avec bureau et showroom en
-> centre-ville où vous pouvez passer nous voir. Tous les travaux sont réalisés
-> par nos soins, sans aucune sous-traitance : l'équipe qui chiffre est celle qui
-> monte sur le toit.
+> Entreprise générale de couverture à Béthune, fondée par un couvreur fort de
+> 25 ans de métier. Bureau et showroom en centre-ville : vous pouvez passer nous
+> voir. Tous les travaux sont réalisés par nos soins, sans aucune
+> sous-traitance.
 
-246 caractères, la phrase se termine avant la coupure. Elle porte les deux
-seuls arguments que la concurrence locale ne peut pas reprendre : un local
-ouvert au public en centre-ville, et l'absence de sous-traitance. Les
-concurrents du secteur sont soit des réseaux nationaux à sous-domaines, soit
-des artisans domiciliés dans une autre commune.
+234 caractères, la phrase se termine avant la coupure. Elle porte les trois
+arguments qu'aucun concurrent du secteur ne peut reprendre : l'ancienneté du
+métier, un local ouvert au public en centre-ville, et l'absence de
+sous-traitance.
 
-### Les règles respectées
+### Règles respectées
 
-Google refuse ou tronque les descriptions qui contiennent certains éléments.
-Vérifié sur ce texte :
-
-| Interdit | État |
+| Interdit par Google | État |
 |---|---|
 | URL ou lien | ✓ aucun |
 | Numéro de téléphone | ✓ aucun — il a son propre champ |
 | Balises HTML | ✓ aucune |
 | Offre promotionnelle, remise, pourcentage | ✓ aucune |
-| Superlatif ou ancienneté invérifiable | ✓ aucun |
+| Qualification non détenue | ✓ aucune |
+| Ancienneté attribuée à l'entreprise | ✓ aucune |
 | Suites de capitales | ✓ aucune |
-
-Le texte ne contient aucune affirmation qui ne figure pas déjà sur le site :
-c'est la même entreprise qui parle au même endroit, ce que Google recoupe.
-
-### À réviser plus tard
-
-Trois éléments amélioreraient nettement cette description, mais ne peuvent pas
-y figurer tant qu'ils ne sont pas confirmés :
-
-- **l'assurance décennale** — c'est l'argument de réassurance le plus utilisé
-  par les concurrents locaux ;
-- **l'année de création** — « depuis 20XX » vaut mieux que n'importe quel
-  adjectif ;
-- **la qualification RGE**, si elle existe, qui ouvrirait le volet isolation.
-
-La description se modifie à tout moment : autant partir avec un texte exact et
-l'enrichir ensuite, plutôt que d'écrire une promesse à corriger.
 
 ---
 

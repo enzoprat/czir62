@@ -53,19 +53,36 @@ site ne mentira pas, mais il ne peut pas non plus compenser une fiche vide.
 
 ## 🟠 Important — crédibilité et taux de transformation
 
-### 4. L'assurance décennale
-`src/config/site.ts` (champ à créer) — nom de l'assureur, n° de contrat,
-activités garanties, zone géographique.
+### 4. L'assurance décennale et le RGE — en cours
 
-⚠️ **Point de cohérence à traiter en priorité.** Le site explique désormais aux
-visiteurs, sur la page prix et sur la page démoussage, que la loi du 18 juin
-2014 impose de faire figurer ces informations sur tout devis du bâtiment — et
-qu'un devis qui ne les porte pas doit être refusé.
+`src/config/site.ts` → `nap.assurance` : `assureur`, `contrat`, `zone`, `rge`
 
-Nous donnons ce conseil sans le suivre nous-mêmes. Un visiteur attentif le
-remarquera, et c'est exactement le genre de détail qui coûte une affaire.
+Les champs existent et sont vides. Le jour où l'attestation arrive, les
+renseigner suffit : les mentions apparaissent en mentions légales sous la forme
+exigée par la loi du 18 juin 2014, et la version 2 de la description Google
+(prête dans `FICHE-GOOGLE.md`) peut être publiée.
 
-Tous les concurrents locaux affichent « garantie décennale ».
+**Ne rien annoncer avant d'avoir le document.** Le site explique lui-même aux
+visiteurs, sur la page prix et la page démoussage, qu'un devis sans mention
+d'assurance se refuse — nous ne pouvons pas donner ce conseil sans le suivre.
+
+Pour le **RGE**, la prudence est d'un autre ordre : c'est cette qualification
+qui rend le client éligible à MaPrimeRénov' et aux CEE. L'annoncer avant de
+l'avoir expose le client à une perte financière réelle, et l'entreprise à une
+sanction DGCCRF.
+
+### ~~6 bis. L'année de création~~ ✅ fournie le 3 septembre 2026
+
+`foundingYear: 2026` et `experienceYears: 25` sont deux champs **distincts**,
+et le commentaire du fichier explique pourquoi ils ne doivent jamais être
+fusionnés : l'entreprise date de 2026, l'artisan exerce depuis 25 ans.
+
+Publié sur l'accueil et sur la page entreprise sous la forme « l'entreprise a
+été créée en 2026, le couvreur qui la dirige exerce depuis 25 ans ».
+
+> ⚠️ Reste à obtenir : **le nom du dirigeant**. Une expérience attribuée à une
+> personne nommée vaut bien plus qu'à un « artisan » anonyme — c'est le premier
+> facteur de crédibilité pour un métier où l'on fait entrer quelqu'un chez soi.
 
 ### 5. Les horaires d'ouverture
 `src/config/site.ts` → `nap.openingHours`

@@ -73,10 +73,39 @@ export const nap = {
   }>,
 
   /** TODO Annee de creation (SIREN / Kbis) — utilisee dans foundingDate */
-  foundingYear: null as number | null,
+  /**
+   * Annee de creation de la PERSONNE MORALE. Distincte de l'experience de
+   * l'artisan : voir experienceYears juste en dessous. Ne jamais fusionner
+   * les deux — la fiche Google affiche la date d'ouverture, et une
+   * entreprise de 2026 qui se dit « depuis 25 ans » se contredit a l'ecran.
+   */
+  foundingYear: 2026 as number | null,
+
+  /**
+   * Annees de metier de l'artisan fondateur, acquises avant la creation de
+   * l'entreprise. S'ecrit TOUJOURS comme l'experience d'une personne
+   * (« fonde par un couvreur fort de 25 ans de metier »), jamais comme
+   * l'anciennete de la societe (« entreprise depuis 25 ans »), qui serait
+   * faux.
+   */
+  experienceYears: 25 as number | null,
 
   /** TODO Numero SIRET — affiche en mentions legales */
   siret: null as string | null,
+
+  /**
+   * Assurance de responsabilite decennale. La loi du 18 juin 2014 impose de
+   * faire figurer ces quatre informations sur les devis et les factures ;
+   * les afficher sur le site est le prolongement logique.
+   * TODO a renseigner des que l'attestation est delivree.
+   */
+  assurance: {
+    assureur: null as string | null,
+    contrat: null as string | null,
+    zone: 'France métropolitaine' as string | null,
+    /** Qualification RGE, si et seulement si elle est effectivement obtenue */
+    rge: null as string | null,
+  },
 } as const;
 
 /* ---------------------------------------------------------------------------
@@ -133,6 +162,21 @@ export const hasGeo = (): boolean => nap.geo.lat !== null && nap.geo.lng !== nul
 export const hasHours = (): boolean => nap.openingHours.length > 0;
 
 /** Adresse sur une ligne : « 12 rue Untel, 62400 Béthune » */
+/** Vrai seulement si l'attestation decennale est reellement renseignee. */
+export function hasAssurance(): boolean {
+  return Boolean(nap.assurance.assureur && nap.assurance.contrat);
+}
+
+/** Vrai seulement si une qualification RGE est effectivement detenue. */
+export function hasRge(): boolean {
+  return Boolean(nap.assurance.rge);
+}
+
+/** Annees de metier de l'artisan — jamais l'anciennete de la societe. */
+export function hasExperience(): boolean {
+  return Boolean(nap.experienceYears && nap.experienceYears > 0);
+}
+
 export function addressOneLine(): string {
   const { street, postalCode, city } = nap.address;
   return [street, `${postalCode} ${city}`].filter(Boolean).join(', ');

@@ -111,12 +111,23 @@ const engagements = [
           <h2>Les compagnons qui montent sur votre toit sont les nôtres</h2>
         </div>
         <p class="lede">
-          Deux engagements qui décident de la façon dont un chantier se déroule, et sur lesquels
-          il vaut mieux être clair avant de signer plutôt qu'après.
+          Trois choses qui décident de la façon dont un chantier se déroule, et sur lesquelles il
+          vaut mieux être clair avant de signer plutôt qu'après.
         </p>
       </div>
 
       <div class="exec">
+        <article class="exec__item">
+          <span class="exec__ico"><Icon name="clock" size={22} /></span>
+          <h3>{nap.experienceYears} ans de métier</h3>
+          <p>
+            L'entreprise a été créée en {nap.foundingYear}, mais le couvreur qui la dirige exerce
+            depuis {nap.experienceYears} ans. C'est une distinction qui compte : ce n'est pas une
+            société qui apprend, c'est un artisan installé qui a monté la sienne. Les toitures du
+            bassin béthunois, il les connaît pour les avoir faites.
+          </p>
+        </article>
+
         <article class="exec__item">
           <span class="exec__ico"><Icon name="shield" size={22} /></span>
           <h3>Aucune sous-traitance</h3>
@@ -253,8 +264,9 @@ const engagements = [
 
 <style>
   /* ------------------------------------------------------------ execution */
-  .exec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-8); margin-top: var(--sp-8); }
-  @media (max-width: 860px) { .exec { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
+  .exec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-8); margin-top: var(--sp-8); }
+  @media (max-width: 1080px) { .exec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 720px) { .exec { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
   .exec__item { padding-top: var(--sp-5); border-top: 2px solid var(--clay-400); }
   .exec__ico { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--clay-50); border: 1px solid var(--clay-200); color: var(--accent); }
   .exec__item h3 { margin-top: var(--sp-4); font-size: var(--fs-xl); }
