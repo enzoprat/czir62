@@ -484,6 +484,16 @@ export const communesDesservies: ReadonlyArray<{ name: string; postalCode: strin
   { name: 'Houdain', postalCode: '62150' },
   { name: 'Divion', postalCode: '62460' },
   { name: 'Isbergues', postalCode: '62330' },
+  // Ajoutees pour rester alignees sur les zones desservies declarees a
+  // Google (voir FICHE-GOOGLE.md) : ce que le site annonce et ce que la
+  // fiche annonce doivent decrire le meme perimetre.
+  { name: 'Mazingarbe', postalCode: '62670' },
+  { name: 'Douvrin', postalCode: '62138' },
+  { name: 'Marles-les-Mines', postalCode: '62540' },
+  { name: 'Calonne-Ricouart', postalCode: '62470' },
+  { name: 'Grenay', postalCode: '62160' },
+  { name: 'Saint-Venant', postalCode: '62350' },
+  { name: 'Aire-sur-la-Lys', postalCode: '62120' },
 ];
 
 /* ------------------------------------------------------------- accesseurs */
