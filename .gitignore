@@ -6,3 +6,6 @@ dist/
 .DS_Store
 *.log
 .leads/
+
+# État interne du crawler SEO — regénérable par npm run crawl
+.seo/

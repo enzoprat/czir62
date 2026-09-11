@@ -13,7 +13,8 @@
     "serve": "node ./dist/server/entry.mjs",
     "check": "astro check",
     "photos": "node scripts/photos-manquantes.mjs",
-    "assets": "node scripts/generate-assets.mjs"
+    "assets": "node scripts/generate-assets.mjs",
+    "crawl": "node scripts/crawl.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^9.4.4",
