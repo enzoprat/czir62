@@ -21,6 +21,7 @@ import Icon from '@/components/Icon.astro';
 import Faq from '@/components/Faq.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import RelatedServices from '@/components/RelatedServices.astro';
+import Comparatif from '@/components/Comparatif.astro';
 import CityLinks from '@/components/CityLinks.astro';
 import RealisationsBlock from '@/components/RealisationsBlock.astro';
 
@@ -269,15 +270,7 @@ const faqItems = [
         <h2>Quatre métaux, quatre comportements</h2>
       </div>
 
-      <div class="met">
-        {materiaux.map((m) => (
-          <article class="met__card">
-            <h3>{m.nom}</h3>
-            <p class="met__pour"><span>Ce qui plaide pour</span>{m.pour}</p>
-            <p class="met__contre"><span>Ce qu'il faut savoir</span>{m.contre}</p>
-          </article>
-        ))}
-      </div>
+      <Comparatif items={materiaux} />
 
       <p class="note met__note">
         <strong>Zinc et cuivre ne cohabitent pas.</strong> L'eau qui ruisselle sur du cuivre

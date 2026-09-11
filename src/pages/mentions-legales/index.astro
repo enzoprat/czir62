@@ -12,6 +12,13 @@ import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
 
 const crumbs = [{ name: 'Mentions légales' }];
 const Todo = 'À COMPLÉTER';
+/*
+ * Les mentions manquantes ne s'affichent QU'EN DÉVELOPPEMENT. Un visiteur qui
+ * lit « SIRET : À COMPLÉTER » voit un chantier, pas une entreprise — et la
+ * page perd exactement la crédibilité qu'elle est censée apporter. Ce qui
+ * manque est suivi dans INFORMATIONS-A-DEMANDER.md, pas affiché au public.
+ */
+const dev = import.meta.env.DEV;
 ---
 
 <BaseLayout
@@ -30,28 +37,51 @@ const Todo = 'À COMPLÉTER';
         <h2>Éditeur du site</h2>
         <p>
           <strong>{site.legalName}</strong><br />
-          {hasAddress() ? addressOneLine() : <em class="todo">Adresse : {Todo}</em>}<br />
-          {hasPhone() ? `Téléphone : ${nap.phone}` : <em class="todo">Téléphone : {Todo}</em>}<br />
-          {hasEmail() ? `E-mail : ${nap.email}` : <em class="todo">E-mail : {Todo}</em>}
+          {hasAddress() && <>{addressOneLine()}<br /></>}
+          {hasPhone() && <>Téléphone : {nap.phone}<br /></>}
+          {hasEmail() && <>E-mail : {nap.email}</>}
         </p>
-        <p>
-          {nap.siret ? `SIRET : ${nap.siret}` : <em class="todo">SIRET : {Todo}</em>}<br />
-          <em class="todo">Forme juridique et capital social : {Todo}</em><br />
-          <em class="todo">Numéro de TVA intracommunautaire : {Todo}</em><br />
-          <em class="todo">Directeur de la publication : {Todo}</em>
-        </p>
+        {(nap.siret || dev) && (
+          <p>
+            {nap.siret ? `SIRET : ${nap.siret}` : <em class="todo">SIRET : {Todo}</em>}
+            {dev && (
+              <>
+                <br /><em class="todo">Forme juridique et capital social : {Todo}</em>
+                <br /><em class="todo">Numéro de TVA intracommunautaire : {Todo}</em>
+                <br /><em class="todo">Directeur de la publication : {Todo}</em>
+              </>
+            )}
+          </p>
+        )}
 
-        <h2>Assurance professionnelle</h2>
-        <p>
-          <em class="todo">
-            Nom et adresse de l'assureur, numéro de police, couverture géographique : {Todo}.
-            Cette mention est obligatoire pour les professionnels du bâtiment soumis à
-            l'assurance décennale.
-          </em>
-        </p>
+        {(hasAssurance() || dev) && (
+          <>
+            <h2>Assurance professionnelle</h2>
+            <p>
+              {hasAssurance() ? (
+                <>
+                  Assureur : {nap.assurance.assureur}<br />
+                  Numéro de contrat : {nap.assurance.contrat}<br />
+                  Couverture géographique : {nap.assurance.zone}
+                  {hasRge() && <><br />Qualification : {nap.assurance.rge}</>}
+                </>
+              ) : (
+                <em class="todo">
+                  Nom et adresse de l'assureur, numéro de police, couverture géographique :
+                  {Todo}. Mention obligatoire pour les professionnels du bâtiment soumis à
+                  l'assurance décennale.
+                </em>
+              )}
+            </p>
+          </>
+        )}
 
-        <h2>Hébergement</h2>
-        <p><em class="todo">Nom, raison sociale, adresse et téléphone de l'hébergeur : {Todo}</em></p>
+        {dev && (
+          <>
+            <h2>Hébergement</h2>
+            <p><em class="todo">Nom, raison sociale, adresse et téléphone de l'hébergeur : {Todo}</em></p>
+          </>
+        )}
 
         <h2>Propriété intellectuelle</h2>
         <p>
@@ -74,14 +104,18 @@ const Todo = 'À COMPLÉTER';
           quant à leur contenu.
         </p>
 
-        <h2>Médiation de la consommation</h2>
-        <p>
-          <em class="todo">
-            Nom et coordonnées du médiateur de la consommation auquel l'entreprise adhère : {Todo}.
-            Cette information est obligatoire pour les professionnels intervenant auprès de
-            consommateurs.
-          </em>
-        </p>
+        {dev && (
+          <>
+            <h2>Médiation de la consommation</h2>
+            <p>
+              <em class="todo">
+                Nom et coordonnées du médiateur de la consommation auquel l'entreprise adhère :
+                {Todo}. Cette information est obligatoire pour les professionnels intervenant
+                auprès de consommateurs.
+              </em>
+            </p>
+          </>
+        )}
 
         <h2>Données personnelles</h2>
         <p>

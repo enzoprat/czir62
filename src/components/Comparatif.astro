@@ -1,0 +1,119 @@
+---
+/**
+ * COMPARATIF DE MATÉRIAUX
+ *
+ * Quatre matériaux comparés sur les mêmes critères, ce n'est pas quatre
+ * cartes : c'est un tableau. Le rendu en boîtes obligeait l'œil à faire des
+ * allers-retours entre des rectangles pour comparer deux lignes de même
+ * nature — exactement ce qu'un tableau évite.
+ *
+ * D'où un registre à filets : le nom du matériau tenu à gauche en display,
+ * les critères alignés en colonnes à droite. On lit en travers, ce qui est
+ * la seule façon utile de lire un comparatif.
+ *
+ * Sur téléphone les colonnes s'empilent avec leur intitulé en regard : la
+ * structure reste lisible sans scroll horizontal.
+ */
+interface Ligne {
+  nom: string;
+  /** Mention courte tenue sous le nom — durée de service, pente admissible… */
+  note?: string;
+  pour: string;
+  contre: string;
+}
+interface Props {
+  items: ReadonlyArray<Ligne>;
+  labelPour?: string;
+  labelContre?: string;
+}
+const { items, labelPour = 'Ce qui plaide pour', labelContre = "Ce qu'il faut savoir" } = Astro.props;
+---
+
+<div class="cmp">
+  <div class="cmp__head" aria-hidden="true">
+    <span></span>
+    <span>{labelPour}</span>
+    <span>{labelContre}</span>
+  </div>
+
+  {items.map((m) => (
+    <article class="cmp__row reveal">
+      <h3 class="cmp__nom">
+        {m.nom}
+        {m.note && <span class="cmp__note">{m.note}</span>}
+      </h3>
+      <p class="cmp__c" data-k={labelPour}>{m.pour}</p>
+      <p class="cmp__c cmp__c--contre" data-k={labelContre}>{m.contre}</p>
+    </article>
+  ))}
+</div>
+
+<style>
+  .cmp { margin-top: var(--sp-8); }
+
+  .cmp__head,
+  .cmp__row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+
+  .cmp__head {
+    padding-bottom: var(--sp-3);
+    border-bottom: 2px solid var(--clay-400);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+  }
+
+  .cmp__row {
+    align-items: start;
+    padding: var(--sp-6) 0;
+    border-bottom: 1px solid var(--rule);
+    transition: background var(--t-fast);
+  }
+  /* Le survol tient la ligne entière : c'est la ligne qu'on lit, pas la case. */
+  .cmp__row:hover { background: var(--surface-sand); }
+
+  .cmp__nom {
+    font-size: var(--fs-xl);
+    font-weight: 650;
+    letter-spacing: -0.018em;
+    line-height: 1.15;
+  }
+  .cmp__note {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--clay-700);
+  }
+
+  .cmp__c {
+    font-size: var(--fs-sm);
+    line-height: var(--lh-normal);
+    color: var(--text-muted);
+  }
+  .cmp__c--contre { color: var(--zinc-600); }
+
+  @media (max-width: 820px) {
+    .cmp__head { display: none; }
+    .cmp__row { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+    .cmp__row:hover { background: none; }
+    /* L'intitulé de colonne revient au-dessus de chaque paragraphe, sinon la
+       distinction entre l'argument et la réserve se perd. */
+    .cmp__c::before {
+      content: attr(data-k);
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: var(--fs-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--clay-700);
+    }
+    .cmp__c--contre::before { color: var(--zinc-500); }
+  }
+</style>

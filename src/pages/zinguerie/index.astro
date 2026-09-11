@@ -18,6 +18,7 @@ import CtaBand from '@/components/CtaBand.astro';
 import RelatedServices from '@/components/RelatedServices.astro';
 import CityLinks from '@/components/CityLinks.astro';
 import RealisationsBlock from '@/components/RealisationsBlock.astro';
+import Comparatif from '@/components/Comparatif.astro';
 
 import { getService } from '@/data/services';
 import { telHref, hasPhone, nap } from '@/config/site';
@@ -216,18 +217,7 @@ const faqItems = [
         </p>
       </div>
 
-      <div class="mat-grid">
-        {materiaux.map((m) => (
-          <article class="mat reveal">
-            <div class="mat__head">
-              <h3>{m.nom}</h3>
-              <span class="tag">{m.duree}</span>
-            </div>
-            <p class="mat__pour"><span>Ce qui plaide pour</span>{m.pour}</p>
-            <p class="mat__contre"><span>Ce qu’il faut savoir</span>{m.contre}</p>
-          </article>
-        ))}
-      </div>
+      <Comparatif items={materiaux.map((m) => ({ nom: m.nom, note: m.duree, pour: m.pour, contre: m.contre }))} />
 
       <p class="note mat-note">
         <strong>Le point de compatibilité à ne pas manquer :</strong> zinc et cuivre ne cohabitent
