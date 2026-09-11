@@ -16,15 +16,11 @@ import { servicesByOrder } from '@/data/services';
 import { villesByOrder } from '@/data/villes';
 import { nap, google, telHref, hasPhone, hasEmail, hasAddress, hasHours, addressOneLine, site } from '@/config/site';
 
+import { plageLabel } from '@/lib/horaires';
+
 const year = new Date().getFullYear();
 const tel = telHref();
 
-const JOURS: Record<string, string> = {
-  Monday: 'Lundi', Tuesday: 'Mardi', Wednesday: 'Mercredi',
-  Thursday: 'Jeudi', Friday: 'Vendredi', Saturday: 'Samedi', Sunday: 'Dimanche',
-};
-const fmtJours = (d: string[]) =>
-  d.length > 1 ? `${JOURS[d[0]] ?? d[0]} – ${JOURS[d[d.length - 1]] ?? d[d.length - 1]}` : (JOURS[d[0]] ?? d[0]);
 ---
 
 <footer class="ftr tex tex--tuiles">
@@ -50,7 +46,7 @@ const fmtJours = (d: string[]) =>
         )}
         {hasHours() && (
           <div class="ftr__hours"><Icon name="clock" size={16} /><span>
-            {nap.openingHours.map((h) => <span>{fmtJours(h.days)} : {h.opens} – {h.closes}</span>)}
+            {nap.openingHours.map((h) => <span>{plageLabel(h)}</span>)}
           </span></div>
         )}
       </address>

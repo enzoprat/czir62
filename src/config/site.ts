@@ -72,8 +72,8 @@ export const nap = {
    * d'ouverture, Google afficherait « ouvert » a tort.
    */
   openingHours: [
-    { days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], opens: '09:00', closes: '12:00' },
-    { days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], opens: '14:00', closes: '18:00' },
+    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '12:00' },
+    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '14:00', closes: '18:00' },
   ] as ReadonlyArray<{
     days: string[];
     opens: string;

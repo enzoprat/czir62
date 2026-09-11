@@ -12,16 +12,10 @@ import QuoteForm from '@/components/QuoteForm.astro';
 import Icon from '@/components/Icon.astro';
 import { nap, google, socials, telHref, hasPhone, hasEmail, hasAddress, hasHours, hasGeo, addressOneLine, site } from '@/config/site';
 import { breadcrumbSchema, webPageSchema, placeSchema } from '@/lib/schema';
+import { plageLabel } from '@/lib/horaires';
 
 const crumbs = [{ name: 'Contact' }];
 const tel = telHref();
-
-const JOURS: Record<string, string> = {
-  Monday: 'Lundi', Tuesday: 'Mardi', Wednesday: 'Mercredi',
-  Thursday: 'Jeudi', Friday: 'Vendredi', Saturday: 'Samedi', Sunday: 'Dimanche',
-};
-const fmtJours = (d: string[]) =>
-  d.length > 1 ? `${JOURS[d[0]] ?? d[0]} – ${JOURS[d[d.length - 1]] ?? d[d.length - 1]}` : (JOURS[d[0]] ?? d[0]);
 
 const canaux = [
   { t: 'Une infiltration en cours', d: "Appelez. Un formulaire attend d'être lu ; un téléphone sonne tout de suite.", ico: 'phone' as const, urgent: true },
@@ -79,7 +73,9 @@ const canaux = [
 
             {hasHours() && (
               <p><Icon name="clock" size={19} /><span><strong>Horaires</strong>
-                {nap.openingHours.map((h) => <span class="ct-hours">{fmtJours(h.days)} : {h.opens} – {h.closes}</span>)}
+                {nap.openingHours.map((h) => <span class="ct-hours">{plageLabel(h)}</span>)}
+                {nap.samediSurRdv && <span class="ct-hours">Samedi matin sur rendez-vous</span>}
+                {nap.depannage7j && <span class="ct-hours ct-hours--urg">Dépannage 7j/7</span>}
               </span></p>
             )}
           </address>
