@@ -129,7 +129,11 @@ import { dimensions } from '@/lib/dimensions';
     letter-spacing: -0.005em;
     cursor: pointer;
     transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
-  }
+    /* Plancher tactile : une puce de filtre se vise au pouce. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
   .gal__chip:hover { border-color: var(--clay-300); color: var(--accent-ink); }
   .gal__chip.is-on { background: var(--zinc-900); border-color: var(--zinc-900); color: #fff; }
   .gal__n { font-size: 0.72rem; opacity: 0.6; }

@@ -78,6 +78,7 @@ const choix = [...vues.entries()]
             class:list={['vit__th', i === 0 && 'is-on']}
             data-go={i}
             role="tab"
+            aria-label={`${c.label} — ${c.legende}`}
             aria-selected={i === 0 ? 'true' : 'false'}
           >
             <img src={c.src} alt="" loading="lazy" decoding="async" width="160" height="120" />
@@ -185,7 +186,7 @@ const choix = [...vues.entries()]
     padding: 1.6rem 0.5rem 0.4rem;
     background: linear-gradient(to top, rgba(14, 19, 24, 0.86), transparent);
     color: #fff;
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     font-weight: 620;
     letter-spacing: 0.02em;
     line-height: 1.15;
@@ -195,6 +196,10 @@ const choix = [...vues.entries()]
     white-space: nowrap;
   }
   .vit__th.is-on .vit__th-k { padding-bottom: 0.6rem; }
+  /* Sous 640 px les vignettes tombent a une centaine de pixels : un libelle
+     y serait sous 10 px. La legende de la grande photo nomme la prestation,
+     et aria-label garde le bouton nomme pour les lecteurs d'ecran. */
+  @media (max-width: 640px) { .vit__th-k { display: none; } }
 
   .vit__all { margin-top: var(--sp-7); }
 

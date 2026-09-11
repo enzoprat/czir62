@@ -221,7 +221,11 @@ const villesPresentes = [...new Set(entries.map((e) => e.data.ville))].map(getVi
     font-weight: 550;
     cursor: pointer;
     transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-  }
+    /* Plancher tactile : une puce de filtre se vise au pouce. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
   .chip:hover { border-color: var(--clay-300); color: var(--accent-ink); }
   .chip.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .chip--ville { border-style: dashed; }
