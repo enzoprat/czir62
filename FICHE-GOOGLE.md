@@ -59,59 +59,57 @@ Google affiche **environ 250 caractères** avant le lien « plus », et presque
 personne ne clique dessus. Le texte est donc écrit pour qu'une phrase complète
 et différenciante tienne dans cette fenêtre.
 
-### Version à publier maintenant — 725 caractères
+### Version à publier maintenant — 687 caractères
 
 ```
-Entreprise générale de couverture à Béthune, fondée par un couvreur fort de 25 ans de métier. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance.
+Entreprise familiale de couverture à Béthune depuis 1925. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance, dans les règles de l'art.
 
-Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation et agrandissement.
+Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation.
 
-Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Nous intervenons dans un rayon de 40 km autour de Béthune et montons voir avant de chiffrer : devis gratuit, détaillé poste par poste.
+Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Dépannage 7j/7. Nous intervenons dans un rayon de 40 km autour de Béthune et montons voir avant de chiffrer : devis gratuit.
 ```
 
-### Version à substituer le jour de l'attestation décennale — 722 caractères
+### Version à substituer le jour de l'attestation décennale — 703 caractères
 
 Une seule phrase change, en tête du troisième paragraphe.
 
 ```
-Entreprise générale de couverture à Béthune, fondée par un couvreur fort de 25 ans de métier. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance.
+Entreprise familiale de couverture à Béthune depuis 1925. Bureau et showroom en centre-ville : vous pouvez passer nous voir. Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance, dans les règles de l'art.
 
 Couverture en tuiles et en ardoises, rénovation et réparation de toiture, recherche de fuite, démoussage, zinguerie et gouttières, charpente, fenêtres de toit, étanchéité de toiture-terrasse, bac acier, bardage, ossature bois, surélévation.
 
-Nos travaux sont couverts par une assurance décennale. Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Intervention dans un rayon de 40 km autour de Béthune, devis gratuit et détaillé après visite.
+Nos travaux sont couverts par une assurance décennale. Pour un réhaussement ou une autorisation en mairie, nous vous accompagnons avec un architecte. Dépannage 7j/7, dans un rayon de 40 km autour de Béthune. Devis gratuit après visite.
 ```
 
 ---
 
-### Les 25 ans : comment ils s'écrivent, et pourquoi
+### 1925 : l'argument le plus fort du dossier
 
-L'entreprise a été créée en **2026**. L'artisan qui la dirige exerce depuis
-**25 ans**. Les deux sont vrais, ils ne disent pas la même chose, et la
-formulation doit le refléter.
+CZIR62 est une **entreprise familiale en activité depuis 1925**, confirmée par
+le client et affichée sur l'auvent du local : « votre artisan depuis 1925 ». La
+structure juridique actuelle a été immatriculée en 2026 — une formalité de
+transmission, pas le début de l'activité.
+
+Un siècle d'existence à Béthune **écrase tout ce que la concurrence peut
+afficher**. Les résultats du secteur annoncent « plus de 20 ans », « depuis 30
+ans », et la moitié d'entre eux sont des réseaux nationaux à sous-domaines qui
+n'ont aucune histoire locale. C'est donc cette date qui ouvre la description,
+et non le showroom ni l'absence de sous-traitance, pourtant déjà rares.
 
 | Formulation | Statut |
 |---|---|
-| « fondée par un couvreur fort de 25 ans de métier » | ✅ exact |
-| « 25 ans d'expérience à votre service » | ⚠️ ambigu, laisse croire à l'entreprise |
-| « entreprise de couverture depuis 25 ans » | ❌ faux |
+| « entreprise familiale de couverture à Béthune depuis 1925 » | ✅ exact |
+| « votre artisan depuis 1925 » | ✅ exact — c'est l'enseigne |
+| « CZIR62, créée en 2026 » | ⚠️ vrai de la structure, faux de l'activité |
 
-Ce n'est pas de la prudence excessive. La fiche Google comporte un champ
-**date d'ouverture** : en y saisissant 2026, une description qui annoncerait
-« depuis 25 ans » se contredirait à deux centimètres d'écart, sur le même
-écran. Un concurrent peut le signaler, et un client qui s'en aperçoit après
-signature a un vrai grief.
+Le couvreur qui dirige aujourd'hui la maison exerce depuis 25 ans : les deux
+faits se disent ensemble sans se contredire, mais jamais l'un à la place de
+l'autre.
 
-Bien écrite, la phrase est d'ailleurs **plus forte** : ce n'est pas une société
-qui apprend, c'est un artisan installé qui a monté la sienne. C'est exactement
-ce que Google appelle l'expérience de première main, et c'est ce que ni les
-réseaux nationaux à sous-domaines ni les plateformes de mise en relation ne
-peuvent revendiquer.
-
-La distinction est inscrite dans le code, avec le commentaire qui l'explique :
-`foundingYear: 2026` et `experienceYears: 25` sont deux champs séparés de
-`src/config/site.ts`.
-
----
+> ⚠️ **Attention au champ « date d'ouverture » de la fiche.** Google demande la
+> date d'ouverture *à cette adresse*, pas la fondation de l'entreprise. Si le
+> local du 100 rue Sainte-Pry est récent, c'est cette date-là qu'il faut y
+> saisir — et 1925 reste dans la description, où il est à sa place.
 
 ### Décennale et RGE : attendre l'attestation
 

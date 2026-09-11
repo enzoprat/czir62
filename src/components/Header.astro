@@ -40,11 +40,10 @@ const mainNav = [
         <Icon name="storefront" size={15} />
         {/* Deux formulations plutot qu'un mot masque : tronquer « au centre »
             laissait lire « showroom de Béthune ». */}
-        <strong class="hdr__long">Bureau &amp; showroom au centre de Béthune</strong>
-        <strong class="hdr__court">Bureau &amp; showroom à Béthune</strong>
-        {/* Segments degressifs : la phrase complete sur grand ecran, l'adresse
-            seule sur ecran moyen, l'accroche seule sur telephone. */}
-        <span class="hdr__accueil">nous vous accueillons selon la nature de vos travaux</span>
+        {/* L'anciennete passe devant : c'est le seul argument qu'aucun
+            concurrent du secteur ne peut reprendre. */}
+        <strong>Entreprise familiale depuis {nap.foundingYear}</strong>
+        <span class="hdr__accueil">Bureau &amp; showroom au centre de Béthune</span>
         {hasAddress() && <span class="hdr__addr">{addressOneLine()}</span>}
       </span>
       <span class="hdr__top-right">
@@ -231,11 +230,8 @@ const mainNav = [
   @media (max-width: 1700px) { .hdr__addr { display: none; } }
   @media (max-width: 1400px) { .hdr__mail { display: none; } }
   @media (max-width: 1200px) { .hdr__accueil { display: none; } }
-  .hdr__court { display: none; }
   @media (max-width: 620px) {
     .hdr__tel { display: none; }
-    .hdr__long { display: none; }
-    .hdr__court { display: inline; }
     .hdr__top-in { justify-content: center; height: 30px; font-size: 0.72rem; }
   }
 

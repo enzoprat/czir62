@@ -18,31 +18,21 @@ n'annoncent rien.
 La devanture révèle plusieurs informations qui n'étaient pas au dossier. Trois
 demandent une décision avant d'être publiées.
 
-### A. « VOTRE ARTISAN DEPUIS 1925 »
+### ~~A. « VOTRE ARTISAN DEPUIS 1925 »~~ ✅ tranché le 11 septembre 2026
 
-L'auvent du local porte cette mention. Elle ne se concilie pas avec ce qui
-m'avait été indiqué — entreprise créée en 2026, artisan fort de 25 ans de
-métier.
+**Entreprise familiale en activité depuis 1925.** La structure juridique
+actuelle date de 2026 : c'est une transmission, pas un démarrage.
 
-Trois lectures possibles :
+`foundingYear` passe donc à **1925** et alimente `foundingDate` — schema.org
+décrit la fondation de l'organisation, pas l'immatriculation de sa dernière
+forme juridique.
 
-1. **CZIR62 est la reprise d'une maison fondée en 1925.** C'est de très loin
-   l'hypothèse la plus probable, et **ce serait l'atout le plus fort du
-   dossier** : un siècle d'existence à Béthune écrase les « 20 ans
-   d'expérience » que tous les concurrents affichent. À ce compte, c'est cette
-   date qui doit structurer le discours, pas les 25 ans.
-2. L'enseigne reprend la date du bâtiment ou du fonds, sans continuité
-   d'activité.
-3. C'est une formule décorative.
+Déployé : title de l'accueil, bandeau site-wide, encart de l'accueil, page
+entreprise, et les deux versions de la description Google.
 
-En attendant la réponse, **aucune année n'est plus écrite en clair sur le
-site** : la photo de devanture y est désormais publiée, et une page qui
-afficherait « créée en 2026 » à côté d'une enseigne disant 1925 se
-contredirait à l'écran. La phrase conservée — « le couvreur qui dirige
-l'entreprise exerce depuis 25 ans » — est vraie dans les trois cas.
-
-`foundingYear` reste à 2026 dans la configuration, avec la question consignée
-en commentaire.
+> Reste une nuance : le champ **« date d'ouverture »** de la fiche Google
+> demande la date d'ouverture *à cette adresse*. Si le local du 100 rue
+> Sainte-Pry est récent, saisir cette date-là et non 1925.
 
 ### B. Six prestations affichées en vitrine, absentes du site
 

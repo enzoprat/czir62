@@ -92,21 +92,27 @@ export const nap = {
    * les deux — la fiche Google affiche la date d'ouverture, et une
    * entreprise de 2026 qui se dit « depuis 25 ans » se contredit a l'ecran.
    */
-  /*
-   * ⚠️ A TRANCHER — la devanture du local affiche « VOTRE ARTISAN DEPUIS
-   * 1925 ». Si CZIR62 est la reprise d'une maison fondee en 1925, c'est
-   * cette date qui doit figurer ici, et 2026 n'est que la date de creation
-   * de la structure juridique actuelle. Tant que ce n'est pas etabli,
-   * aucune annee n'est ecrite en clair sur le site.
+  /**
+   * Annee de fondation de la maison. Confirmee par le client et affichee sur
+   * l'auvent du local : « VOTRE ARTISAN DEPUIS 1925 ». C'est une entreprise
+   * FAMILIALE, en activite depuis cette date — la structure juridique
+   * actuelle a ete immatriculee en 2026, ce qui est une formalite de
+   * transmission et non le debut de l'activite.
+   *
+   * C'est cette date qui alimente foundingDate : schema.org decrit la
+   * fondation de l'organisation, pas l'immatriculation de sa derniere forme
+   * juridique.
    */
-  foundingYear: 2026 as number | null,
+  foundingYear: 1925 as number | null,
+
+  /** Entreprise familiale — conditionne la formulation « maison familiale ». */
+  familiale: true,
 
   /**
-   * Annees de metier de l'artisan fondateur, acquises avant la creation de
-   * l'entreprise. S'ecrit TOUJOURS comme l'experience d'une personne
-   * (« fonde par un couvreur fort de 25 ans de metier »), jamais comme
-   * l'anciennete de la societe (« entreprise depuis 25 ans »), qui serait
-   * faux.
+   * Annees de metier du couvreur qui dirige aujourd'hui la maison. A ne pas
+   * confondre avec foundingYear : l'entreprise existe depuis 1925, la
+   * personne qui la dirige exerce depuis 25 ans. Les deux se disent ensemble
+   * sans se contredire, mais jamais l'une a la place de l'autre.
    */
   experienceYears: 25 as number | null,
 
