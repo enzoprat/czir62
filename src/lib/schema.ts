@@ -131,9 +131,13 @@ export function organizationSchema(): Json {
       url: `${site.url}/apple-touch-icon.png`,
       caption: site.brand,
     },
-    // Photo de reference de l'entreprise. A remplacer par la devanture des
-    // qu'elle sera fournie : un local physique est le signal le plus fort.
-    image: `${site.url}/images/accueil/couvreur-bethune-czir62.jpg`,
+    // La devanture plutot qu'un chantier : un local physique identifiable est
+    // le signal le plus fort dont dispose l'entreprise, et le seul que ses
+    // concurrents du secteur ne peuvent pas produire.
+    image: [
+      `${site.url}/images/local/devanture-czir62-bethune.jpg`,
+      `${site.url}/images/accueil/couvreur-bethune-czir62.jpg`,
+    ],
     // Derivee du registre : ajouter une prestation met la description a jour,
     // il n'y a pas de liste a maintenir en double.
     description: `Entreprise générale de couverture installée à ${nap.address.city} : ${servicesByOrder

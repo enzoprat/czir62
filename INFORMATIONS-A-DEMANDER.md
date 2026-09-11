@@ -13,6 +13,84 @@ n'annoncent rien.
 
 ---
 
+## ⚠️ Ouvert depuis la photo de devanture du 11 septembre 2026
+
+La devanture révèle plusieurs informations qui n'étaient pas au dossier. Trois
+demandent une décision avant d'être publiées.
+
+### A. « VOTRE ARTISAN DEPUIS 1925 »
+
+L'auvent du local porte cette mention. Elle ne se concilie pas avec ce qui
+m'avait été indiqué — entreprise créée en 2026, artisan fort de 25 ans de
+métier.
+
+Trois lectures possibles :
+
+1. **CZIR62 est la reprise d'une maison fondée en 1925.** C'est de très loin
+   l'hypothèse la plus probable, et **ce serait l'atout le plus fort du
+   dossier** : un siècle d'existence à Béthune écrase les « 20 ans
+   d'expérience » que tous les concurrents affichent. À ce compte, c'est cette
+   date qui doit structurer le discours, pas les 25 ans.
+2. L'enseigne reprend la date du bâtiment ou du fonds, sans continuité
+   d'activité.
+3. C'est une formule décorative.
+
+En attendant la réponse, **aucune année n'est plus écrite en clair sur le
+site** : la photo de devanture y est désormais publiée, et une page qui
+afficherait « créée en 2026 » à côté d'une enseigne disant 1925 se
+contredirait à l'écran. La phrase conservée — « le couvreur qui dirige
+l'entreprise exerce depuis 25 ans » — est vraie dans les trois cas.
+
+`foundingYear` reste à 2026 dans la configuration, avec la question consignée
+en commentaire.
+
+### B. Six prestations affichées en vitrine, absentes du site
+
+Les vitrines annoncent, en plus de tout ce que le site couvre déjà :
+
+| Prestation | État sur le site |
+|---|---|
+| Isolation de combles | ⛔ aucune page |
+| Isolation de façade | ⛔ aucune page |
+| Sarking | ⛔ aucune page |
+| Ravalement projeté | ⛔ aucune page |
+| Peinture intérieure | ⛔ aucune page |
+| Peinture extérieure | ⛔ aucune page |
+
+L'audit SEO avait identifié l'isolation comme **la prestation manquante la plus
+coûteuse** : tous les concurrents examinés la proposent, et c'est la seule du
+métier éligible à MaPrimeRénov'. Le **sarking** est en plus une technique de
+couvreur, à forte valeur et peu concurrencée localement.
+
+Décision à prendre : ces six prestations entrent-elles dans le périmètre du
+site ? Si oui, cela représente au minimum trois pages neuves (isolation de
+combles et sarking, isolation de façade, ravalement et peinture) et une
+révision du menu, qui est aujourd'hui entièrement organisé autour de la
+couverture.
+
+### C. Dépannage 7j/7 — désormais affichable
+
+La porte du local annonce **DÉPANNAGE 7J/7**. Le site ne promettait jusqu'ici
+aucun délai, faute de confirmation. C'est un argument que tous les concurrents
+mettent en avant et qu'il est maintenant possible d'écrire — à condition que
+l'astreinte soit réellement tenue. Confirmer avant publication.
+
+### D. « Agréé toutes assurances »
+
+Les deux vitrines portent cette mention. Elle intéresse directement les
+sinistres tempête, qui sont un flux d'affaires régulier dans le Pas-de-Calais.
+À confirmer, puis à intégrer à la page réparation et à la section assurance de
+la page fuite.
+
+### E. Fournisseurs identifiés
+
+Relevés sur les vitrines : **Asturienne, Fernagut, Larivière, Velux** côté
+couverture ; **Isover, Seigneurie, Cedeo, Zolpan, Actis** côté isolation et
+peinture. Utile pour compléter le bandeau fournisseurs du site, sous réserve
+de leurs conditions d'utilisation de marque.
+
+---
+
 ## 🔴 Bloquant — sans ça, le site ne convertit pas
 
 ### ~~1. Le numéro de téléphone~~ ✅ fourni le 3 septembre 2026
@@ -84,7 +162,7 @@ Publié sur l'accueil et sur la page entreprise sous la forme « l'entreprise a
 > personne nommée vaut bien plus qu'à un « artisan » anonyme — c'est le premier
 > facteur de crédibilité pour un métier où l'on fait entrer quelqu'un chez soi.
 
-### 5. Les horaires d'ouverture
+### ~~5. Les horaires d'ouverture~~ ✅ relevés sur la porte du local
 `src/config/site.ts` → `nap.openingHours`
 
 Aucun horaire n'est affiché ni déclaré. Google affiche les horaires dans le
@@ -108,7 +186,7 @@ concurrents (« plus de 20 ans », « depuis 30 ans »).
 Clic droit sur le point exact dans Google Maps → « Copier les coordonnées ».
 Active la carte de la page contact et le champ `geo` des données structurées.
 
-### 8. La photo de devanture
+### ~~8. La photo de devanture~~ ✅ fournie le 11 septembre 2026
 `public/images/local/devanture-czir62-bethune.jpg`
 
 C'est le dernier emplacement photo en attente sur tout le site (accueil,

@@ -66,18 +66,38 @@ export const nap = {
    * Tant que le tableau est vide, aucun horaire n'est affiche ni declare.
    * Exemple : { days: ['Monday','Tuesday'], opens: '08:00', closes: '18:00' }
    */
-  openingHours: [] as ReadonlyArray<{
+  /**
+   * Releves sur la porte du local, photo du 11 septembre 2026. Le samedi
+   * matin est sur rendez-vous : il n'est donc pas declare comme une plage
+   * d'ouverture, Google afficherait « ouvert » a tort.
+   */
+  openingHours: [
+    { days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], opens: '09:00', closes: '12:00' },
+    { days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], opens: '14:00', closes: '18:00' },
+  ] as ReadonlyArray<{
     days: string[];
     opens: string;
     closes: string;
   }>,
 
-  /** TODO Annee de creation (SIREN / Kbis) — utilisee dans foundingDate */
+  /** Samedi matin sur rendez-vous — mention libre, hors plage declaree. */
+  samediSurRdv: true,
+
+  /** Depannage 7j/7 annonce sur la devanture du local. */
+  depannage7j: true,
+
   /**
    * Annee de creation de la PERSONNE MORALE. Distincte de l'experience de
    * l'artisan : voir experienceYears juste en dessous. Ne jamais fusionner
    * les deux — la fiche Google affiche la date d'ouverture, et une
    * entreprise de 2026 qui se dit « depuis 25 ans » se contredit a l'ecran.
+   */
+  /*
+   * ⚠️ A TRANCHER — la devanture du local affiche « VOTRE ARTISAN DEPUIS
+   * 1925 ». Si CZIR62 est la reprise d'une maison fondee en 1925, c'est
+   * cette date qui doit figurer ici, et 2026 n'est que la date de creation
+   * de la structure juridique actuelle. Tant que ce n'est pas etabli,
+   * aucune annee n'est ecrite en clair sur le site.
    */
   foundingYear: 2026 as number | null,
 

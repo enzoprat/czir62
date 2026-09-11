@@ -51,6 +51,18 @@ export const chantiers: PhotoChantier[] = [
     legende: 'Joint debout',
   },
   {
+    src: '/images/chantiers/devanture-vitrines-czir62.jpg',
+    categorie: 'entreprise',
+    alt: "Vitrines du local CZIR62 à Béthune, listant les prestations de couverture et d'isolation",
+    legende: 'Nos vitrines, rue Sainte-Pry',
+  },
+  {
+    src: '/images/chantiers/local-rue-sainte-pry-czir62.jpg',
+    categorie: 'entreprise',
+    alt: "Le local CZIR62 à l'angle de la rue Sainte-Pry à Béthune, vu depuis la chaussée",
+    legende: 'Notre local, à l\'angle de la rue Sainte-Pry',
+  },
+  {
     src: '/images/chantiers/vehicules-entreprise-czir62.jpg',
     categorie: 'entreprise',
     alt: "Camion benne et fourgon de l'entreprise stationnés devant un chantier",
