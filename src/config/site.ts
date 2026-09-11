@@ -39,7 +39,7 @@ export const nap = {
   phoneE164: '+33786704134' as string | null,
 
   /** Email de reception des demandes */
-  email: 'Ent.czir62@hotmail.com' as string | null,
+  email: 'ent.czir62@hotmail.com' as string | null,
 
   address: {
     /**
