@@ -108,17 +108,27 @@ haut de page, la page contact et le champ `email` des données structurées.
 > ⚠️ Vérifier que ce numéro est **exactement** celui de la fiche Google. Une
 > divergence, même de format, casse la cohérence NAP.
 
-### 2. La fiche Google Business Profile
-`src/config/site.ts` → `google.placeId`, `google.cid`, `google.profileUrl`
+### ~~2. La fiche Google Business Profile~~ ✅ créée le 11 septembre 2026
 
-**Sur « couvreur Béthune », les quatre premiers résultats organiques sont des
-annuaires** (Pages Jaunes en tête). Au-dessus d'eux, Google affiche le Local
-Pack — trois fiches Google avec note, horaires et bouton d'appel. C'est là que
-se joue l'essentiel des appels, pas dans les résultats bleus.
+Fiche **« CZIR62 Couvreur Béthune »**, CID `6405054400449423243`, renseignée
+dans `src/config/site.ts`.
 
-Le site est prêt : dès que le `placeId` est renseigné, les blocs d'avis
-s'activent sur 13 pages, le lien « laisser un avis » apparaît, et le champ
-`sameAs` des données structurées relie le site à la fiche.
+Conséquences immédiates sur le site :
+
+- le bouton **« Laissez-nous un avis »** apparaît sur **14 pages** — page avis,
+  page devis, page entreprise et les dix pages de communes ;
+- les liens « voir les avis » et « itinéraire » pointent vers la vraie fiche ;
+- `sameAs` des données structurées relie enfin le site à la fiche, ce qui
+  permet à Google de rapprocher les deux entités.
+
+> ⚠️ **Un lien reste à récupérer.** Le bouton ouvre aujourd'hui la fiche, où le
+> bouton « Rédiger un avis » est immédiatement visible — mais cela fait un clic
+> de trop. Google fournit aux propriétaires un lien court qui ouvre
+> directement le formulaire : tableau de bord → **« Demander des avis »** →
+> une URL de la forme `https://g.page/r/…/review`.
+>
+> Il suffit de la coller dans `google.shortReviewUrl` (`src/config/site.ts`) :
+> les 14 boutons deviennent alors directs, sans autre modification.
 
 ### 3. Les avis clients
 Aucune action de code — ils remontent automatiquement de la fiche Google.

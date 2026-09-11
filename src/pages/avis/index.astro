@@ -11,6 +11,7 @@ import GoogleReviews from '@/components/GoogleReviews.astro';
 import GoogleLogo from '@/components/GoogleLogo.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import Icon from '@/components/Icon.astro';
+import BoutonAvisGoogle from '@/components/BoutonAvisGoogle.astro';
 import { google } from '@/config/site';
 import { hasAvis } from '@/data/avis';
 import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
@@ -38,7 +39,7 @@ const crumbs = [{ name: 'Avis clients' }];
     </div>
   </section>
 
-  <GoogleReviews variant="light" title="Avis Google" intro={undefined} />
+  <GoogleReviews cta={false} variant="light" title="Avis Google" intro={undefined} />
 
   <!-- ========================================= NOTRE POSITION SUR LES AVIS -->
   <section class="section section--alt">
@@ -88,11 +89,7 @@ const crumbs = [{ name: 'Avis clients' }];
                 {import.meta.env.DEV && <span> [dev] renseigner <code>google.placeId</code> dans <code>src/config/site.ts</code>.</span>}
               </p>
             )}
-            {google.writeReviewUrl && (
-              <a href={google.writeReviewUrl} class="btn btn--ghost" target="_blank" rel="noopener">
-                Laisser un avis
-              </a>
-            )}
+            <BoutonAvisGoogle trackLabel="page-avis" />
           </div>
         </div>
       </div>

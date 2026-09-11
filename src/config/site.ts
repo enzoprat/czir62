@@ -134,22 +134,46 @@ export const nap = {
  *    disponible sur la fiche doit etre accessible depuis le site.
  * ------------------------------------------------------------------------ */
 export const google = {
-  /** TODO Place ID — https://developers.google.com/maps/documentation/places/web-service/place-id */
+  /**
+   * Place ID (format ChIJ…). Introuvable sans cle API ; il n'est pas requis :
+   * le CID suffit pour toutes les URL ci-dessous. Le renseigner rendrait le
+   * lien « laisser un avis » direct, sans passage par la fiche.
+   */
   placeId: null as string | null,
-  /** TODO CID de la fiche (identifiant numerique dans l'URL Maps) */
-  cid: null as string | null,
 
-  /** URL directe vers l'onglet avis. Genere automatiquement si placeId fourni. */
-  get reviewsUrl(): string | null {
-    if (this.cid) return `https://search.google.com/local/reviews?placeid=${this.placeId ?? ''}`;
-    if (this.placeId) return `https://search.google.com/local/reviews?placeid=${this.placeId}`;
+  /** CID de la fiche — identifiant numerique, releve le 11 septembre 2026. */
+  cid: '6405054400449423243' as string | null,
+
+  /**
+   * Lien court fourni par le tableau de bord Google Business Profile
+   * (« Demander des avis »), de la forme https://g.page/r/…/review.
+   * C'est le seul qui ouvre le formulaire d'avis en un clic ; tant qu'il
+   * n'est pas renseigne, on retombe sur la fiche, ou le bouton « Rediger un
+   * avis » est immediatement visible.
+   */
+  shortReviewUrl: null as string | null,
+
+  /** URL publique de la fiche. */
+  get profileUrl(): string | null {
+    if (this.cid) return `https://www.google.com/maps?cid=${this.cid}`;
+    if (this.placeId) return `https://www.google.com/maps/place/?q=place_id:${this.placeId}`;
     return null;
   },
-  /** Lien "laisser un avis" (ouvre directement la boite de dialogue) */
-  get writeReviewUrl(): string | null {
-    return this.placeId ? `https://search.google.com/local/writereview?placeid=${this.placeId}` : null;
+
+  /** Onglet avis de la fiche. */
+  get reviewsUrl(): string | null {
+    if (this.placeId) return `https://search.google.com/local/reviews?placeid=${this.placeId}`;
+    return this.profileUrl;
   },
-  /** Lien itineraire Google Maps */
+
+  /** Formulaire « laisser un avis ». */
+  get writeReviewUrl(): string | null {
+    if (this.shortReviewUrl) return this.shortReviewUrl;
+    if (this.placeId) return `https://search.google.com/local/writereview?placeid=${this.placeId}`;
+    return this.profileUrl;
+  },
+
+  /** Itineraire Google Maps. */
   get directionsUrl(): string | null {
     if (this.placeId) {
       return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
@@ -161,8 +185,6 @@ export const google = {
     }
     return null;
   },
-  /** URL publique de la fiche (bouton "voir la fiche") */
-  profileUrl: null as string | null,
 };
 
 /* ---------------------------------------------------------------------------

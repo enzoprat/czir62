@@ -20,15 +20,18 @@ import GoogleLogo from '@/components/GoogleLogo.astro';
 import Stars from '@/components/Stars.astro';
 import Icon from '@/components/Icon.astro';
 import { avis, avisSource, hasAvis, hasNoteVerifiee } from '@/data/avis';
+import BoutonAvisGoogle from '@/components/BoutonAvisGoogle.astro';
 import { google } from '@/config/site';
 
 interface Props {
+  /** Masque le bouton d'avis quand la page hote porte deja le sien */
+  cta?: boolean;
   title?: string;
   intro?: string;
   variant?: 'light' | 'alt';
 }
 const {
-  title = 'Ce que disent nos clients',
+  cta = true, title = 'Ce que disent nos clients',
   intro,
   variant = 'alt',
 } = Astro.props;
@@ -115,17 +118,7 @@ const initiale = (n: string) => n.trim().charAt(0).toUpperCase();
               Voir tous nos avis Google
             </a>
           )}
-          {google.writeReviewUrl && (
-            <a href={google.writeReviewUrl} class="link-arrow" target="_blank" rel="noopener">
-              Laisser un avis
-            </a>
-          )}
-          {!google.reviewsUrl && (
-            <p class="grv__hint">
-              Lien vers la fiche Google à activer : renseigner <code>google.placeId</code> dans
-              <code>src/config/site.ts</code>.
-            </p>
-          )}
+          {cta && <BoutonAvisGoogle trackLabel="section-avis" />}
         </div>
       </>
     ) : (
@@ -144,11 +137,7 @@ const initiale = (n: string) => n.trim().charAt(0).toUpperCase();
               Consulter les avis
             </a>
           )}
-          {google.writeReviewUrl && (
-            <a href={google.writeReviewUrl} class="btn btn--ghost" target="_blank" rel="noopener">
-              Laisser un avis
-            </a>
-          )}
+          {cta && <BoutonAvisGoogle trackLabel="repli-avis" />}
         </div>
       </div>
     )}
