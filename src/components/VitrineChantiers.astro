@@ -18,7 +18,7 @@
 import Icon from '@/components/Icon.astro';
 import { chantiers } from '@/data/chantiers';
 import { getService } from '@/data/services';
-import { dimensions } from '@/lib/dimensions';
+import { dimensions, srcset } from '@/lib/dimensions';
 
 interface Props {
   title?: string;
@@ -58,6 +58,7 @@ const choix = [...vues.entries()]
             alt={c.alt}
             loading={i === 0 ? 'eager' : 'lazy'}
             decoding="async"
+            srcset={srcset(c.src)?.jpeg}
             width={dimensions(c.src)?.width}
             height={dimensions(c.src)?.height}
             sizes="(max-width: 900px) 100vw, 62vw"

@@ -28,7 +28,7 @@ import BeforeAfter from '@/components/BeforeAfter.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import Faq from '@/components/Faq.astro';
 
-import { dimensions } from '@/lib/dimensions';
+import { dimensions, srcset } from '@/lib/dimensions';
 import { servicesByOrder, getService } from '@/data/services';
 import { villes, communesDesservies, RAYON_KM } from '@/data/villes';
 import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
@@ -186,6 +186,7 @@ const etapes = [
           <a href={s.url} class:list={['pil__t', i === 0 && 'pil__t--lead', 'reveal']}>
             <span class="pil__ph">
               <img src={`/images/services/${s.slug}-czir62.jpg`} alt="" loading="lazy" decoding="async"
+                   srcset={srcset(`/images/services/${s.slug}-czir62.jpg`)?.jpeg}
                    width={dimensions(`/images/services/${s.slug}-czir62.jpg`)?.width}
                    height={dimensions(`/images/services/${s.slug}-czir62.jpg`)?.height}
                    sizes="(max-width: 860px) 100vw, 50vw" />

@@ -45,8 +45,10 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      changefreq: 'weekly',
-      lastmod: new Date(),
+      /* Ni changefreq ni lastmod : Google ignore le premier depuis longtemps,
+         et une date de build identique sur toutes les URLs est un signal de
+         fraicheur faux. Mieux vaut n'en declarer aucun que d'en declarer un
+         que le contenu ne justifie pas. */
       filter: (page) =>
         !page.includes('/merci/') &&
         !page.includes('/mentions-legales/') &&

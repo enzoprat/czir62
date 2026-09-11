@@ -77,17 +77,19 @@ const webpDispo = Boolean(webp) && existsSync(chemin.replace(/\.jpe?g$/i, '.webp
 /* Dimensions reelles du fichier plutot que les valeurs par defaut : declarer
    un 3/2 sur une photo 4/3 fait reserver la mauvaise hauteur, donc du CLS. */
 const reel = src ? dimensions(src) : null;
+const jeu = src ? srcset(src) : null;
 const w = reel?.width ?? width;
 const h = reel?.height ?? height;
 const aspect = ratio ?? `${w} / ${h}`;
 const aspectM = ratioMobile ?? aspect;
-import { dimensions } from '@/lib/dimensions';
+import { dimensions, srcset } from '@/lib/dimensions';
 ---
 
 <figure class:list={['ph', rounded && 'ph--rounded', tone === 'dark' && 'ph--dark', zoom && 'ph--zoom', className]} style={`--ph-ratio:${aspect};--ph-ratio-m:${aspectM}`}>
   {disponible ? (
     <picture>
-      {webpDispo && <source srcset={webp} type="image/webp" />}
+      {webpDispo && <source srcset={jeu?.webp || webp} sizes={jeu ? sizes : undefined} type="image/webp" />}
+      {jeu?.jpeg && <source srcset={jeu.jpeg} sizes={sizes} type="image/jpeg" />}
       <img
         src={src}
         alt={alt}

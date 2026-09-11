@@ -54,3 +54,33 @@ export function dimensions(src: string): { width: number; height: number } | nul
   CACHE.set(src, res);
   return res;
 }
+
+/* ---------------------------------------------------------------------------
+ * Declinaisons responsives
+ * ------------------------------------------------------------------------ */
+
+const LARGEURS = [480, 800, 1200, 1600];
+const SRCSET = new Map<string, { webp: string; jpeg: string } | null>();
+
+/**
+ * Construit le srcset a partir des declinaisons reellement presentes sur le
+ * disque (generees par scripts/responsive.mjs). Renvoie null si aucune
+ * declinaison n'existe : l'appelant retombe alors sur le fichier unique.
+ *
+ * Sans srcset, l'attribut `sizes` ne sert a rien — le navigateur telecharge
+ * le seul fichier declare quelle que soit la taille d'affichage.
+ */
+export function srcset(src: string): { webp: string; jpeg: string } | null {
+  if (SRCSET.has(src)) return SRCSET.get(src)!;
+  const base = src.replace(/\.(jpg|jpeg|png)$/i, '');
+  const racine = join(process.cwd(), 'public');
+  const w: string[] = [];
+  const j: string[] = [];
+  for (const l of LARGEURS) {
+    if (existsSync(join(racine, `${base}-${l}.webp`.replace(/^\//, '')))) w.push(`${base}-${l}.webp ${l}w`);
+    if (existsSync(join(racine, `${base}-${l}.jpg`.replace(/^\//, '')))) j.push(`${base}-${l}.jpg ${l}w`);
+  }
+  const res = w.length || j.length ? { webp: w.join(', '), jpeg: j.join(', ') } : null;
+  SRCSET.set(src, res);
+  return res;
+}

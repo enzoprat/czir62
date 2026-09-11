@@ -56,7 +56,7 @@ const cats = [...compte.keys()].sort((a, b) => {
   const ia = ordre.indexOf(a), ib = ordre.indexOf(b);
   return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
 });
-import { dimensions } from '@/lib/dimensions';
+import { dimensions, srcset } from '@/lib/dimensions';
 ---
 
 <section class="gal" data-galerie>
@@ -92,6 +92,7 @@ import { dimensions } from '@/lib/dimensions';
           <picture>
             <source srcset={p.src.replace(/\.jpg$/, '.webp')} type="image/webp" />
             <img src={p.src} alt={p.alt} loading="lazy" decoding="async"
+                 srcset={srcset(p.src)?.jpeg}
                  width={dimensions(p.src)?.width} height={dimensions(p.src)?.height}
                  sizes="(max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" />
           </picture>
