@@ -98,7 +98,7 @@ haut de page, la page contact et le champ `email` des données structurées.
 > ⚠️ Vérifier que ce numéro est **exactement** celui de la fiche Google. Une
 > divergence, même de format, casse la cohérence NAP.
 
-### ~~2. La fiche Google Business Profile~~ ✅ créée le 11 septembre 2026
+### ~~2. La fiche Google Business Profile~~ ✅ créée et connectée le 11 septembre 2026
 
 Fiche **« CZIR62 Couvreur Béthune »**, CID `6405054400449423243`, renseignée
 dans `src/config/site.ts`.
@@ -111,14 +111,8 @@ Conséquences immédiates sur le site :
 - `sameAs` des données structurées relie enfin le site à la fiche, ce qui
   permet à Google de rapprocher les deux entités.
 
-> ⚠️ **Un lien reste à récupérer.** Le bouton ouvre aujourd'hui la fiche, où le
-> bouton « Rédiger un avis » est immédiatement visible — mais cela fait un clic
-> de trop. Google fournit aux propriétaires un lien court qui ouvre
-> directement le formulaire : tableau de bord → **« Demander des avis »** →
-> une URL de la forme `https://g.page/r/…/review`.
->
-> Il suffit de la coller dans `google.shortReviewUrl` (`src/config/site.ts`) :
-> les 14 boutons deviennent alors directs, sans autre modification.
+Le lien court d'avis `https://g.page/r/CYsn17EKU-NYEBM/review` est renseigné :
+les boutons ouvrent **directement le formulaire**, sans passer par la fiche.
 
 ### 3. Les avis clients
 Aucune action de code — ils remontent automatiquement de la fiche Google.
@@ -180,11 +174,24 @@ Le SIRET est une mention obligatoire des mentions légales — la page existe ma
 il y manque. L'ancienneté est l'argument de réassurance le plus utilisé par les
 concurrents (« plus de 20 ans », « depuis 30 ans »).
 
-### 7. Les coordonnées GPS du local
+### ~~7. Les coordonnées GPS du local~~ ✅ relevées le 11 septembre 2026
 `src/config/site.ts` → `nap.geo.lat` / `nap.geo.lng`
 
-Clic droit sur le point exact dans Google Maps → « Copier les coordonnées ».
-Active la carte de la page contact et le champ `geo` des données structurées.
+`50.529439, 2.637719`, relevées sur la **Base Adresse Nationale**
+(api-adresse.data.gouv.fr), au niveau du numéro et non de la voie. La carte
+de la page contact est active et le champ `geo` des données structurées est
+renseigné.
+
+> ⚠️ **Une vérification d'une minute.** Ouvrir `/contact/` et regarder si le
+> repère tombe bien sur l'angle du bâtiment. Si non : clic droit sur le bon
+> point dans Google Maps → la première ligne du menu donne les coordonnées →
+> les coller dans `nap.geo`.
+
+> ⚠️ **Orthographe de la voie à trancher.** La Base Adresse Nationale écrit
+> **« 100 Rue Saint Pry »**, sans « e » et sans trait d'union. Le site et
+> l'enseigne écrivent « rue Sainte-Pry ». La référence à suivre est la fiche
+> Google : c'est elle que les annuaires recopient. Une divergence dégrade la
+> cohérence des citations locales.
 
 ### ~~8. La photo de devanture~~ ✅ fournie le 11 septembre 2026
 `public/images/local/devanture-czir62-bethune.jpg`

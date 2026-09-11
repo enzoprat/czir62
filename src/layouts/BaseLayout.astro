@@ -85,7 +85,12 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID;
 
     <meta name="theme-color" content="#AE5A2F" />
     <meta name="format-detection" content="telephone=yes" />
+    {/* Le motif des marteaux croises n'est pas lisible sous 32 px : la
+        marque au toit prend le relais en 16. Les navigateurs choisissent
+        selon l'attribut sizes, le SVG servant de rendu vectoriel par defaut. */}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 

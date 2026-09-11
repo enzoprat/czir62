@@ -56,16 +56,16 @@ export const nap = {
   },
 
   /** TODO Coordonnees du local (clic droit sur Google Maps > copier les coords) */
+  /**
+   * Releve sur la Base Adresse Nationale (api-adresse.data.gouv.fr), au
+   * niveau du numero et non de la voie. A verifier une fois : le point doit
+   * tomber sur l'angle du batiment, pas au milieu de la rue.
+   */
   geo: {
-    lat: null as number | null,
-    lng: null as number | null,
+    lat: 50.529439 as number | null,
+    lng: 2.637719 as number | null,
   },
 
-  /**
-   * TODO Horaires reels. Format Schema.org OpeningHoursSpecification.
-   * Tant que le tableau est vide, aucun horaire n'est affiche ni declare.
-   * Exemple : { days: ['Monday','Tuesday'], opens: '08:00', closes: '18:00' }
-   */
   /**
    * Releves sur la porte du local, photo du 11 septembre 2026. Le samedi
    * matin est sur rendez-vous : il n'est donc pas declare comme une plage
@@ -157,7 +157,7 @@ export const google = {
    * n'est pas renseigne, on retombe sur la fiche, ou le bouton « Rediger un
    * avis » est immediatement visible.
    */
-  shortReviewUrl: null as string | null,
+  shortReviewUrl: 'https://g.page/r/CYsn17EKU-NYEBM/review' as string | null,
 
   /** URL publique de la fiche. */
   get profileUrl(): string | null {
