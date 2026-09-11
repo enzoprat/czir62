@@ -1,0 +1,236 @@
+---
+/**
+ * VITRINE DE CHANTIERS
+ *
+ * Une grande photo pilotée par une colonne de miniatures, plutôt qu'une
+ * planche-contact. Sur un métier qui se vend par la preuve visuelle, une
+ * image lue en grand vaut mieux que douze vignettes qu'on survole.
+ *
+ * HONNÊTETÉ — la légende porte la PRESTATION et ce qu'on voit, jamais une
+ * commune ni une durée : aucune photo n'est rattachée à un chantier
+ * documenté, et inventer un lieu serait le genre de détail qu'un visiteur
+ * du secteur peut démentir.
+ *
+ * SANS JAVASCRIPT — les douze images sont dans le HTML et restent
+ * indexables ; la première s'affiche en grand, les miniatures deviennent de
+ * simples images. Rien ne disparaît.
+ */
+import Icon from '@/components/Icon.astro';
+import { chantiers } from '@/data/chantiers';
+import { getService } from '@/data/services';
+import { dimensions } from '@/lib/dimensions';
+
+interface Props {
+  title?: string;
+  intro?: string;
+  limit?: number;
+}
+const { title = 'Le travail, avant qu’il ne soit recouvert', intro, limit = 8 } = Astro.props;
+
+/* Une photo par prestation, dans l'ordre du registre : la vitrine balaie le
+   métier au lieu de montrer huit fois la même chose. */
+const vues = new Map<string, (typeof chantiers)[number]>();
+for (const c of chantiers) if (!vues.has(c.categorie)) vues.set(c.categorie, c);
+const choix = [...vues.entries()]
+  .map(([cat, photo]) => {
+    let label = "L'entreprise";
+    try { label = getService(cat).name; } catch { /* categorie hors registre */ }
+    return { ...photo, label };
+  })
+  .slice(0, limit);
+---
+
+<section class="vit" data-vitrine>
+  <div class="head-split">
+    <div>
+      <p class="eyebrow">Réalisations</p>
+      <h2>{title}</h2>
+    </div>
+    {intro && <p class="lede">{intro}</p>}
+  </div>
+
+  <div class="vit__grid">
+    <div class="vit__stage">
+      {choix.map((c, i) => (
+        <figure class:list={['vit__shot', i === 0 && 'is-on']} data-shot={i}>
+          <img
+            src={c.src}
+            alt={c.alt}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            decoding="async"
+            width={dimensions(c.src)?.width}
+            height={dimensions(c.src)?.height}
+            sizes="(max-width: 900px) 100vw, 62vw"
+          />
+          <figcaption>
+            <span class="vit__cat">{c.label}</span>
+            <span class="vit__leg">{c.legende}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <ol class="list-clean vit__thumbs" role="tablist" aria-label="Choisir une photo">
+      {choix.map((c, i) => (
+        <li>
+          <button
+            type="button"
+            class:list={['vit__th', i === 0 && 'is-on']}
+            data-go={i}
+            role="tab"
+            aria-selected={i === 0 ? 'true' : 'false'}
+          >
+            <img src={c.src} alt="" loading="lazy" decoding="async" width="160" height="120" />
+            <span class="vit__th-k">{c.label}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <p class="vit__all">
+    <a href="/realisations/" class="link-arrow">
+      <Icon name="camera" size={17} /> Toute la galerie, triée par prestation
+    </a>
+  </p>
+</section>
+
+<style>
+  .vit__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+    gap: var(--sp-5);
+    margin-top: var(--sp-8);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .vit__grid { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ----------------------------------------------------------- la scène */
+  .vit__stage {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 3px 3px 16px 3px;
+    background: var(--zinc-900);
+  }
+  @media (max-width: 900px) { .vit__stage { aspect-ratio: 3 / 2; } }
+
+  .vit__shot {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 420ms var(--ease-out);
+  }
+  .vit__shot.is-on { opacity: 1; visibility: visible; }
+  .vit__shot img { width: 100%; height: 100%; object-fit: cover; }
+
+  .vit__shot figcaption {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: grid;
+    gap: 0.22rem;
+    padding: var(--sp-7) var(--sp-6) var(--sp-5);
+    background: linear-gradient(to top, rgba(14, 19, 24, 0.9) 0%, rgba(14, 19, 24, 0.7) 52%, transparent 100%);
+    color: #fff;
+  }
+  .vit__cat {
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--clay-300);
+  }
+  .vit__leg { font-size: var(--fs-base); font-weight: 600; }
+
+  /* ------------------------------------------------------- les vignettes */
+  .vit__thumbs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
+  @media (max-width: 900px) { .vit__thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .vit__thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .vit__th {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 0;
+    border-radius: 2px;
+    background: var(--sand-100);
+    cursor: pointer;
+    /* La vignette non retenue s'efface un peu : l'œil sait où il en est. */
+    opacity: 0.62;
+    transition: opacity var(--t-fast), transform var(--t-fast) var(--ease-out);
+  }
+  .vit__th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vit__th:hover { opacity: 0.92; transform: translateY(-2px); }
+  .vit__th.is-on { opacity: 1; }
+  .vit__th.is-on::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: var(--clay-500);
+  }
+  .vit__th:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .vit__th-k {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1.6rem 0.5rem 0.4rem;
+    background: linear-gradient(to top, rgba(14, 19, 24, 0.86), transparent);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 620;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .vit__th.is-on .vit__th-k { padding-bottom: 0.6rem; }
+
+  .vit__all { margin-top: var(--sp-7); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vit__shot, .vit__th { transition: none; }
+    .vit__th:hover { transform: none; }
+  }
+</style>
+
+<script>
+  /* Pilotage des miniatures. Tout est déjà rendu : le script ne fait que
+     changer la vue active, il n'ajoute aucun contenu. */
+  document.querySelectorAll<HTMLElement>('[data-vitrine]').forEach((bloc) => {
+    const vues = [...bloc.querySelectorAll<HTMLElement>('[data-shot]')];
+    const boutons = [...bloc.querySelectorAll<HTMLButtonElement>('[data-go]')];
+    if (vues.length < 2) return;
+
+    const montrer = (i: number) => {
+      vues.forEach((v, k) => v.classList.toggle('is-on', k === i));
+      boutons.forEach((b, k) => {
+        b.classList.toggle('is-on', k === i);
+        b.setAttribute('aria-selected', k === i ? 'true' : 'false');
+      });
+    };
+
+    boutons.forEach((b, i) => {
+      b.addEventListener('click', () => montrer(i));
+      b.addEventListener('mouseenter', () => montrer(i));
+      b.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        const n = (i + d + boutons.length) % boutons.length;
+        boutons[n].focus();
+        montrer(n);
+      });
+    });
+  });
+</script>

@@ -23,8 +23,8 @@ import DiagnosticToiture from '@/components/DiagnosticToiture.astro';
 import ZoneMap from '@/components/ZoneMap.astro';
 import GoogleReviews from '@/components/GoogleReviews.astro';
 import BrandsStrip from '@/components/BrandsStrip.astro';
-import RealisationsBlock from '@/components/RealisationsBlock.astro';
-import GalerieChantiers from '@/components/GalerieChantiers.astro';
+import VitrineChantiers from '@/components/VitrineChantiers.astro';
+import BeforeAfter from '@/components/BeforeAfter.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import Faq from '@/components/Faq.astro';
 
@@ -32,7 +32,6 @@ import { dimensions } from '@/lib/dimensions';
 import { servicesByOrder, getService } from '@/data/services';
 import { villes, communesDesservies, RAYON_KM } from '@/data/villes';
 import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
-import { getRealisations } from '@/lib/realisations';
 import { webPageSchema, faqSchema, placeSchema } from '@/lib/schema';
 
 const tel = telHref();
@@ -43,7 +42,6 @@ const PILIERS = ['couverture', 'renovation-toiture', 'reparation-toiture'];
 const piliers = PILIERS.map((x) => getService(x));
 const urgence = getService('fuite-toiture');
 const reste = servicesByOrder.filter((x) => !PILIERS.includes(x.slug) && x.slug !== 'fuite-toiture');
-const realisations = (await getRealisations()).slice(0, 3);
 
 /* Repères tirés des données — aucun chiffre inventé, aucun à maintenir. */
 const nbCommunes = villes.length + communesDesservies.length;
@@ -339,25 +337,38 @@ const etapes = [
     </div>
   </section>
 
-  <!-- ═══════════════ 6 · CHANTIERS EN IMAGES + RÉALISATIONS ════════════ -->
+  <!-- ═══════════════ 6 · RÉALISATIONS — VITRINE + AVANT/APRÈS ═════════ -->
   <section class="section">
     <div class="container">
-      <GalerieChantiers
-        limit={8}
-        intro="Des photos prises sur nos chantiers : dépose, écran, liteaunage, couverture, zinguerie, étanchéité. Le travail tel qu'il se présente avant d'être recouvert."
+      <VitrineChantiers
+        intro="Une toiture finie se ressemble d'un chantier à l'autre. Tout se joue avant : sur le support, sur l'écran, sur le liteaunage. Ces photos montrent ce moment-là."
       />
     </div>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <RealisationsBlock
-        items={realisations}
-        title="Chantiers documentés"
-        intro="Certains chantiers font l'objet d'une fiche complète : ce qui a été constaté au départ, les travaux réalisés, les matériaux mis en œuvre."
-        moreHref="/realisations/"
-        hideIfEmpty
-      />
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Avant / après</p>
+          <h2>La même maison, à six semaines d'intervalle</h2>
+        </div>
+        <p class="lede">
+          Faites glisser la poignée. À gauche la toiture d'origine, à droite la couverture neuve —
+          même point de vue, même cadrage.
+        </p>
+      </div>
+      <div class="ba-home">
+        <BeforeAfter
+          avant={{ src: '/images/realisations/renovation-toiture-avant-czir62.jpg', alt: "Toiture avant rénovation, couverture d'origine dégradée" }}
+          apres={{ src: '/images/realisations/renovation-toiture-apres-czir62.jpg', alt: 'La même toiture après rénovation complète, couverture neuve' }}
+          ratio="4 / 5"
+          caption="Rénovation complète de couverture"
+        />
+      </div>
+      <p class="ba-home__more">
+        <a href="/renovation-toiture/" class="link-arrow">Comment se déroule une rénovation de toiture</a>
+      </p>
     </div>
   </section>
 
@@ -389,6 +400,9 @@ const etapes = [
 </BaseLayout>
 
 <style>
+  .ba-home { max-width: 34rem; margin-top: var(--sp-8); }
+  .ba-home__more { margin-top: var(--sp-6); }
+
   /* ------------------------------------------------- sans sous-traitance */
   /* Trois preuves plutot qu'un paragraphe : chacune tient en une ligne et
      se lit sans effort, ce qu'un bloc de texte dans un encart gris ne
