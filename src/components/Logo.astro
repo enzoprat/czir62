@@ -2,12 +2,10 @@
 /**
  * Marque CZIR62.
  *
- * Le signe est une coupe de rampant : la pente, puis deux rangs de tuiles qui
- * se raccourcissent vers l'égout. Il vient du métier plutôt que du catalogue
- * de pictogrammes, et il fonctionne à 24 px comme à 200 px.
- *
- * REMPLACER PAR LE LOGO RÉEL dès qu'il est fourni : déposer
- * public/images/logo-czir62.svg et substituer le bloc <svg> ci-dessous.
+ * Le signe est le symbole de marque fourni par le client — chevron de rampant
+ * à bras biseautés, panne, puis rang qui se raccourcit vers l'égout. Les
+ * coordonnées sont relevées au pixel sur logo czir62.png ; le fichier
+ * autonome est public/images/logo/czir62-symbole.svg.
  */
 interface Props {
   variant?: 'default' | 'invert';
@@ -22,10 +20,10 @@ const sub = variant === 'invert' ? 'rgba(255,255,255,.55)' : 'var(--text-muted)'
 ---
 
 <span class:list={['logo', bare && 'logo--bare', className]} aria-label="CZIR62">
-  <svg class="logo__mark" width="30" height="28" viewBox="0 0 30 28" fill="none" aria-hidden="true">
-    <path d="M2 14.5 15 3l13 11.5" stroke={accent} stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
-    <path d="M5.5 19.5h19" stroke={ink} stroke-width="2.6" stroke-linecap="square"/>
-    <path d="M9 24.5h12" stroke={ink} stroke-width="2.6" stroke-linecap="square" opacity=".45"/>
+  <svg class="logo__mark" width="33" height="24" viewBox="0 0 544 395" aria-hidden="true">
+    <path d="M272 0 542 232 501 276 272 84 43 276 2 232Z" fill={accent}/>
+    <rect x="80" y="276" width="377" height="46" fill={ink}/>
+    <rect x="133" y="349" width="269" height="46" fill={ink} opacity=".45"/>
   </svg>
 
   <span class="logo__text">

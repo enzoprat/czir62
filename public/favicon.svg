@@ -1,18 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
-  <!--
-    Embleme CZIR62 — marteaux de couvreur croises, version epaissie.
-    Le trace de l'enseigne est trop fin pour une favicon : les manches et les
-    pannes sont ici elargis pour rester lisibles a 32 px. En dessous, c'est
-    favicon-16.png qui prend le relais, avec la marque au toit simplifiee.
-  -->
-  <circle cx="60" cy="60" r="60" fill="#B2551F"/>
-  <g fill="#FFF6EC">
-    <circle cx="60" cy="20" r="6"/>
-    <g id="h">
-      <path d="M57 23 q-11 6 -19 15 l7 6 q7 -8 16 -13 Z"/>
-      <path d="M44 31 q-12 -5 -25 -1 q7 3 11.5 8 q4.5 5 7 12 l6.5 -8 q-3 -6 -8 -10 q5 -1 11 0 Z"/>
-      <path d="M40 37 L49 44 L78 96 L69 100 Z"/>
-    </g>
-    <use href="#h" transform="translate(120,0) scale(-1,1)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Symbole de marque CZIR62, relevé sur le logo fourni. Sur pastille
+       foncée : le chevron terre cuite et les deux rangs restent lisibles
+       jusqu'à 16 px, ce que le logo sur fond blanc ne permettait pas. -->
+  <rect width="64" height="64" rx="13" fill="#16222B"/>
+  <g transform="translate(8 15.5) scale(0.0882)">
+    <path d="M272 0 542 232 501 276 272 84 43 276 2 232Z" fill="#C4712F"/>
+    <rect x="80"  y="276" width="377" height="46" fill="#F3ECE1"/>
+    <rect x="133" y="349" width="269" height="46" fill="#98A0A6"/>
   </g>
 </svg>
