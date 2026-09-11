@@ -127,11 +127,11 @@ const materiaux = [
     chips={['Tuiles et ardoises', 'Neuf, remplacement, entretien', 'Devis après visite']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=couverture" class="btn btn--lg" data-track="quote_start" data-track-label="hero-couverture">
+      <a href="/devis/?prestation=couverture" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-couverture">
         Demander un devis
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-couverture">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-couverture">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

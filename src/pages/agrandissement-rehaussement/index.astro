@@ -117,11 +117,11 @@ const faqItems = [
     chips={['Extension, surélévation, réhaussement', 'Faisabilité vérifiée d’abord', 'Raccordement à l’existant']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=agrandissement-rehaussement" class="btn btn--lg" data-track="quote_start" data-track-label="hero-agrandissement">
+      <a href="/devis/?prestation=agrandissement-rehaussement" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-agrandissement">
         Étudier la faisabilité
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-agrandissement">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-agrandissement">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

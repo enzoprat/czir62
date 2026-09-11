@@ -146,7 +146,7 @@ const faqItems = [
   >
     <Fragment slot="actions">
       {hasPhone() && tel ? (
-        <a href={tel} class="btn btn--lg" data-track-zone="hero-fuite">
+        <a href={tel} class="btn btn--lg btn--phone" data-track-zone="hero-fuite">
           <Icon name="phone" size={19} /> Appeler {nap.phone}
         </a>
       ) : (
@@ -184,7 +184,7 @@ const faqItems = [
         </li>
       </ol>
       {hasPhone() && tel && (
-        <a href={tel} class="btn now__call" data-track-zone="urgence-fuite">
+        <a href={tel} class="btn now__call btn--phone" data-track-zone="urgence-fuite">
           <Icon name="phone" size={19} /> Appeler CZIR62 — {nap.phone}
         </a>
       )}

@@ -103,11 +103,11 @@ const faqItems = [
     chips={['Bac acier et joint debout', 'Acier, zinc, aluminium', 'Faibles pentes']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=couverture-metallique" class="btn btn--lg" data-track="quote_start" data-track-label="hero-metallique">
+      <a href="/devis/?prestation=couverture-metallique" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-metallique">
         Étudier mon projet
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg num" data-track-zone="hero-metallique">
+        <a href={tel} class="btn btn--phone btn--lg num" data-track-zone="hero-metallique">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

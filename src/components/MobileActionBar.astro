@@ -17,7 +17,7 @@ const tel = telHref();
   <div class="mbar__ridge" aria-hidden="true"></div>
   <div class="mbar__in">
     {hasPhone() && tel ? (
-      <a href={tel} class="mbar__btn mbar__btn--call" data-track-zone="barre-mobile">
+      <a href={tel} class="mbar__btn mbar__btn--call btn--phone" data-track-zone="barre-mobile">
         <Icon name="phone" size={18} />
         <span>
           <em>Appeler</em>
@@ -72,7 +72,19 @@ const tel = telHref();
     text-transform: uppercase;
     opacity: 0.62;
   }
-  .mbar__btn strong { font-size: 0.98rem; font-weight: 680; letter-spacing: -0.02em; margin-top: 0.1rem; }
+  .mbar__btn strong {
+    font-size: 0.98rem;
+    font-weight: 680;
+    letter-spacing: -0.02em;
+    margin-top: 0.1rem;
+    /* Un numero coupe en deux lignes ne se compose plus d'un coup d'oeil :
+       il retrecit plutot que de passer a la ligne. */
+    white-space: nowrap;
+  }
+  @media (max-width: 380px) {
+    .mbar__btn strong { font-size: 0.9rem; }
+    .mbar__btn { padding-inline: 0.5rem; }
+  }
 
   .mbar__btn--call { background: var(--surface); color: var(--text-strong); }
   .mbar__btn--call :global(svg) { color: var(--accent); }

@@ -55,9 +55,9 @@ const engagements = [
           physique où l'on peut nous trouver.
         </p>
         <div class="btn-row en-hero__btns">
-          <a href="/devis/" class="btn" data-track="quote_start" data-track-label="entreprise-hero">Demander un devis</a>
+          <a href="/devis/" class="btn btn--go" data-track="quote_start" data-track-label="entreprise-hero">Demander un devis</a>
           {hasPhone() && tel && (
-            <a href={tel} class="btn btn--ghost" data-track-zone="entreprise-hero">
+            <a href={tel} class="btn btn--phone" data-track-zone="entreprise-hero">
               <Icon name="phone" size={18} /> {nap.phone}
             </a>
           )}

@@ -111,11 +111,11 @@ const faqItems = [
     chips={['Bitume, synthétique, résine', "Relevés et évacuations", 'Reprise ou réfection']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=etancheite-toiture-terrasse" class="btn btn--lg" data-track="quote_start" data-track-label="hero-etancheite">
+      <a href="/devis/?prestation=etancheite-toiture-terrasse" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-etancheite">
         Faire diagnostiquer ma terrasse
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg num" data-track-zone="hero-etancheite">
+        <a href={tel} class="btn btn--phone btn--lg num" data-track-zone="hero-etancheite">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

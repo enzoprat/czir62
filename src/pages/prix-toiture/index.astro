@@ -143,11 +143,11 @@ const faqItems = [
     chips={['Fourchettes du marché', 'TVA applicable', 'Lire un devis']}
   >
     <Fragment slot="actions">
-      <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="hero-prix">
+      <a href="/devis/" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-prix">
         Demander un devis gratuit
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-prix">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-prix">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

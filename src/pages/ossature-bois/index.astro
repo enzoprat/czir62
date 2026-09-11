@@ -101,11 +101,11 @@ const faqItems = [
     chips={['Extension et annexe', 'Isolation intégrée au mur', 'Mise hors d’eau rapide']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=ossature-bois" class="btn btn--lg" data-track="quote_start" data-track-label="hero-ossature">
+      <a href="/devis/?prestation=ossature-bois" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-ossature">
         Parler de mon projet
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-ossature">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-ossature">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

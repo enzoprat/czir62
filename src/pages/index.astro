@@ -28,13 +28,21 @@ import GalerieChantiers from '@/components/GalerieChantiers.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import Faq from '@/components/Faq.astro';
 
-import { servicesByOrder } from '@/data/services';
+import { dimensions } from '@/lib/dimensions';
+import { servicesByOrder, getService } from '@/data/services';
 import { villes, communesDesservies, RAYON_KM } from '@/data/villes';
 import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
 import { getRealisations } from '@/lib/realisations';
 import { webPageSchema, faqSchema, placeSchema } from '@/lib/schema';
 
 const tel = telHref();
+
+/* Composition de la section prestations : trois piliers photographiques,
+   l'urgence isolee, le reste en registre. Les treize liens restent presents. */
+const PILIERS = ['couverture', 'renovation-toiture', 'reparation-toiture'];
+const piliers = PILIERS.map((x) => getService(x));
+const urgence = getService('fuite-toiture');
+const reste = servicesByOrder.filter((x) => !PILIERS.includes(x.slug) && x.slug !== 'fuite-toiture');
 const realisations = (await getRealisations()).slice(0, 3);
 
 /* Repères tirés des données — aucun chiffre inventé, aucun à maintenir. */
@@ -96,11 +104,11 @@ const etapes = [
         </p>
 
         <div class="hero__cta">
-          <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="hero-accueil">
+          <a href="/devis/" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-accueil">
             Demander mon devis
           </a>
           {hasPhone() && tel ? (
-            <a href={tel} class="btn btn--on-dark btn--lg num" data-track-zone="hero-accueil">
+            <a href={tel} class="btn btn--on-dark btn--lg num btn--phone" data-track-zone="hero-accueil">
               <Icon name="phone" size={18} /> Appeler CZIR62
             </a>
           ) : (
@@ -160,36 +168,70 @@ const etapes = [
 
   <!-- ═══════════════ 2 · PRESTATIONS — REGISTRE ÉDITORIAL ══════════════ -->
   <section class="section svc seam-top--rev">
-    <div class="container svc__in">
-      <div class="svc__aside">
-        <p class="eyebrow">Prestations</p>
-        <h2 class="svc__h2">Ce que nous faisons,<br />concrètement</h2>
+    <div class="container">
+      <div class="head-split svc__head">
+        <div>
+          <p class="eyebrow">Prestations</p>
+          <h2 class="svc__h2">Ce que nous faisons,<br />concrètement</h2>
+        </div>
         <p class="lede">
-          Une toiture pose rarement un seul problème à la fois : une infiltration
-          renvoie souvent à un solin, une rénovation à l'état de la charpente.
+          Une toiture pose rarement un seul problème à la fois : une infiltration renvoie souvent
+          à un solin, une rénovation à l'état de la charpente. Chaque prestation a sa page, avec
+          ce qu'il faut savoir avant de décider.
         </p>
-        <p class="svc__aside-note">
-          Chaque prestation a sa page, avec ce qu'il faut savoir avant de décider —
-          pas une fiche produit.
-        </p>
-        <a href="/prestations/" class="btn btn--ghost svc__aside-btn">Voir les dix pages</a>
       </div>
 
-      <ol class="list-clean svc__list">
-        {servicesByOrder.map((s, i) => (
-          <li class="svc__row">
+      {/* Trois piliers, en tuiles photographiques de tailles inégales : le
+          métier de base occupe la place qu'il occupe dans l'activité. */}
+      <div class="pil">
+        {piliers.map((s, i) => (
+          <a href={s.url} class:list={['pil__t', i === 0 && 'pil__t--lead', 'reveal']}>
+            <span class="pil__ph">
+              <img src={`/images/services/${s.slug}-czir62.jpg`} alt="" loading="lazy" decoding="async"
+                   width={dimensions(`/images/services/${s.slug}-czir62.jpg`)?.width}
+                   height={dimensions(`/images/services/${s.slug}-czir62.jpg`)?.height}
+                   sizes="(max-width: 860px) 100vw, 50vw" />
+            </span>
+            <span class="pil__in">
+              <span class="pil__ico"><Icon name={s.icon} size={20} /></span>
+              <strong>{s.name}</strong>
+              <em>{s.cardText}</em>
+              <span class="pil__go" aria-hidden="true">→</span>
+            </span>
+          </a>
+        ))}
+      </div>
+
+      {/* L'urgence ne se range pas dans une grille avec les autres. */}
+      <a href={urgence.url} class="urg reveal">
+        <span class="urg__k"><Icon name="alert" size={19} /> Urgence</span>
+        <span class="urg__t">
+          <strong>Une infiltration en cours&nbsp;?</strong>
+          <em>{urgence.cardText}</em>
+        </span>
+        <span class="urg__go" aria-hidden="true">→</span>
+      </a>
+
+      {/* Le reste en registre serré : lisible, scannable, sans prétendre que
+          neuf prestations valent chacune une tuile photographique. */}
+      <ol class="list-clean svc__rest">
+        {reste.map((s) => (
+          <li>
             <a href={s.url} class="svc__link">
-              <span class="svc__idx num">{String(i + 1).padStart(2, '0')}</span>
-              <span class="svc__ico"><Icon name={s.icon} size={20} /></span>
+              <span class="svc__ico"><Icon name={s.icon} size={18} /></span>
               <span class="svc__body">
                 <strong>{s.name}</strong>
-                <em>{s.cardText}</em>
+                <em>{s.cardText.split(/[:.]/)[0]}</em>
               </span>
               <span class="svc__go" aria-hidden="true">→</span>
             </a>
           </li>
         ))}
       </ol>
+
+      <p class="svc__all">
+        <a href="/prestations/" class="link-arrow">Les {servicesByOrder.length} prestations en détail</a>
+      </p>
     </div>
   </section>
 
@@ -276,24 +318,23 @@ const etapes = [
         ))}
       </ol>
 
-      <aside class="soust">
-        <p class="soust__k"><Icon name="shield" size={19} /> Qui monte sur votre toit</p>
-        <p>
-          <strong>Entreprise familiale de couverture depuis {nap.foundingYear}.</strong> Le
-          couvreur qui la dirige aujourd'hui exerce depuis {nap.experienceYears} ans.
-        </p>
-        <p>
-          <strong>Tous les travaux sont réalisés par nos soins, sans aucune sous-traitance</strong>,
-          dans les règles de l'art et le respect des normes en vigueur. L'équipe qui établit le
-          devis est celle qui exécute le chantier.
-        </p>
-        <p>
-          Pour un réhaussement, un agrandissement ou une autorisation en mairie, nous vous
-          accompagnons avec un architecte.
-        </p>
-        <p class="soust__more">
-          <a href="/entreprise/" class="link-arrow">Comment nous travaillons</a>
-        </p>
+      <aside class="soust reveal">
+        <p class="soust__k">Ce qui ne se voit pas sur une photo de chantier</p>
+        <ul class="list-clean soust__l">
+          <li>
+            <span class="soust__n num">{nap.foundingYear}</span>
+            <span><strong>Entreprise familiale</strong>Le couvreur qui la dirige aujourd'hui exerce depuis {nap.experienceYears} ans.</span>
+          </li>
+          <li>
+            <span class="soust__n"><Icon name="shield" size={20} /></span>
+            <span><strong>Aucune sous-traitance</strong>L'équipe qui chiffre est celle qui monte sur le toit.</span>
+          </li>
+          <li>
+            <span class="soust__n"><Icon name="ruler" size={20} /></span>
+            <span><strong>Architecte pour l'urbanisme</strong>Réhaussement, agrandissement, autorisation en mairie.</span>
+          </li>
+        </ul>
+        <a href="/entreprise/" class="link-arrow soust__more">Comment nous travaillons</a>
       </aside>
     </div>
   </section>
@@ -349,17 +390,46 @@ const etapes = [
 
 <style>
   /* ------------------------------------------------- sans sous-traitance */
+  /* Trois preuves plutot qu'un paragraphe : chacune tient en une ligne et
+     se lit sans effort, ce qu'un bloc de texte dans un encart gris ne
+     permettait pas. */
   .soust {
     margin-top: var(--sp-9);
     padding: var(--sp-6) var(--sp-7);
-    max-width: 68ch;
-    background: rgba(255, 255, 255, 0.55);
-    border-left: 3px solid var(--clay-500);
-    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 2px solid var(--clay-500);
+    backdrop-filter: blur(3px);
   }
-  .soust__k { display: flex; align-items: center; gap: var(--sp-3); font-weight: 620; color: var(--clay-700); }
-  .soust p + p { margin-top: var(--sp-4); }
-  .soust__more { margin-top: var(--sp-5) !important; }
+  .soust__k {
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--clay-700);
+  }
+  .soust__l {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-6) var(--sp-7);
+    margin-top: var(--sp-6);
+  }
+  @media (max-width: 860px) { .soust__l { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); } }
+  .soust__l li { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); align-items: start; gap: var(--sp-4); }
+  .soust__n {
+    display: grid; place-items: center;
+    min-height: 2.4rem;
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--clay-600);
+    border-right: 1px solid var(--rule);
+    padding-right: var(--sp-3);
+  }
+  .soust__l strong { display: block; font-weight: 640; line-height: 1.3; }
+  .soust__l span span, .soust__l li > span:last-child {
+    font-size: var(--fs-sm); color: var(--text-muted); line-height: var(--lh-snug);
+  }
+  .soust__more { margin-top: var(--sp-6); }
 
   /* ═══════════════════════════ 1 · HERO ════════════════════════════════ */
   .hero {
@@ -498,66 +568,185 @@ const etapes = [
   }
 
   /* ═════════════════════ 2 · PRESTATIONS (registre) ════════════════════ */
+  /* ───────────────────────────────────────────────── PRESTATIONS ────────
+     Trois rangs de poids décroissant plutôt que treize lignes égales :
+     tuiles photographiques pour le métier de base, bande isolée pour
+     l'urgence, registre serré pour le reste. La hiérarchie visuelle
+     reproduit la hiérarchie réelle de l'activité.                        */
   .svc { background: var(--bg); }
-  .svc__in {
-    display: grid;
-    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: start;
-  }
-  @media (max-width: 940px) { .svc__in { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); } }
-
-  .svc__aside { position: sticky; top: calc(var(--header-h) + 2.5rem); }
-  @media (max-width: 940px) { .svc__aside { position: static; } }
+  .svc__head { margin-bottom: var(--sp-8); }
   .svc__h2 { font-size: clamp(1.9rem, 2vw + 1.3rem, 2.7rem); }
-  .svc__aside .lede { margin-top: var(--sp-4); max-width: 34ch; }
-  .svc__aside-note {
-    margin-top: var(--sp-4);
-    font-size: var(--fs-sm);
-    color: var(--text-muted);
-    line-height: var(--lh-relaxed);
-    max-width: 34ch;
-  }
-  .svc__aside-btn { margin-top: var(--sp-6); }
 
-  .svc__list { border-top: 1px solid var(--border); }
-  .svc__row { border-bottom: 1px solid var(--border); }
-  .svc__link {
+  /* ------------------------------------------------------- les piliers */
+  .pil {
     display: grid;
-    grid-template-columns: 2.4rem 2.1rem minmax(0, 1fr) 1.5rem;
-    align-items: center;
-    gap: var(--sp-3);
-    padding: var(--sp-5) 0.4rem;
+    grid-template-columns: 1.32fr 1fr;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4);
+    min-height: 30rem;
+  }
+  .pil__t--lead { grid-row: span 2; }
+  @media (max-width: 860px) {
+    .pil { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; min-height: 0; }
+    .pil__t--lead { grid-row: auto; }
+  }
+
+  .pil__t {
+    position: relative;
+    display: block;
+    min-height: 13.5rem;
+    overflow: hidden;
+    border-radius: 3px 3px 14px 3px;
+    color: #fff;
     text-decoration: none;
-    color: var(--text);
-    transition: background var(--t-fast), padding-left var(--t-base) var(--ease-out);
+    isolation: isolate;
   }
-  .svc__link:hover { background: var(--sand-50); padding-left: 1rem; color: var(--text); }
-  .svc__idx { font-family: var(--font-mono); font-size: 0.74rem; color: var(--zinc-300); transition: color var(--t-fast); }
-  .svc__link:hover .svc__idx { color: var(--accent); }
-  .svc__ico { color: var(--accent); }
-  .svc__body strong {
-    display: block;
+  .pil__ph { position: absolute; inset: 0; z-index: -2; }
+  .pil__ph img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease-out); }
+  .pil__t::after {
+    content: '';
+    position: absolute; inset: 0; z-index: -1;
+    /* Une tuile neuve en plein soleil est presque blanche : le voile doit
+       etre franc en pied, sinon le titre disparait dessus. */
+    /* Voile d'ambiance seulement : la photo doit rester une photo. Le
+       contraste du texte est assure separement, sous le bloc de contenu. */
+    background: linear-gradient(to top, rgba(17, 22, 28, 0.42) 0%, rgba(17, 22, 28, 0.05) 62%);
+    transition: background var(--t-base) var(--ease-out);
+  }
+  .pil__t:hover .pil__ph img { transform: scale(1.045); }
+  .pil__t:hover::after {
+    background: linear-gradient(
+      to top,
+      rgba(94, 41, 16, 0.58) 0%,
+      rgba(17, 22, 28, 0.10) 66%
+    );
+  }
+  .pil__t:focus-visible { outline: 2px solid var(--clay-300); outline-offset: 3px; }
+
+  /* Voile serre, cale sur le bloc de texte : il descend d'un tiers au-dessus
+     du titre et devient opaque en pied. C'est ce qui garantit la lisibilite
+     quelle que soit la photo, sans delaver l'image entiere. */
+  .pil__in::before {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: calc(100% + 3.5rem);
+    max-height: 22rem;
+    z-index: -1;
+    background: linear-gradient(to top,
+      rgba(14, 19, 24, 0.93) 0%,
+      rgba(14, 19, 24, 0.86) 42%,
+      rgba(14, 19, 24, 0.55) 72%,
+      rgba(14, 19, 24, 0) 100%);
+    pointer-events: none;
+  }
+  .pil__in {
+    position: relative;
+    isolation: auto;
+    display: grid;
+    align-content: end;
+    gap: 0.3rem;
+    height: 100%;
+    padding: var(--sp-6);
+  }
+  .pil__ico { color: var(--clay-300); margin-bottom: var(--sp-2); }
+  .pil__in strong {
+    /* base.css donne une couleur a <strong> : sans declaration explicite le
+       titre reste sombre sur la photo. */
+    color: #fff;
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45);
     font-family: var(--font-display);
-    font-size: var(--fs-lg);
-    font-weight: 660;
-    letter-spacing: -0.022em;
-    color: var(--text-strong);
+    font-size: var(--fs-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
-  .svc__body em {
-    display: block;
+  .pil__t--lead .pil__in strong { font-size: clamp(1.5rem, 1.4vw + 1.1rem, 2rem); }
+  .pil__in em {
     font-style: normal;
     font-size: var(--fs-sm);
-    color: var(--text-muted);
-    line-height: 1.5;
-    margin-top: 0.15rem;
+    line-height: var(--lh-snug);
+    color: rgba(255, 255, 255, 0.76);
+    max-width: 42ch;
   }
-  .svc__go { color: var(--zinc-200); transition: transform var(--t-base) var(--ease-out), color var(--t-base); text-align: right; }
+  .pil__t:not(.pil__t--lead) .pil__in em { display: none; }
+  @media (max-width: 860px) { .pil__t:not(.pil__t--lead) .pil__in em { display: block; } }
+  .pil__go {
+    margin-top: var(--sp-3);
+    color: var(--clay-200);
+    transition: transform var(--t-base) var(--ease-out);
+  }
+  .pil__t:hover .pil__go { transform: translateX(5px); }
+
+  /* -------------------------------------------------------- l'urgence */
+  .urg {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--sp-5);
+    margin-top: var(--sp-4);
+    padding: var(--sp-5) var(--sp-6);
+    background: var(--deep);
+    border-left: 3px solid var(--clay-500);
+    border-radius: 3px 3px 14px 3px;
+    color: #fff;
+    text-decoration: none;
+    transition: background var(--t-base) var(--ease-out);
+  }
+  .urg:hover { background: var(--deep-warm); }
+  .urg:focus-visible { outline: 2px solid var(--clay-300); outline-offset: 3px; }
+  .urg__k {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .09em;
+    color: var(--clay-300); white-space: nowrap;
+  }
+  .urg__t strong { display: block; color: #fff; font-size: var(--fs-lg); font-weight: 650; }
+  .urg__t em { font-style: normal; font-size: var(--fs-sm); color: rgba(255,255,255,.66); }
+  .urg__go { color: var(--clay-200); transition: transform var(--t-base) var(--ease-out); }
+  .urg:hover .urg__go { transform: translateX(5px); }
+  @media (max-width: 720px) {
+    .urg { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-3) var(--sp-4); }
+    .urg__k { grid-column: 1 / -1; }
+    .urg__t em { display: none; }
+  }
+
+  /* ---------------------------------------------------------- le reste */
+  .svc__rest {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 var(--sp-7);
+    margin-top: var(--sp-8);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 940px) { .svc__rest { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .svc__rest { grid-template-columns: minmax(0, 1fr); } }
+  .svc__rest > li { border-bottom: 1px solid var(--border); }
+
+  .svc__link {
+    display: grid;
+    grid-template-columns: 1.4rem minmax(0, 1fr) 1rem;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-4) 0;
+    color: var(--text);
+    text-decoration: none;
+    transition: padding-left var(--t-fast) var(--ease-out);
+  }
+  .svc__link:hover { padding-left: 0.5rem; }
+  .svc__ico { color: var(--accent); }
+  .svc__body strong { display: block; font-weight: 620; font-size: var(--fs-sm); line-height: 1.3; }
+  .svc__body em {
+    display: block; font-style: normal;
+    font-size: var(--fs-xs); color: var(--text-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .svc__go { color: var(--zinc-300); transition: transform var(--t-base) var(--ease-out), color var(--t-base); }
   .svc__link:hover .svc__go { transform: translateX(4px); color: var(--accent); }
-  @media (max-width: 560px) {
-    .svc__link { grid-template-columns: 1.9rem minmax(0, 1fr) 1.2rem; gap: var(--sp-3); }
-    .svc__ico { display: none; }
-    .svc__body em { display: none; }
+
+  .svc__all { margin-top: var(--sp-7); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pil__ph img, .pil__go, .urg__go, .svc__go, .svc__link { transition: none; }
+    .pil__t:hover .pil__ph img { transform: none; }
   }
 
   /* ═══════════════ 3 · IMPLANTATION (photo à bord perdu) ═══════════════ */

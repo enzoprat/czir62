@@ -131,7 +131,7 @@ const mainNav = [
             <Icon name="phone" size={16} /><span>{nap.phone}</span>
           </a>
         )}
-        <a href="/devis/" class="btn btn--sm hdr__quote" data-track="quote_start" data-track-label="header">
+        <a href="/devis/" class="btn btn--sm hdr__quote btn--go" data-track="quote_start" data-track-label="header">
           Demander un devis
         </a>
       </div>
@@ -170,11 +170,11 @@ const mainNav = [
       </ul>
 
       <div class="mnav__cta">
-        <a href="/devis/" class="btn btn--block btn--lg" data-track="quote_start" data-track-label="menu-mobile">
+        <a href="/devis/" class="btn btn--block btn--lg btn--go" data-track="quote_start" data-track-label="menu-mobile">
           Demander un devis
         </a>
         {hasPhone() && tel && (
-          <a href={tel} class="btn btn--ghost btn--block btn--lg num" data-track-zone="menu-mobile">
+          <a href={tel} class="btn btn--phone btn--block btn--lg num" data-track-zone="menu-mobile">
             <Icon name="phone" size={18} /> {nap.phone}
           </a>
         )}
@@ -237,7 +237,18 @@ const mainNav = [
 
   /* ───────────────────────── barre principale ───────────────────────── */
   .hdr__bar { border-bottom: 1px solid var(--border); background: var(--bone); transition: box-shadow var(--t-base); }
-  .hdr.is-stuck .hdr__bar { box-shadow: 0 8px 24px -18px rgba(30, 18, 10, 0.5); }
+  /* Une fois decroche, l'en-tete s'allege : fond translucide, flou discret,
+     filet bas capillaire. Le contenu defile dessous sans le traverser. */
+  .hdr.is-stuck .hdr__bar {
+    box-shadow: 0 8px 24px -18px rgba(30, 18, 10, 0.5);
+    border-bottom: 1px solid var(--rule);
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .hdr.is-stuck .hdr__bar {
+      background: color-mix(in srgb, var(--bone) 82%, transparent);
+      backdrop-filter: blur(14px) saturate(1.4);
+    }
+  }
 
   .hdr__in { display: flex; align-items: center; gap: var(--sp-5); min-height: var(--header-h); transition: min-height var(--t-base) var(--ease-out); }
   .hdr.is-stuck .hdr__in { min-height: 60px; }

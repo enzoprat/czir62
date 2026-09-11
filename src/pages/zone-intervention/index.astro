@@ -137,11 +137,11 @@ const faqItems = [
         </div>
 
         <div class="verif__act">
-          <a href="/devis/" class="btn btn--lg" data-track="quote_start" data-track-label="zone-verif-commune">
+          <a href="/devis/" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="zone-verif-commune">
             Vérifier ma commune
           </a>
           {hasPhone() && tel && (
-            <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="zone-verif-commune">
+            <a href={tel} class="btn btn--phone btn--lg" data-track-zone="zone-verif-commune">
               <Icon name="phone" size={18} /> {nap.phone}
             </a>
           )}

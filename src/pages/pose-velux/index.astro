@@ -105,11 +105,11 @@ const faqItems = [
     chips={['Création et remplacement', 'Raccord adapté à la couverture', 'Chevêtre si nécessaire']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=pose-velux" class="btn btn--lg" data-track="quote_start" data-track-label="hero-velux">
+      <a href="/devis/?prestation=pose-velux" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-velux">
         Étudier la faisabilité
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-velux">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-velux">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}

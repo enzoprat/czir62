@@ -278,19 +278,36 @@ small { font-size: var(--fs-sm); }
 /* ═══════════════════════════════ BOUTONS ═════════════════════════════════
    Arêtes resserrées, graisse marquée. Un bouton de chantier, pas un bouton
    d'application.                                                           */
+/* ═══════════════════════════════ BOUTONS ═════════════════════════════════
+   Signature : le bouton a une ÉPAISSEUR. Une arête sombre court sous lui,
+   comme le chant d'une tuile ou d'un bardeau posé. Au survol il se soulève
+   et l'arête s'épaissit ; au clic il s'enfonce et l'arête disparaît. C'est
+   un geste de matière, pas un effet d'interface — et c'est ce qui distingue
+   un bouton d'artisan d'un rectangle de SaaS.
+
+   Quatre rangs, volontairement très différenciés :
+     .btn            action principale, pleine, avec arête
+     .btn--ghost     action secondaire, filet capillaire, sans arête
+     .btn--phone     appel : l'icône a sa propre case, séparée d'un filet
+     .link-arrow     lien de texte, flèche qui avance
+   ------------------------------------------------------------------------ */
 .btn {
   --btn-bg: var(--accent);
   --btn-ink: var(--on-accent);
   --btn-border: transparent;
+  --btn-edge: var(--clay-700);
+  --btn-lift: 2px;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  padding: 0.92rem 1.55rem;
+  padding: 0.9rem 1.5rem;
   min-height: 50px;
   border: 1px solid var(--btn-border);
-  border-radius: var(--r-sm);
+  /* Angle bas-droit adouci : le seul écart à l'équerre du site, assez
+     discret pour ne pas se remarquer et assez présent pour signer. */
+  border-radius: 3px 3px 11px 3px;
   background: var(--btn-bg);
   color: var(--btn-ink);
   font-size: var(--fs-base);
@@ -300,32 +317,107 @@ small { font-size: var(--fs-sm); }
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  transform: translateY(0);
+  box-shadow: 0 var(--btn-lift) 0 var(--btn-edge), var(--shadow-sm);
   transition: background var(--t-fast) var(--ease-out),
               transform var(--t-fast) var(--ease-out),
-              box-shadow var(--t-base) var(--ease-out),
+              box-shadow var(--t-fast) var(--ease-out),
               border-color var(--t-fast) var(--ease-out);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, var(--shadow-sm);
 }
-.btn:hover { background: var(--accent-hover); color: var(--btn-ink); box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, var(--shadow-md); }
-.btn:active { transform: translateY(1px); }
+.btn:hover {
+  background: var(--accent-hover);
+  color: var(--btn-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 calc(var(--btn-lift) + 1px) 0 var(--btn-edge), var(--shadow-md);
+}
+.btn:active {
+  transform: translateY(var(--btn-lift));
+  box-shadow: 0 0 0 var(--btn-edge), none;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 .btn svg { flex: none; }
 
+/* La flèche n'est pas décorative : elle dit qu'il se passe quelque chose
+   après le clic. Réservée à l'action principale, jamais sur un appel. */
+.btn--go::after {
+  content: '→';
+  font-weight: 500;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.btn--go:hover::after { transform: translateX(3px); }
+
+/* ------------------------------------------------------------- secondaire */
 .btn--ghost {
   --btn-bg: transparent;
   --btn-ink: var(--text-strong);
   --btn-border: var(--border-strong);
+  --btn-lift: 0px;
   box-shadow: none;
+  border-radius: 3px;
 }
-.btn--ghost:hover { background: var(--surface); color: var(--text-strong); border-color: var(--zinc-400); box-shadow: var(--shadow-sm); }
+.btn--ghost:hover {
+  background: var(--surface);
+  color: var(--text-strong);
+  border-color: var(--zinc-500);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.btn--ghost:active { transform: translateY(0); box-shadow: none; }
 
-.btn--solid-dark { --btn-bg: var(--zinc-800); --btn-ink: #fff; }
+/* ------------------------------------------------------------------ appel */
+/* L'icône occupe sa propre case, détachée par un filet : le bouton
+   ressemble à une plaque de sonnette plutôt qu'à un bouton de formulaire. */
+.btn--phone {
+  --btn-bg: var(--zinc-900);
+  --btn-ink: #fff;
+  --btn-edge: #000;
+  gap: 0;
+  padding: 0 1.35rem 0 0;
+  overflow: hidden;
+}
+.btn--phone > svg:first-child {
+  box-sizing: content-box;
+  width: 19px;
+  height: 19px;
+  padding: 0.9rem 0.9rem;
+  margin-right: 1rem;
+  border-right: 1px solid var(--btn-sep, rgba(255, 255, 255, 0.16));
+  color: var(--btn-ico, var(--clay-300));
+}
+.btn--phone:hover { background: var(--zinc-800); }
+/* Sur fond clair, la case de l'icône se detache par un aplat plutot que par
+   un filet clair, qui y serait invisible. */
+.btn--phone.btn--ghost {
+  --btn-sep: var(--border);
+  --btn-ico: var(--accent);
+  padding-left: 0;
+}
+.btn--phone.btn--ghost > svg:first-child { background: var(--sand-100); }
+
+.btn--solid-dark { --btn-bg: var(--zinc-800); --btn-ink: #fff; --btn-edge: #000; }
 .btn--solid-dark:hover { background: var(--zinc-700); }
 
 .btn--on-dark {
   --btn-bg: rgba(255,255,255,0.07);
   --btn-ink: #fff;
   --btn-border: rgba(255,255,255,0.26);
+  --btn-lift: 0px;
   box-shadow: none;
+  border-radius: 3px;
+}
+.btn--on-dark:hover {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn--go::after { transition: background var(--t-fast); }
+  .btn:hover, .btn:active, .btn--ghost:hover { transform: none; }
 }
 .btn--on-dark:hover { background: rgba(255,255,255,0.14); color: #fff; }
 

@@ -120,11 +120,11 @@ const faqItems = [
     chips={['Traditionnelle et fermettes', 'Reprise partielle privilégiée', 'Neuf et existant']}
   >
     <Fragment slot="actions">
-      <a href="/devis/?prestation=charpente" class="btn btn--lg" data-track="quote_start" data-track-label="hero-charpente">
+      <a href="/devis/?prestation=charpente" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-charpente">
         Faire examiner ma charpente
       </a>
       {hasPhone() && tel && (
-        <a href={tel} class="btn btn--ghost btn--lg" data-track-zone="hero-charpente">
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-charpente">
           <Icon name="phone" size={19} /> {nap.phone}
         </a>
       )}
