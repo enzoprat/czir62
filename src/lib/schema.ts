@@ -167,7 +167,7 @@ export function organizationSchema(): Json {
     areaServed: areaServed(),
     knowsLanguage: 'fr-FR',
     currenciesAccepted: 'EUR',
-    sameAs: [google.profileUrl, ...socials.map((s) => s.url)].filter(Boolean),
+    sameAs: [google.profileUrl, google.knowledgeUrl, ...socials.map((s) => s.url)].filter(Boolean),
     aggregateRating: aggregateRating(),
     review: reviews(),
     hasOfferCatalog: {

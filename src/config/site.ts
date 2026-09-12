@@ -174,6 +174,19 @@ export const google = {
    */
   placeId: null as string | null,
 
+  /**
+   * Identifiant Knowledge Graph de l'entreprise, releve le 12 septembre 2026
+   * dans l'URL vers laquelle redirige le lien de partage de la fiche
+   * (share.google -> google.com/search?kgmid=...).
+   *
+   * C'est l'identifiant que Google attribue lui-meme a l'entite dans son
+   * graphe de connaissances. Il sert de reference supplementaire dans
+   * `sameAs` : une URL de plus qui designe sans ambiguite la meme entreprise.
+   * Aucun effet de classement documente — c'est une reference, pas un levier,
+   * et il est ecrit ici comme tel.
+   */
+  kgmid: '/g/11zxdwzsmd' as string | null,
+
   /** CID de la fiche — identifiant numerique, releve le 11 septembre 2026. */
   cid: '6405054400449423243' as string | null,
 
@@ -191,6 +204,11 @@ export const google = {
     if (this.cid) return `https://www.google.com/maps?cid=${this.cid}`;
     if (this.placeId) return `https://www.google.com/maps/place/?q=place_id:${this.placeId}`;
     return null;
+  },
+
+  /** Panneau de connaissance de l'entite, derive du kgmid. */
+  get knowledgeUrl(): string | null {
+    return this.kgmid ? `https://www.google.com/search?kgmid=${this.kgmid}` : null;
   },
 
   /** Onglet avis de la fiche. */
