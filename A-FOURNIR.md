@@ -214,23 +214,34 @@ est renseignée ; elles sont cumulables.
 | `LEAD_WEBHOOK_URL` | Envoi vers n8n / Make / endpoint maison (signature HMAC possible) |
 | `LEAD_SHEETS_URL` | Une ligne par demande dans Google Sheets (Apps Script) |
 | `LEAD_CRM_URL` + `LEAD_CRM_TOKEN` | Envoi vers un CRM |
-| `RESEND_API_KEY` + `LEAD_EMAIL_TO/FROM` | Notification e-mail immédiate |
+| **`WEB3FORMS_ACCESS_KEY`** | **Notification e-mail immédiate, sans DNS. Le plus rapide à mettre en place.** |
+| `RESEND_API_KEY` + `LEAD_EMAIL_TO/FROM` | Notification e-mail immédiate, après validation DNS de czir62.fr |
 | `PUBLIC_GTM_ID` ou `PUBLIC_GA4_ID` | Analytics (aucun script injecté tant que c'est vide) |
 | `TURNSTILE_SECRET_KEY` | Vérification anti-robot supplémentaire |
 
-Sans aucune configuration, les demandes sont journalisées localement dans
-`.leads/leads.ndjson` : **aucune demande n'est jamais perdue.**
+⚠️ **En hébergement serverless — c'est le cas sur Vercel — le journal local ne
+fonctionne pas** : le disque est en lecture seule et `/tmp` est effacé entre
+deux appels. Il est donc désactivé automatiquement, pour ne pas faire passer
+un lead perdu pour un lead livré.
 
-## 10. À confirmer — orthographe d'une commune
+**Conséquence : au moins une destination doit être configurée avant la mise en
+ligne.** Sans cela, chaque envoi renvoie une erreur honnête au visiteur
+(« appelez-nous directement ») au lieu de disparaître en silence — mais aucune
+demande n'arrive. `WEB3FORMS_ACCESS_KEY` seule suffit et se met en place en
+quelques minutes.
 
-La zone déclare un rayon de **40 km autour de Béthune, jusqu'à la métropole
-lilloise**. Deux communes ont été ajoutées à ce titre : **Lille** et
-**Roncq**.
+## 10. ✅ Orthographe de la commune — tranché le 12 septembre 2026
 
-> ⚠️ « Roncq » (59223) a été retenu d'après l'indication orale « Ronque ».
-> S'il s'agissait de **Ronchin** (59790), corriger dans
-> `src/data/villes.ts` → `communesDesservies` : c'est le seul endroit à
-> modifier.
+La zone déclare un rayon d'environ **40 km autour de Béthune, et jusqu'à la
+métropole lilloise**. Deux communes ont été ajoutées à ce titre : **Lille**
+(~39,5 km par la route) et **Roncq** (~52,8 km), confirmé — ce n'était pas
+Ronchin.
+
+> ⚠️ Roncq est **au-delà du rayon annoncé** : c'est la commune la plus
+> éloignée de la zone. Les formulations du site disent « environ 40 km **et**
+> jusqu'à la métropole lilloise » plutôt que de faire passer la MEL pour
+> incluse dans les 40 km. Si les déplacements jusque-là sont la règle et non
+> l'exception, monter `RAYON_KM` à 50.
 
 Le rayon lui-même est une constante unique, `RAYON_KM` dans
 `src/data/villes.ts`. La carte, les repères chiffrés de l'accueil et la page

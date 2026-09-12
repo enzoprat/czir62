@@ -220,10 +220,90 @@ async function emailSink(lead: Lead): Promise<SinkResult | null> {
 }
 
 /* ------------------------------------------------------------------------ *
+ * 6. Web3Forms — e-mail sans DNS ni domaine a verifier
+ *    Une cle d'acces liee a une adresse e-mail suffit : ni compte a creer, ni
+ *    enregistrement a poser chez le registrar. C'est le chemin le plus court
+ *    vers un formulaire qui fonctionne le jour de la mise en ligne, la ou
+ *    Resend demande d'abord de valider czir62.fr par DNS.
+ *
+ *    Particularite de cette integration : la cle reste cote serveur. Le
+ *    formulaire poste sur /api/lead/, jamais directement sur Web3Forms — la
+ *    cle n'apparait donc pas dans le HTML, contrairement a l'usage courant ou
+ *    elle est lisible par n'importe qui affichant le code source.
+ *
+ *    Limite du plan gratuit : 250 envois par mois. Au-dela, Web3Forms refuse
+ *    l'envoi — d'ou l'interet de garder une seconde destination active.
+ * ------------------------------------------------------------------------ */
+async function web3formsSink(lead: Lead): Promise<SinkResult | null> {
+  const key = env('WEB3FORMS_ACCESS_KEY');
+  if (!key) return null;
+
+  // Web3Forms compose l'e-mail a partir des cles recues, dans l'ordre d'envoi.
+  // On lui passe donc des libelles lisibles plutot que le Lead brut : ce mail
+  // est lu sur un telephone, entre deux chantiers.
+  const champs: Record<string, string> = {
+    access_key: key,
+    subject: `[${lead.id}] ${lead.prestationLabel ?? 'Demande'} — ${lead.nom}${
+      lead.commune ? ` (${lead.commune})` : ''
+    }`,
+    from_name: 'Site CZIR62',
+  };
+  if (lead.email) champs.replyto = lead.email;
+
+  champs['Nom'] = lead.nom;
+  champs['Téléphone'] = lead.telephone;
+  if (lead.email) champs['E-mail'] = lead.email;
+  if (lead.commune) champs['Commune'] = [lead.codePostal, lead.commune].filter(Boolean).join(' ');
+  else if (lead.codePostal) champs['Code postal'] = lead.codePostal;
+  if (lead.prestationLabel) champs['Prestation'] = lead.prestationLabel;
+  if (lead.message) champs['Message'] = lead.message;
+
+  // Reponses des parcours guides (diagnostic, assistant fuite, estimateur) :
+  // c'est souvent la que se trouve le detail technique utile au rappel.
+  for (const [q, r] of Object.entries(lead.reponses ?? {})) {
+    champs[q] = Array.isArray(r) ? r.join(', ') : r;
+  }
+  if (lead.fichiers.length) champs['Fichiers'] = lead.fichiers.join(', ');
+
+  champs['Origine'] = lead.origin;
+  champs['Reçu le'] = `${lead.date} à ${lead.heure}`;
+
+  // Attribution : sert a repondre plus tard a « ce chantier vient d'ou ? ».
+  const a = lead.attribution;
+  const provenance = [a.source, a.medium, a.campaign].filter(Boolean).join(' / ');
+  if (provenance) champs['Provenance'] = provenance;
+  if (a.conversionPage) champs['Page de conversion'] = a.conversionPage;
+  if (a.gclid || a.wbraid || a.gbraid || a.msclkid) champs['Clic publicitaire'] = 'oui';
+
+  try {
+    const res = await postJson('https://api.web3forms.com/submit', champs);
+    // Web3Forms peut repondre 200 avec success:false (cle revoquee, quota
+    // atteint). Se fier au seul code HTTP ferait passer un lead perdu pour
+    // un lead livre, et le visiteur verrait « demande envoyee ».
+    const data = (await res.json().catch(() => null)) as { success?: boolean; message?: string } | null;
+    const ok = res.ok && data?.success !== false;
+    return {
+      name: 'web3forms',
+      ok,
+      detail: ok ? undefined : data?.message ?? `HTTP ${res.status}`,
+    };
+  } catch (e) {
+    return { name: 'web3forms', ok: false, detail: String(e) };
+  }
+}
+
+/* ------------------------------------------------------------------------ *
  * Orchestration
  * ------------------------------------------------------------------------ */
 export async function dispatchLead(lead: Lead): Promise<SinkResult[]> {
-  const tasks = [fileSink(lead), webhookSink(lead), sheetsSink(lead), crmSink(lead), emailSink(lead)];
+  const tasks = [
+    fileSink(lead),
+    webhookSink(lead),
+    sheetsSink(lead),
+    crmSink(lead),
+    web3formsSink(lead),
+    emailSink(lead),
+  ];
   const settled = await Promise.allSettled(tasks);
 
   return settled
