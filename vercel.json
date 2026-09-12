@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "czir62.vercel.app" }],
+      "destination": "https://www.czir62.fr/$1",
+      "permanent": true
+    }
+  ]
+}

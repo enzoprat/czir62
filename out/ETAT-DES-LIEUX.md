@@ -1,5 +1,12 @@
 # État des lieux SEO — 11 septembre 2026
 
+> **Instantané figé, conservé tel quel.** Ce document mesure l'état zéro
+> d'avant lancement : c'est sa seule valeur, et le corriger la détruirait.
+> Depuis le 12 septembre 2026, le site est déployé sur `www.czir62.fr`, la
+> preview GitHub Pages est supprimée, et les trois constats du tableau
+> ci-dessous sont donc périmés. Le suivi vivant se lit dans
+> `INFORMATIONS-A-DEMANDER.md`.
+
 Produit avec la méthode « du diagnostic à l'exécution », **sans aucun outil
 payant**. Ce document dit ce qui a pu être fait, ce qui n'a pas pu l'être, et
 pourquoi.
