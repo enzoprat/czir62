@@ -16,7 +16,8 @@
     "assets": "node scripts/generate-assets.mjs",
     "crawl": "node scripts/crawl.mjs",
     "audit": "node scripts/audit.mjs",
-    "responsive": "node scripts/responsive.mjs"
+    "responsive": "node scripts/responsive.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
