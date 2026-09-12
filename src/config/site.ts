@@ -55,15 +55,20 @@ export const nap = {
     country: 'France',
   },
 
-  /** TODO Coordonnees du local (clic droit sur Google Maps > copier les coords) */
   /**
-   * Releve sur la Base Adresse Nationale (api-adresse.data.gouv.fr), au
-   * niveau du numero et non de la voie. A verifier une fois : le point doit
-   * tomber sur l'angle du batiment, pas au milieu de la rue.
+   * Releve par l'entreprise sur Google Maps le 12 septembre 2026, a partir de
+   * la fiche elle-meme. C'est la reference a privilegier : ce sont les
+   * coordonnees que Google affiche pour l'etablissement, donc celles avec
+   * lesquelles le balisage doit concorder.
+   *
+   * La Base Adresse Nationale donnait 50.529439 / 2.637719 pour le 100 rue
+   * Saint Pry, soit 26 m plus au sud. L'ecart est de l'ordre de la largeur
+   * d'un batiment : les deux points designent la meme adresse, on garde celui
+   * qui vient de Google.
    */
   geo: {
-    lat: 50.529439 as number | null,
-    lng: 2.637719 as number | null,
+    lat: 50.529673 as number | null,
+    lng: 2.637652 as number | null,
   },
 
   /**

@@ -178,18 +178,20 @@ Le SIRET est une mention obligatoire des mentions légales — la page existe ma
 il y manque. L'ancienneté est l'argument de réassurance le plus utilisé par les
 concurrents (« plus de 20 ans », « depuis 30 ans »).
 
-### ~~7. Les coordonnées GPS du local~~ ✅ relevées le 11 septembre 2026
+### ~~7. Les coordonnées GPS du local~~ ✅ confirmées le 12 septembre 2026
 `src/config/site.ts` → `nap.geo.lat` / `nap.geo.lng`
 
-`50.529439, 2.637719`, relevées sur la **Base Adresse Nationale**
-(api-adresse.data.gouv.fr), au niveau du numéro et non de la voie. La carte
-de la page contact est active et le champ `geo` des données structurées est
-renseigné.
+**`50.529673, 2.637652`**, relevées par l'entreprise sur Google Maps depuis la
+fiche. C'est la référence à privilégier : ce sont les coordonnées que Google
+affiche pour l'établissement, donc celles avec lesquelles le balisage doit
+concorder.
 
-> ⚠️ **Une vérification d'une minute.** Ouvrir `/contact/` et regarder si le
-> repère tombe bien sur l'angle du bâtiment. Si non : clic droit sur le bon
-> point dans Google Maps → la première ligne du menu donne les coordonnées →
-> les coller dans `nap.geo`.
+La Base Adresse Nationale donnait `50.529439, 2.637719` pour le 100 rue Saint
+Pry, soit **26 m plus au sud** — l'écart d'une largeur de bâtiment. Les deux
+points désignent la même adresse ; on garde celui qui vient de Google.
+
+La carte de la page contact et le champ `geo` des données structurées suivent
+automatiquement : la valeur n'existe qu'à un seul endroit.
 
 > ⚠️ **Orthographe de la voie à trancher.** La Base Adresse Nationale écrit
 > **« 100 Rue Saint Pry »**, sans « e » et sans trait d'union. Le site et
