@@ -11,13 +11,22 @@
  * tant que `avis` est vide.
  *
  * POUR ACTIVER LA SECTION :
- *  1. renseigner `google.placeId` dans src/config/site.ts ;
- *  2. saisir ci-dessous la note reelle, le nombre reel d'avis et les avis
+ *  1. saisir ci-dessous la note reelle, le nombre reel d'avis et les avis
  *     reellement publies sur la fiche (texte fidele, prenom tel qu'affiche
  *     publiquement par Google) ;
- *  3. passer `verifie` a true apres relecture.
+ *  2. laisser `verifie` a false — voir ci-dessous.
  *
- * Le JSON-LD AggregateRating n'est emis que si `verifie === true`.
+ * POURQUOI LAISSER `verifie` A FALSE MEME AVEC DE VRAIS AVIS
+ * Depuis septembre 2019, Google ignore les extraits enrichis d'avis
+ * « self-serving » : une entreprise qui balise ses propres avis sur son
+ * propre site n'obtient aucune etoile dans les resultats. Les etoiles
+ * visibles dans le pack local viennent de la fiche Google, pas d'ici.
+ * Emettre quand meme un AggregateRating n'apporte donc rien et expose a une
+ * action manuelle si le balisage diverge un jour de la fiche.
+ *
+ * Conclusion : afficher les avis sur le site (c'est excellent pour la
+ * conversion), ne pas les baliser. `verifie` reste un interrupteur de
+ * secours, pas une etape d'activation.
  * ========================================================================= */
 
 export interface Avis {

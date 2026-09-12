@@ -42,10 +42,18 @@ async function postJson(
 }
 
 /* ------------------------------------------------------------------------ *
- * 1. Journal local NDJSON — filet de securite
+ * 1. Journal local NDJSON — filet de securite en hebergement persistant
  *    Un lead n'est jamais perdu, meme si toutes les integrations tombent.
+ *    Inoperant en serverless : voir la garde en tete de fonction.
  * ------------------------------------------------------------------------ */
-async function fileSink(lead: Lead): Promise<SinkResult> {
+async function fileSink(lead: Lead): Promise<SinkResult | null> {
+  // Sur un hebergeur serverless, le disque est en lecture seule et /tmp est
+  // efface entre deux invocations : un lead « ecrit » y serait perdu sans
+  // que personne ne le sache. On desactive donc le journal plutot que de le
+  // laisser compter comme une livraison reussie — c'est ce booleen qui decide
+  // si le visiteur voit « demande envoyee » ou « appelez-nous ».
+  if (env('VERCEL') || env('AWS_LAMBDA_FUNCTION_NAME') || env('NETLIFY')) return null;
+
   const path = env('LEAD_LOG_FILE') ?? '.leads/leads.ndjson';
   try {
     const { mkdir, appendFile } = await import('node:fs/promises');

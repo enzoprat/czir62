@@ -31,7 +31,7 @@ import Faq from '@/components/Faq.astro';
 import { dimensions, srcset } from '@/lib/dimensions';
 import { servicesByOrder, getService } from '@/data/services';
 import { villes, communesDesservies, RAYON_KM } from '@/data/villes';
-import { nap, google, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { nap, google, telHref, hasPhone, hasAddress, addressOneLine, hasDirigeant, dirigeantNom } from '@/config/site';
 import { webPageSchema, faqSchema, placeSchema } from '@/lib/schema';
 
 const tel = telHref();
@@ -322,7 +322,7 @@ const etapes = [
         <ul class="list-clean soust__l">
           <li>
             <span class="soust__n num">{nap.foundingYear}</span>
-            <span><strong>Entreprise familiale</strong>Le couvreur qui la dirige aujourd'hui exerce depuis {nap.experienceYears} ans.</span>
+            <span><strong>Entreprise familiale</strong>{hasDirigeant() ? `${dirigeantNom()}, qui la dirige aujourd'hui, exerce depuis ${nap.experienceYears} ans.` : `Le couvreur qui la dirige aujourd'hui exerce depuis ${nap.experienceYears} ans.`}</span>
           </li>
           <li>
             <span class="soust__n"><Icon name="shield" size={20} /></span>

@@ -17,7 +17,7 @@
  * pour tout le site, referencee par chaque page.
  * ========================================================================= */
 
-import { site, nap, google, socials, hasAddress, hasGeo, hasPhone, hasHours, addressOneLine } from '@/config/site';
+import { site, nap, google, socials, hasAddress, hasGeo, hasPhone, hasHours, addressOneLine, hasDirigeant, dirigeantNom } from '@/config/site';
 import { services, servicesByOrder, type Service } from '@/data/services';
 import { villes, communesDesservies } from '@/data/villes';
 import { avis, avisSource, hasNoteVerifiee } from '@/data/avis';
@@ -152,6 +152,16 @@ export function organizationSchema(): Json {
     hasMap: google.profileUrl ?? undefined,
     openingHoursSpecification: openingHours(),
     foundingDate: nap.foundingYear ? String(nap.foundingYear) : undefined,
+    // Le gerant nomme. Pas `founder` : la maison date de 1925, il ne l'a pas
+    // fondee — il la dirige. `employee` est la seule relation exacte ici.
+    employee: hasDirigeant()
+      ? {
+          '@type': 'Person',
+          '@id': `${site.url}#dirigeant`,
+          name: dirigeantNom(),
+          jobTitle: nap.dirigeant.fonction ?? undefined,
+        }
+      : undefined,
     vatID: undefined,
     taxID: nap.siret ?? undefined,
     areaServed: areaServed(),

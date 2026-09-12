@@ -7,7 +7,7 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { site, nap, hasAddress, hasPhone, hasEmail, addressOneLine, hasAssurance, hasRge } from '@/config/site';
+import { site, nap, hasAddress, hasPhone, hasEmail, addressOneLine, hasAssurance, hasRge, hasDirigeant, dirigeantNom, tvaIntracom } from '@/config/site';
 import { breadcrumbSchema, webPageSchema } from '@/lib/schema';
 
 const crumbs = [{ name: 'Mentions légales' }];
@@ -41,16 +41,18 @@ const dev = import.meta.env.DEV;
           {hasPhone() && <>Téléphone : {nap.phone}<br /></>}
           {hasEmail() && <>E-mail : {nap.email}</>}
         </p>
-        {(nap.siret || dev) && (
+        {(nap.siret || hasDirigeant() || dev) && (
           <p>
-            {nap.siret ? `SIRET : ${nap.siret}` : <em class="todo">SIRET : {Todo}</em>}
-            {dev && (
-              <>
-                <br /><em class="todo">Forme juridique et capital social : {Todo}</em>
-                <br /><em class="todo">Numéro de TVA intracommunautaire : {Todo}</em>
-                <br /><em class="todo">Directeur de la publication : {Todo}</em>
-              </>
-            )}
+            {nap.siret
+              ? <>SIRET : {nap.siret}<br /></>
+              : dev && <><em class="todo">SIRET : {Todo}</em><br /></>}
+            {tvaIntracom()
+              ? <>TVA intracommunautaire : {tvaIntracom()}<br /></>
+              : dev && <><em class="todo">Numéro de TVA intracommunautaire : calculé automatiquement dès que le SIRET est renseigné</em><br /></>}
+            {hasDirigeant()
+              ? <>Directeur de la publication : {dirigeantNom()}{nap.dirigeant.fonction && <>, {nap.dirigeant.fonction.toLowerCase()}</>}</>
+              : dev && <em class="todo">Directeur de la publication : {Todo}</em>}
+            {dev && <><br /><em class="todo">Forme juridique et capital social : {Todo}</em></>}
           </p>
         )}
 
@@ -76,17 +78,29 @@ const dev = import.meta.env.DEV;
           </>
         )}
 
-        {dev && (
+        {(nap.hebergeur.nom || dev) && (
           <>
             <h2>Hébergement</h2>
-            <p><em class="todo">Nom, raison sociale, adresse et téléphone de l'hébergeur : {Todo}</em></p>
+            <p>
+              {nap.hebergeur.nom ? (
+                <>
+                  <strong>{nap.hebergeur.nom}</strong>
+                  {nap.hebergeur.adresse && <><br />{nap.hebergeur.adresse}</>}
+                  {nap.hebergeur.site && (
+                    <><br /><a href={nap.hebergeur.site} rel="nofollow noopener" target="_blank">{nap.hebergeur.site.replace('https://', '')}</a></>
+                  )}
+                </>
+              ) : (
+                <em class="todo">Nom, raison sociale et adresse de l'hébergeur : {Todo}</em>
+              )}
+            </p>
           </>
         )}
 
         <h2>Propriété intellectuelle</h2>
         <p>
           L'ensemble des contenus de ce site — textes, photographies, illustrations, schémas
-          techniques et éléments graphiques — est la propriété de {site.legalName}, sauf mention
+          techniques et éléments graphiques — est la propriété de la société {site.legalName}, sauf mention
           contraire. Toute reproduction ou représentation, totale ou partielle, sans autorisation
           écrite préalable est interdite.
         </p>

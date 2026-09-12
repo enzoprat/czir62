@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 
 /** Slugs des pages prestation — miroir de src/data/services.ts */
 const PRESTATIONS = new RegExp(
@@ -24,7 +24,18 @@ export default defineConfig({
   // Seules les routes marquees `export const prerender = false` sont rendues
   // a la demande : aujourd'hui uniquement /api/lead/.
   output: 'static',
-  adapter: node({ mode: 'standalone' }),
+
+  // Vercel, parce que c'est la que le domaine pointe deja : www.czir62.fr est
+  // un CNAME vers vercel-dns-017.com et l'apex y est redirige en 308. Avec
+  // l'adaptateur Node, `astro build` produit dist/client + dist/server, que
+  // Vercel ne sait pas servir — le deploiement repondrait 404 sur tout.
+  // Sortie reelle : .vercel/output/static (CDN) + une fonction pour /api/lead/.
+  adapter: vercel({
+    // Le formulaire est le seul point d'entree commercial du site : on veut
+    // savoir qu'une soumission a echoue, pas l'apprendre par un appel manque.
+    webAnalytics: { enabled: false },
+    imageService: false,
+  }),
 
   build: {
     format: 'directory',

@@ -116,6 +116,21 @@ export const nap = {
    */
   experienceYears: 25 as number | null,
 
+  /**
+   * Le gerant, nomme. C'est le signal E-E-A-T le moins cher et le plus rare
+   * du secteur : la quasi-totalite des sites de couvreurs parlent d'un
+   * « nous » sans visage. Une personne nommee porte l'experience, engage la
+   * responsabilite et donne un sujet a `employee` dans le balisage.
+   *
+   * Sert aussi de directeur de la publication en mentions legales : la LCEN
+   * (art. 6-III) l'impose, et laisser ce champ vide est une non-conformite.
+   */
+  dirigeant: {
+    prenom: 'Sébastien' as string | null,
+    nom: 'Feret' as string | null,
+    fonction: 'Gérant' as string | null,
+  },
+
   /** TODO Numero SIRET — affiche en mentions legales */
   siret: null as string | null,
 
@@ -125,6 +140,18 @@ export const nap = {
    * les afficher sur le site est le prolongement logique.
    * TODO a renseigner des que l'attestation est delivree.
    */
+  /**
+   * Hebergeur du site — mention imposee par la LCEN art. 6-III (nom, adresse).
+   * Deduit du DNS le 12 septembre 2026 : www.czir62.fr pointe sur
+   * vercel-dns-017.com et les reponses portent l'en-tete `server: Vercel`.
+   * A corriger ici, et nulle part ailleurs, si l'hebergement change.
+   */
+  hebergeur: {
+    nom: 'Vercel Inc.' as string | null,
+    adresse: '340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis' as string | null,
+    site: 'https://vercel.com' as string | null,
+  },
+
   assurance: {
     assureur: null as string | null,
     contrat: null as string | null,
@@ -220,9 +247,32 @@ export function hasRge(): boolean {
   return Boolean(nap.assurance.rge);
 }
 
+/** Vrai seulement si le dirigeant est reellement nomme. */
+export function hasDirigeant(): boolean {
+  return Boolean(nap.dirigeant.prenom && nap.dirigeant.nom);
+}
+
+/** « Sébastien Feret » — ou null tant que le nom n'est pas connu. */
+export function dirigeantNom(): string | null {
+  if (!hasDirigeant()) return null;
+  return `${nap.dirigeant.prenom} ${nap.dirigeant.nom}`;
+}
+
 /** Annees de metier de l'artisan — jamais l'anciennete de la societe. */
 export function hasExperience(): boolean {
   return Boolean(nap.experienceYears && nap.experienceYears > 0);
+}
+
+/**
+ * Numero de TVA intracommunautaire, calcule depuis le SIREN plutot que saisi.
+ * Cle = (12 + 3 × (SIREN modulo 97)) modulo 97 — formule officielle. Il n'y a
+ * donc rien a demander au client : le SIRET suffit a produire les deux.
+ */
+export function tvaIntracom(): string | null {
+  const siren = (nap.siret ?? '').replace(/\D/g, '').slice(0, 9);
+  if (siren.length !== 9) return null;
+  const cle = (12 + 3 * (Number(siren) % 97)) % 97;
+  return `FR${String(cle).padStart(2, '0')}${siren}`;
 }
 
 export function addressOneLine(): string {

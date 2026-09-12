@@ -2,7 +2,7 @@
 /* ===========================================================================
  * Crawler local — Phase 1
  * ---------------------------------------------------------------------------
- * Parcourt le build de production (dist/client), qui est exactement ce qui
+ * Parcourt le build de production (voir racineBuild), qui est exactement ce qui
  * sera deploye. Le site est statique : une seule passe suffit, il n'y a pas
  * de DOM differe a rendre.
  *
@@ -12,8 +12,18 @@
 import { readFileSync, readdirSync, statSync, existsSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const RACINE = 'dist/client';
-if (!existsSync(RACINE)) { console.error('Build absent — lancer npm run build.'); process.exit(1); }
+/* Racine du build. L'adaptateur decide ou il ecrit : Vercel sort dans
+ * .vercel/output/static, l'adaptateur Node dans dist/client, un build sans
+ * adaptateur dans dist. On prend le premier qui existe plutot que de coder
+ * en dur un chemin qui change avec l'hebergeur. */
+const racineBuild = () => {
+  for (const d of ['.vercel/output/static', 'dist/client', 'dist']) {
+    if (existsSync(join(d, 'index.html'))) return d;
+  }
+  console.error('Build absent ou incomplet — lancer npm run build.');
+  process.exit(1);
+};
+const RACINE = racineBuild();
 
 const fichiers = [];
 (function marcher(d) {

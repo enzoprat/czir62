@@ -3,7 +3,18 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const R = 'dist/client';
+/* Racine du build. L'adaptateur decide ou il ecrit : Vercel sort dans
+ * .vercel/output/static, l'adaptateur Node dans dist/client, un build sans
+ * adaptateur dans dist. On prend le premier qui existe plutot que de coder
+ * en dur un chemin qui change avec l'hebergeur. */
+const racineBuild = () => {
+  for (const d of ['.vercel/output/static', 'dist/client', 'dist']) {
+    if (existsSync(join(d, 'index.html'))) return d;
+  }
+  console.error('Build absent ou incomplet — lancer npm run build.');
+  process.exit(1);
+};
+const R = racineBuild();
 const SITE = 'https://www.czir62.fr';
 const f = [];
 (function w(d){ for (const e of readdirSync(d)) { const p = join(d,e); statSync(p).isDirectory()?w(p):f.push(p); } })(R);

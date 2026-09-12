@@ -19,10 +19,16 @@ import ZoneMap from '@/components/ZoneMap.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import Icon from '@/components/Icon.astro';
 import { servicesByOrder } from '@/data/services';
-import { nap, telHref, hasPhone, hasAddress, addressOneLine } from '@/config/site';
+import { nap, telHref, hasPhone, hasAddress, addressOneLine, hasDirigeant, dirigeantNom } from '@/config/site';
 import { breadcrumbSchema, webPageSchema, placeSchema } from '@/lib/schema';
 
 const crumbs = [{ name: "L'entreprise" }];
+
+// Nommer le dirigeant plutot qu'un « nous » sans visage. Degrade proprement
+// si le nom n'est pas renseigne : voir nap.dirigeant.
+const phraseDirigeant = hasDirigeant()
+  ? `${dirigeantNom()}, qui dirige aujourd'hui l'entreprise, exerce le métier depuis ${nap.experienceYears} ans`
+  : `Le couvreur qui dirige aujourd'hui l'entreprise exerce depuis ${nap.experienceYears} ans`;
 const tel = telHref();
 
 const engagements = [
@@ -122,9 +128,8 @@ const engagements = [
           <h3>Une maison familiale depuis {nap.foundingYear}</h3>
           <p>
             L'enseigne le dit depuis l'auvent : votre artisan depuis {nap.foundingYear}. Un siècle
-            de toitures dans le bassin béthunois, dans la même famille. Le couvreur qui dirige
-            aujourd'hui l'entreprise exerce depuis {nap.experienceYears} ans — les toitures d'ici,
-            il les connaît pour les avoir faites.
+            de toitures dans le bassin béthunois, dans la même famille. {phraseDirigeant} — les
+            toitures d'ici, il les connaît pour les avoir faites.
           </p>
           <p>
             Ce n'est pas un argument d'ancienneté pour l'ancienneté. Une couverture posée se juge

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /404/
+
+Sitemap: https://www.czir62.fr/sitemap-index.xml

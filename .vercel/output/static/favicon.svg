@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Symbole de marque CZIR62, relevé sur le logo fourni. Sur pastille
+       foncée : le chevron terre cuite et les deux rangs restent lisibles
+       jusqu'à 16 px, ce que le logo sur fond blanc ne permettait pas. -->
+  <rect width="64" height="64" rx="13" fill="#16222B"/>
+  <g transform="translate(8 15.5) scale(0.0882)">
+    <path d="M272 0 542 232 501 276 272 84 43 276 2 232Z" fill="#C4712F"/>
+    <rect x="80"  y="276" width="377" height="46" fill="#F3ECE1"/>
+    <rect x="133" y="349" width="269" height="46" fill="#98A0A6"/>
+  </g>
+</svg>

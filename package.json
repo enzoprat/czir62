@@ -10,7 +10,7 @@
     "build": "astro check && astro build",
     "build:fast": "astro build",
     "preview": "astro preview",
-    "serve": "node ./dist/server/entry.mjs",
+    "serve": "npx --yes serve .vercel/output/static -l 4321",
     "check": "astro check",
     "photos": "node scripts/photos-manquantes.mjs",
     "assets": "node scripts/generate-assets.mjs",
@@ -19,8 +19,8 @@
     "responsive": "node scripts/responsive.mjs"
   },
   "dependencies": {
-    "@astrojs/node": "^9.4.4",
     "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/vercel": "^9.0.5",
     "astro": "^5.16.2",
     "sharp": "^0.34.4"
   },
