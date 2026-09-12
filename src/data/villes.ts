@@ -89,7 +89,7 @@ export const villes: Ville[] = [
     faq: [
       {
         q: "Où se trouve exactement votre entreprise à Béthune ?",
-        a: "Notre bureau et notre showroom sont au 100 rue Sainte-Pry, en centre-ville, et vous pouvez y passer sans rendez-vous aux heures d'ouverture. C'est une adresse vérifiable, pas une domiciliation : vous savez où nous trouver avant les travaux comme après. Les horaires et l'itinéraire figurent sur la page contact.",
+        a: "Notre bureau et notre showroom sont au 100 rue Saint-Pry, en centre-ville, et vous pouvez y passer sans rendez-vous aux heures d'ouverture. C'est une adresse vérifiable, pas une domiciliation : vous savez où nous trouver avant les travaux comme après. Les horaires et l'itinéraire figurent sur la page contact.",
       },
       {
         q: "Intervenez-vous sur les maisons mitoyennes du centre de Béthune ?",

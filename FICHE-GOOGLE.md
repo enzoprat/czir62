@@ -18,7 +18,7 @@ Google distingue trois cas. CZIR62 relève du troisième :
 | Service de proximité pur *(plombier qui n'a pas de local ouvert)* | **non — Google demande de la retirer** | oui |
 | **Établissement mixte** | **oui** | **oui** |
 
-Le bureau du 100 rue Sainte-Pry accueille des clients : c'est un
+Le bureau du 100 rue Saint-Pry accueille des clients : c'est un
 **établissement mixte**. Il faut donc **garder l'adresse visible** et déclarer
 en plus les zones desservies.
 
@@ -108,7 +108,7 @@ l'autre.
 
 > ⚠️ **Attention au champ « date d'ouverture » de la fiche.** Google demande la
 > date d'ouverture *à cette adresse*, pas la fondation de l'entreprise. Si le
-> local du 100 rue Sainte-Pry est récent, c'est cette date-là qu'il faut y
+> local du 100 rue Saint-Pry est récent, c'est cette date-là qu'il faut y
 > saisir — et 1925 reste dans la description, où il est à sa place.
 
 ### Décennale et RGE : attendre l'attestation
@@ -576,7 +576,7 @@ En sortie d'hiver, les versants nord sortent chargés en mousse. Avant de faire 
 #### Le showroom → `https://www.czir62.fr/contact/`
 
 ```
-Notre bureau et notre showroom sont au centre de Béthune, 100 rue Sainte-Pry. Vous pouvez passer voir des échantillons de tuiles et d'ardoises, comparer les teintes en vrai plutôt que sur un écran, et parler de votre projet sans rendez-vous préalable.
+Notre bureau et notre showroom sont au centre de Béthune, 100 rue Saint-Pry. Vous pouvez passer voir des échantillons de tuiles et d'ardoises, comparer les teintes en vrai plutôt que sur un écran, et parler de votre projet sans rendez-vous préalable.
 ```
 
 #### Comment nous travaillons → `https://www.czir62.fr/entreprise/`
@@ -638,12 +638,12 @@ l'abréviation et au trait d'union près.
 | Champ | Valeur du site — `src/config/site.ts` |
 |---|---|
 | Nom | `CZIR62 — Entreprise Générale de Couverture` |
-| Adresse | `100 rue Sainte-Pry, 62400 Béthune` |
+| Adresse | `100 rue Saint-Pry, 62400 Béthune` |
 | Téléphone | `07 86 70 41 34` |
 | E-mail | `Ent.czir62@hotmail.com` |
 | Site | `https://www.czir62.fr` |
 
-> Si la fiche écrit « 100 Rue Sainte Pry » sans trait d'union, il faut
+> Si la fiche écrit « 100 Rue Saint-Pry » sans trait d'union, il faut
 > **corriger le site**, pas la fiche : c'est la fiche qui fait foi.
 
 ---

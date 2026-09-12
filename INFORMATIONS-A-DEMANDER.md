@@ -32,7 +32,7 @@ entreprise, et les deux versions de la description Google.
 
 > Reste une nuance : le champ **« date d'ouverture »** de la fiche Google
 > demande la date d'ouverture *à cette adresse*. Si le local du 100 rue
-> Sainte-Pry est récent, saisir cette date-là et non 1925.
+> Saint-Pry est récent, saisir cette date-là et non 1925.
 
 ### B. Six prestations affichées en vitrine, absentes du site
 
@@ -193,11 +193,11 @@ points désignent la même adresse ; on garde celui qui vient de Google.
 La carte de la page contact et le champ `geo` des données structurées suivent
 automatiquement : la valeur n'existe qu'à un seul endroit.
 
-> ⚠️ **Orthographe de la voie à trancher.** La Base Adresse Nationale écrit
-> **« 100 Rue Saint Pry »**, sans « e » et sans trait d'union. Le site et
-> l'enseigne écrivent « rue Sainte-Pry ». La référence à suivre est la fiche
-> Google : c'est elle que les annuaires recopient. Une divergence dégrade la
-> cohérence des citations locales.
+> ✅ **Orthographe tranchée le 12 septembre 2026 : « Saint-Pry ».** La fiche
+> Google écrit « 100 Rue Saint-Pry » — avec le trait d'union, sans le « e ».
+> Le site écrivait « Sainte-Pry » : c'était une faute, et `villes.ts` la
+> contredisait déjà en listant le quartier béthunois « Saint-Pry ». Corrigé
+> partout, y compris dans les noms de fichiers des photos du local.
 
 ### ~~8. La photo de devanture~~ ✅ fournie le 11 septembre 2026
 `public/images/local/devanture-czir62-bethune.jpg`
@@ -285,12 +285,28 @@ constante consommée par la carte, l'accueil et la page zone). Le texte de la
 page défend aujourd'hui la zone resserrée comme un argument — monter le chiffre
 affaiblit cet argument.
 
-### 14. L'orthographe exacte de l'adresse
-`src/config/site.ts` → `nap.address.street`
+### ~~14. L'orthographe exacte de l'adresse~~ ✅ relevée sur la fiche le 12 septembre 2026
+`src/config/site.ts` → `nap.address.street` et `nap.name`
 
-`100 rue Sainte-Pry` doit être **strictement identique** à ce qui figure sur la
-fiche Google Business Profile, au trait d'union près. Une divergence dégrade la
-cohérence des citations locales.
+Deux éléments du NAP relevés sur la fiche et répercutés sur le site :
+
+| | Fiche Google | Site avant | Site après |
+|---|---|---|---|
+| Nom | `CZIR62 Couvreur Béthune` | `CZIR62 — Entreprise Générale de Couverture` | aligné sur la fiche |
+| Adresse | `100 Rue Saint-Pry` | `100 rue Sainte-Pry` | `100 rue Saint-Pry` |
+
+Le « rue » reste en minuscule : c'est la typographie française, et Google
+normalise la casse des voies de toute façon. La correction qui comptait est
+« Sainte » → « Saint ».
+
+> ⚠️ **Le nom de la fiche est hors des règles de Google.** « Couvreur Béthune »
+> est une catégorie suivie d'une ville ajoutées au nom réel de l'entreprise.
+> Les règles de Google Business Profile imposent le nom tel qu'il figure sur
+> la devanture — ici « CZIR62 » — et interdisent explicitement d'y ajouter
+> catégorie, ville ou mots-clés. Le risque n'est pas théorique : un concurrent
+> peut le signaler par « Suggérer une modification », et la sanction va du
+> renommage d'office à la suspension de la fiche. Décision à prendre en
+> connaissance de cause ; le site suit ce que la fiche affiche.
 
 ### 15. Réseaux sociaux et autres profils
 `src/config/site.ts` → `socials`

@@ -25,7 +25,7 @@ mentions légales.
 
 | Champ | État | Remarque |
 |---|---|---|
-| `nap.address.street` | ✅ `100 rue Sainte-Pry` | Vérifier que l'orthographe est **identique** à la fiche Google |
+| `nap.address.street` | ✅ `100 rue Saint-Pry` | Vérifier que l'orthographe est **identique** à la fiche Google |
 | `nap.phone` | ✅ `07 86 70 41 34` | Vérifier l'identité avec la fiche Google |
 | `nap.phoneE164` | ✅ `+33786704134` | Utilisé par tous les liens `tel:` |
 | `nap.email` | ✅ `Ent.czir62@hotmail.com` | Affichée dans le bandeau et sur la page contact |

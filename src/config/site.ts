@@ -31,7 +31,17 @@ export const site = {
  * ------------------------------------------------------------------------ */
 export const nap = {
   /** Nom exact affiche sur la fiche Google Business Profile */
-  name: 'CZIR62 — Entreprise Générale de Couverture',
+  /**
+   * Le nom EXACT de la fiche Google, releve sur la fiche le 12 septembre 2026.
+   * C'est lui qui alimente `name` dans le balisage et l'en-tete de la page
+   * contact : le nom fait partie du NAP au meme titre que l'adresse et le
+   * telephone, et une divergence dissocie les citations.
+   *
+   * Ne pas confondre avec `site.legalName` (la personne morale) ni
+   * `site.brand` (l'enseigne courte, celle de la devanture et du logo). Les
+   * trois cohabitent dans le balisage : name / legalName / alternateName.
+   */
+  name: 'CZIR62 Couvreur Béthune',
 
   /** TODO Numero principal. Format d'affichage francais : '03 21 00 00 00' */
   phone: '07 86 70 41 34' as string | null,
@@ -46,7 +56,7 @@ export const nap = {
      * Numero + voie. DOIT etre strictement identique a la fiche Google
      * Business Profile — a l'abreviation et au trait d'union pres.
      */
-    street: '100 rue Sainte-Pry' as string | null,
+    street: '100 rue Saint-Pry' as string | null,
     postalCode: '62400',
     city: 'Béthune',
     region: 'Hauts-de-France',
