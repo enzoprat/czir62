@@ -470,9 +470,11 @@ export const RAYON_KM = 40;
 export const communesDesservies: ReadonlyArray<{ name: string; postalCode: string }> = [
   // Metropole lilloise — limite est de la zone
   { name: 'Lille', postalCode: '59000' },
-  // TODO ORTHOGRAPHE A CONFIRMER : « Roncq » (59223, metropole lilloise) a ete
-  // retenu d'apres l'indication orale « Ronque ». Si la commune visee est
-  // « Ronchin » (59790), corriger ici — c'est le seul endroit a modifier.
+  // Roncq (59223) confirme par l'entreprise le 12 septembre 2026 — il ne
+  // s'agissait pas de Ronchin. C'est ~53 km par la route, donc au-dela du
+  // rayon de 40 km annonce : la commune la plus eloignee de la zone. Les
+  // formulations de /zone-intervention/ disent « environ 40 km ET jusqu'a la
+  // metropole lilloise » pour que la liste reste exacte.
   { name: 'Roncq', postalCode: '59223' },
   { name: 'Hersin-Coupigny', postalCode: '62530' },
   { name: 'La Bassée', postalCode: '59480' },

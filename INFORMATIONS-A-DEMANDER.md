@@ -152,9 +152,13 @@ fusionnés : l'entreprise date de 2026, l'artisan exerce depuis 25 ans.
 Publié sur l'accueil et sur la page entreprise sous la forme « l'entreprise a
 été créée en 2026, le couvreur qui la dirige exerce depuis 25 ans ».
 
-> ⚠️ Reste à obtenir : **le nom du dirigeant**. Une expérience attribuée à une
-> personne nommée vaut bien plus qu'à un « artisan » anonyme — c'est le premier
-> facteur de crédibilité pour un métier où l'on fait entrer quelqu'un chez soi.
+> ✅ **Obtenu le 12 septembre 2026 : Sébastien Feret, gérant.** Publié sur
+> l'accueil, sur la page entreprise, en directeur de la publication (obligation
+> LCEN restée jusqu'ici non remplie) et dans le balisage comme `employee` —
+> pas `founder` : la maison date de 1925, il ne l'a pas fondée.
+>
+> À vérifier : l'orthographe exacte de l'état civil. « Sébastien » est écrit
+> avec l'accent ; s'il n'en porte pas, c'est une ligne dans `site.ts`.
 
 ### ~~5. Les horaires d'ouverture~~ ✅ relevés sur la porte du local
 `src/config/site.ts` → `nap.openingHours`
@@ -225,19 +229,14 @@ présentées comme une galerie et non comme des chantiers localisés.
 Dix chantiers documentés dans dix communes valent mieux que dix pages de
 communes supplémentaires.
 
-### 10. Le démoussage est-il bien une prestation de l'entreprise ?
+### ~~10. Le démoussage est-il bien une prestation de l'entreprise ?~~ ✅ confirmé le 12 septembre 2026
 `src/data/services.ts` → entrée `demoussage-toiture`
 
-**À confirmer explicitement.** Le démoussage et l'entretien figuraient déjà
-dans le registre des prestations du site (en sous-prestations de la page
-couverture) ; l'audit a montré que c'est l'une des requêtes les plus
-recherchées du métier sur le secteur, avec un spécialiste local dédié et des
-annonces payantes. Une page complète lui a donc été créée.
+**Oui, l'entreprise le pratique.** La page `/demoussage-toiture/` reste donc en
+place : c'est l'une des requêtes les plus travaillées du métier sur le secteur,
+avec un spécialiste local dédié et des annonces payantes en face.
 
-Si l'entreprise **ne fait pas** de démoussage, il suffit de le dire : la page
-et l'entrée du registre sont supprimées d'un bloc.
-
-À préciser également :
+Deux points restent ouverts, et ils sont commerciaux, pas structurels :
 - proposez-vous un **traitement hydrofuge** après démoussage ? (la page reste
   aujourd'hui volontairement neutre sur ce point) ;
 - travaillez-vous **par drone** ? (plusieurs concurrents locaux le mettent en
@@ -267,11 +266,22 @@ Si elle ne l'assure pas, ne rien promettre reste la bonne décision.
 
 ## 🔵 À confirmer — points ouverts
 
-### 13. « Ronque » : Roncq ou Ronchin ?
+### ~~13. « Ronque » : Roncq ou Ronchin ?~~ ✅ tranché le 12 septembre 2026
 `src/data/villes.ts` → `communesDesservies`
 
-**Roncq** (59223, métropole lilloise) a été retenu d'après l'indication orale.
-S'il s'agissait de **Ronchin** (59790), c'est une seule ligne à corriger.
+**Roncq** (59223), confirmé par l'entreprise. Ce n'était pas Ronchin.
+
+Conséquence à connaître : Roncq est à **~53 km par la route**, soit au-delà du
+rayon de 40 km annoncé sur le site — c'est la commune la plus éloignée de la
+zone. Les formulations de `/zone-intervention/` ont été ajustées pour dire
+« environ 40 km **et** jusqu'à la métropole lilloise » plutôt que de faire
+passer la MEL pour incluse dans le rayon.
+
+Reste une décision commerciale : annoncer 40 km et assumer une exception, ou
+monter le rayon déclaré à 50 km (`RAYON_KM` dans `src/data/villes.ts`, une
+constante consommée par la carte, l'accueil et la page zone). Le texte de la
+page défend aujourd'hui la zone resserrée comme un argument — monter le chiffre
+affaiblit cet argument.
 
 ### 14. L'orthographe exacte de l'adresse
 `src/config/site.ts` → `nap.address.street`

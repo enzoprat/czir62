@@ -120,8 +120,7 @@ registre des prestations, mais seulement comme ancre dans la page couverture.
 L'analyse des résultats de recherche montre que c'est l'une des requêtes les
 plus travaillées du secteur : concurrent local dédié, annonces payantes,
 rubrique Pages Jaunes propre. La prestation a donc désormais sa page.
-**À confirmer : l'entreprise pratique-t-elle bien le démoussage ?** Si non, la
-page et l'entrée du registre se retirent d'un bloc.
+✅ **Confirmé le 12 septembre 2026 : l'entreprise pratique bien le démoussage.**
 
 **`/prix-toiture/`** — aucune page ne répondait à « combien ça coûte », qui est
 le plus gros volume de recherche du métier. La page publie les fourchettes des

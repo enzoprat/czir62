@@ -662,13 +662,13 @@ l'abréviation et au trait d'union près.
 
 ---
 
-## À confirmer
+## Zone : un point à connaître
 
-**Roncq (59223)** figure dans la zone déclarée du site d'après l'indication
-orale « Ronque ». C'est à environ **55 km par la route**, au nord de Lille —
-au-delà du rayon de 40 km annoncé sur le site.
+**Roncq (59223)** est confirmé — ce n'était pas Ronchin. C'est à environ
+**53 km par la route**, au nord de Lille, donc **au-delà du rayon de 40 km**
+annoncé sur le site : c'est la commune la plus éloignée de la zone.
 
-Deux possibilités : soit la commune visée est **Ronchin** (59790, au sud de
-Lille, ~45 km), soit les déplacements vont réellement jusqu'à Roncq et il faut
-alors ajuster le rayon annoncé sur le site. Une ligne à changer dans
-`src/data/villes.ts` dans les deux cas.
+Sans incidence sur la fiche Google, qui raisonne en zones desservies et non en
+rayon. Sur le site, les formulations disent désormais « environ 40 km **et**
+jusqu'à la métropole lilloise ». Si les déplacements jusqu'à Roncq sont la
+règle et non l'exception, il vaut mieux monter `RAYON_KM` à 50.

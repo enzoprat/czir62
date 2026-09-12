@@ -21,7 +21,7 @@ const tel = telHref();
 const faqItems = [
   {
     q: 'Intervenez-vous dans ma commune si elle n’est pas listée ?',
-    a: `Souvent oui. Notre zone couvre un rayon d'environ ${RAYON_KM} km autour de Béthune, jusqu'à la métropole lilloise — cela représente beaucoup plus de communes que celles listées ici. Appelez-nous : nous vous répondrons franchement. Si la distance ne nous permet pas d'assurer correctement le suivi d'un chantier, nous préférons vous le dire plutôt que d'accepter et de mal faire.`,
+    a: `Souvent oui. Notre zone couvre un rayon d'environ ${RAYON_KM} km autour de Béthune, et jusqu'à la métropole lilloise — cela représente beaucoup plus de communes que celles listées ici. Appelez-nous : nous vous répondrons franchement. Si la distance ne nous permet pas d'assurer correctement le suivi d'un chantier, nous préférons vous le dire plutôt que d'accepter et de mal faire.`,
   },
   {
     q: 'La distance change-t-elle le prix ?',
@@ -29,7 +29,7 @@ const faqItems = [
   },
   {
     q: 'Le déplacement pour un devis est-il facturé ?',
-    a: "Non, sur l'ensemble de la zone présentée ici, soit un rayon de 40 km autour de Béthune. Nous considérons que voir la toiture fait partie du travail d'établissement d'un devis, pas d'une prestation à part. Un prix donné sans être monté, sans avoir vu l'accès ni l'état du support, n'engagerait personne. Vous ne réglez rien avant d'avoir signé.",
+    a: "Non, sur l'ensemble de la zone présentée sur cette page. Nous considérons que voir la toiture fait partie du travail d'établissement d'un devis, pas d'une prestation à part. Un prix donné sans être monté, sans avoir vu l'accès ni l'état du support, n'engagerait personne. Vous ne réglez rien avant d'avoir signé.",
   },
   {
     q: 'Pourquoi une zone aussi resserrée ?',
@@ -58,7 +58,7 @@ const faqItems = [
       <h1>Notre zone d'intervention</h1>
       <p class="lede lede--wide">
         Nous intervenons depuis notre local de Béthune dans un rayon d'environ {RAYON_KM} km,
-        jusqu'à la métropole lilloise. Le cœur de notre activité reste le bassin béthunois :
+        et jusqu'à la métropole lilloise. Le cœur de notre activité reste le bassin béthunois :
         c'est là que nous repassons le plus vite, et c'est le bâti que nous connaissons le mieux.
       </p>
       {hasAddress() && (
