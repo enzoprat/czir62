@@ -1,1 +1,0 @@
-import{i as a}from"./wizard.DbEH6nTo.js";import"./leadForm.CyKyPXUu.js";import"./tracking.DWAil_ge.js";document.querySelectorAll(".af[data-wz]").forEach(t=>a(t,{origin:"assistant-fuite",startEvent:"leak_assistant_start",completeEvent:"leak_assistant_complete",prestation:"fuite-toiture"}));
