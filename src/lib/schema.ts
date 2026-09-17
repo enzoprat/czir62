@@ -17,7 +17,7 @@
  * pour tout le site, referencee par chaque page.
  * ========================================================================= */
 
-import { site, nap, google, socials, hasAddress, hasGeo, hasPhone, hasHours, addressOneLine, hasDirigeant, dirigeantNom } from '@/config/site';
+import { site, nap, google, socials, hasAddress, hasGeo, hasPhone, hasHours, addressOneLine, hasDirigeant, dirigeantNom, tvaIntracom } from '@/config/site';
 import { services, servicesByOrder, type Service } from '@/data/services';
 import { villes, communesDesservies } from '@/data/villes';
 import { avis, avisSource, hasNoteVerifiee } from '@/data/avis';
@@ -162,8 +162,10 @@ export function organizationSchema(): Json {
           jobTitle: nap.dirigeant.fonction ?? undefined,
         }
       : undefined,
-    vatID: undefined,
-    taxID: nap.siret ?? undefined,
+    // Le SIREN plutot que le SIRET : c'est l'identifiant de la personne
+    // morale, et c'est celui dont on dispose. Le numero de TVA se calcule.
+    vatID: tvaIntracom() ?? undefined,
+    taxID: nap.siret ?? nap.legal.siren ?? undefined,
     areaServed: areaServed(),
     knowsLanguage: 'fr-FR',
     currenciesAccepted: 'EUR',

@@ -19,7 +19,16 @@
 export const site = {
   url: 'https://www.czir62.fr',
   brand: 'CZIR62',
-  legalName: 'Entreprise Générale de Couverture CZIR62',
+  /**
+   * Denomination sociale EXACTE, relevee sur l'extrait Kbis du 3 septembre
+   * 2026 (greffe d'Arras, n° de gestion 2026B01716). Avec l'espace.
+   *
+   * Portait auparavant « Entreprise Générale de Couverture CZIR62 », qui
+   * n'est pas une raison sociale mais une description d'activite : la faire
+   * passer pour la personne morale en mentions legales etait une erreur.
+   * Cette formulation reste utilisee comme descriptif (voir `tagline`).
+   */
+  legalName: 'CZIR 62',
   /** Formulation courte reutilisee dans les titres et le JSON-LD */
   tagline: 'Entreprise générale de couverture à Béthune',
   locale: 'fr_FR',
@@ -102,32 +111,41 @@ export const nap = {
   depannage7j: true,
 
   /**
-   * Annee de creation de la PERSONNE MORALE. Distincte de l'experience de
-   * l'artisan : voir experienceYears juste en dessous. Ne jamais fusionner
-   * les deux — la fiche Google affiche la date d'ouverture, et une
-   * entreprise de 2026 qui se dit « depuis 25 ans » se contredit a l'ecran.
-   */
-  /**
-   * Annee de fondation de la maison. Confirmee par le client et affichee sur
-   * l'auvent du local : « VOTRE ARTISAN DEPUIS 1925 ». C'est une entreprise
-   * FAMILIALE, en activite depuis cette date — la structure juridique
-   * actuelle a ete immatriculee en 2026, ce qui est une formalite de
-   * transmission et non le debut de l'activite.
+   * Annee de fondation de l'ORGANISATION, au sens de schema.org. C'est donc
+   * 2026 : l'extrait Kbis du 3 septembre 2026 porte « Origine du fonds ou de
+   * l'activite : Creation », et une date de debut d'activite au 26/08/2026.
    *
-   * C'est cette date qui alimente foundingDate : schema.org decrit la
-   * fondation de l'organisation, pas l'immatriculation de sa derniere forme
-   * juridique.
+   * Cette valeur portait 1925 jusqu'au 17 septembre 2026, au motif que
+   * l'immatriculation de 2026 serait une formalite de transmission. Le Kbis
+   * dit le contraire : il n'y a pas eu de reprise de fonds, mais une
+   * creation. Or `foundingDate` est une assertion verifiable sur une personne
+   * morale — les registres publics sont lisibles par tous, Google compris.
+   *
+   * L'anciennete familiale n'est pas niee pour autant : elle vit dans
+   * `familleDepuis` juste en dessous, qui alimente le texte editorial et rien
+   * d'autre. Le balisage decrit la societe, la prose decrit la famille.
    */
-  foundingYear: 1925 as number | null,
+  foundingYear: 2026 as number | null,
+
+  /**
+   * Annee revendiquee par la maison, affichee sur l'auvent du local :
+   * « VOTRE ARTISAN DEPUIS 1925 », confirmee oralement par le client.
+   *
+   * Sert UNIQUEMENT au texte visible. Ne jamais la renvoyer dans le JSON-LD :
+   * la societe immatriculee a ete creee en 2026, et une declaration
+   * structuree contraire au registre du commerce se verifie en une requete.
+   */
+  familleDepuis: 1925 as number | null,
 
   /** Entreprise familiale — conditionne la formulation « maison familiale ». */
   familiale: true,
 
   /**
    * Annees de metier du couvreur qui dirige aujourd'hui la maison. A ne pas
-   * confondre avec foundingYear : l'entreprise existe depuis 1925, la
+   * confondre avec `familleDepuis` : la maison se reclame de 1925, la
    * personne qui la dirige exerce depuis 25 ans. Les deux se disent ensemble
-   * sans se contredire, mais jamais l'une a la place de l'autre.
+   * sans se contredire, mais jamais l'une a la place de l'autre — et aucune
+   * des deux ne decrit la societe, immatriculee en 2026 (`foundingYear`).
    */
   experienceYears: 25 as number | null,
 
@@ -143,10 +161,35 @@ export const nap = {
   dirigeant: {
     prenom: 'Sébastien' as string | null,
     nom: 'Feret' as string | null,
-    fonction: 'Gérant' as string | null,
+    /** Kbis : « Président ». Une SASU n'a pas de gerant — c'est une SARL qui en a. */
+    fonction: 'Président' as string | null,
   },
 
-  /** TODO Numero SIRET — affiche en mentions legales */
+  /**
+   * Identite legale, relevee sur l'extrait Kbis du 3 septembre 2026.
+   * L'article R123-237 du code de commerce impose la forme juridique, le
+   * capital, le siege et le numero RCS avec la ville du greffe sur tout site
+   * professionnel — pas le SIRET, contrairement a une idee repandue.
+   */
+  legal: {
+    /** 9 chiffres. Le Kbis ne porte pas le SIRET, qui ajoute le NIC a 5 chiffres. */
+    siren: '109525725' as string | null,
+    /** Ville du greffe — indissociable du numero dans la mention legale. */
+    rcsVille: 'Arras' as string | null,
+    formeJuridique: 'SASU' as string | null,
+    formeJuridiqueLongue: "Société par actions simplifiée à associé unique" as string | null,
+    capitalEuros: 1000 as number | null,
+    /** Immatriculation au RCS. Le debut d'activite est anterieur : 26/08/2026. */
+    immatriculation: '2026-09-03' as string | null,
+  },
+
+  /**
+   * Le SIRET n'est PAS sur l'extrait Kbis : celui-ci porte le SIREN, le SIRET
+   * y ajoute le NIC a 5 chiffres propre a l'etablissement. Il se lit sur
+   * l'avis de situation INSEE (avis-situation-sirene.insee.fr, gratuit et
+   * immediat a partir du SIREN). Il n'est pas obligatoire sur un site ; le
+   * RCS l'est, et il est renseigne ci-dessus.
+   */
   siret: null as string | null,
 
   /**
@@ -302,7 +345,7 @@ export function hasExperience(): boolean {
  * donc rien a demander au client : le SIRET suffit a produire les deux.
  */
 export function tvaIntracom(): string | null {
-  const siren = (nap.siret ?? '').replace(/\D/g, '').slice(0, 9);
+  const siren = (nap.legal.siren ?? nap.siret ?? '').replace(/\D/g, '').slice(0, 9);
   if (siren.length !== 9) return null;
   const cle = (12 + 3 * (Number(siren) % 97)) % 97;
   return `FR${String(cle).padStart(2, '0')}${siren}`;

@@ -34,29 +34,27 @@ entreprise, et les deux versions de la description Google.
 > demande la date d'ouverture *à cette adresse*. Si le local du 100 rue
 > Saint-Pry est récent, saisir cette date-là et non 1925.
 
-### B. Six prestations affichées en vitrine, absentes du site
+### B. Six prestations en vitrine — **deux sont désormais documentées**
 
-Les vitrines annoncent, en plus de tout ce que le site couvre déjà :
+Le Kbis déclare les activités suivantes :
 
-| Prestation | État sur le site |
-|---|---|
-| Isolation de combles | ⛔ aucune page |
-| Isolation de façade | ⛔ aucune page |
-| Sarking | ⛔ aucune page |
-| Ravalement projeté | ⛔ aucune page |
-| Peinture intérieure | ⛔ aucune page |
-| Peinture extérieure | ⛔ aucune page |
+> Couverture, charpente, **isolation**, **ravalement** et installation
+> d'ossature bois
 
-L'audit SEO avait identifié l'isolation comme **la prestation manquante la plus
-coûteuse** : tous les concurrents examinés la proposent, et c'est la seule du
-métier éligible à MaPrimeRénov'. Le **sarking** est en plus une technique de
-couvreur, à forte valeur et peu concurrencée localement.
+**L'isolation et le ravalement sont donc des activités officiellement
+déclarées**, et n'ont plus besoin d'être confirmées oralement. Ce sont deux
+pages de prestation à écrire — l'isolation des combles est la seule prestation
+du métier éligible à MaPrimeRénov', et tous les concurrents examinés la
+proposent.
 
-Décision à prendre : ces six prestations entrent-elles dans le périmètre du
-site ? Si oui, cela représente au minimum trois pages neuves (isolation de
-combles et sarking, isolation de façade, ravalement et peinture) et une
-révision du menu, qui est aujourd'hui entièrement organisé autour de la
-couverture.
+Restent non déclarées et donc à confirmer avant toute publication : **sarking**
+(qui relève de couverture + isolation), **peinture intérieure** et **peinture
+extérieure** — absentes du Kbis.
+
+> ⚠️ Mention n° 1 du Kbis : les activités artisanales sont inscrites **sous
+> condition suspensive de l'immatriculation au répertoire des métiers**. À
+> vérifier que cette immatriculation est bien effective avant de communiquer
+> sur les prestations artisanales.
 
 ### C. Dépannage 7j/7 — désormais affichable
 
@@ -171,12 +169,33 @@ perd en visibilité comme en clics.
 concurrents mettent en avant « 7j/7 » et « intervention sous 24h ». Nous ne
 l'écrirons que si c'est vrai.
 
-### 6. Le SIRET et l'année de création
-`src/config/site.ts` → `nap.siret`, `nap.foundingYear`
+### ~~6. Le SIRET et l'année de création~~ ✅ extrait Kbis fourni le 17 septembre 2026
+`src/config/site.ts` → `nap.legal`
 
-Le SIRET est une mention obligatoire des mentions légales — la page existe mais
-il y manque. L'ancienneté est l'argument de réassurance le plus utilisé par les
-concurrents (« plus de 20 ans », « depuis 30 ans »).
+Relevé sur l'extrait Kbis du 3 septembre 2026, greffe d'Arras, n° de gestion
+2026B01716 :
+
+| | |
+|---|---|
+| Dénomination | **CZIR 62** (avec l'espace) |
+| Forme juridique | SASU — société par actions simplifiée à associé unique |
+| Capital | 1 000 € |
+| RCS | Arras 109 525 725 |
+| TVA intracommunautaire | FR66109525725 — *calculée depuis le SIREN* |
+| Immatriculation | 03/09/2026 · début d'activité 26/08/2026 |
+| Président | Feret Sébastien André Alexandre |
+
+Les mentions légales sont désormais **conformes à l'article R123-237** du code
+de commerce : forme juridique, capital, siège, RCS avec ville du greffe.
+
+> ⚠️ **Le SIRET n'est pas sur le Kbis.** Celui-ci porte le SIREN (9 chiffres) ;
+> le SIRET y ajoute le NIC à 5 chiffres propre à l'établissement. Il se lit sur
+> l'avis de situation INSEE (`avis-situation-sirene.insee.fr`), gratuit et
+> immédiat à partir du SIREN. **Il n'est pas obligatoire sur un site** — c'est
+> le RCS qui l'est, et il y est.
+
+> ⚠️ **« Gérant » était faux.** Une SASU a un *président* ; c'est une SARL qui a
+> un gérant. Corrigé en mentions légales et dans le balisage.
 
 ### ~~7. Les coordonnées GPS du local~~ ✅ confirmées le 12 septembre 2026
 `src/config/site.ts` → `nap.geo.lat` / `nap.geo.lng`

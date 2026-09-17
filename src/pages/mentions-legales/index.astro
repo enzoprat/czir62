@@ -41,20 +41,20 @@ const dev = import.meta.env.DEV;
           {hasPhone() && <>Téléphone : {nap.phone}<br /></>}
           {hasEmail() && <>E-mail : {nap.email}</>}
         </p>
-        {(nap.siret || hasDirigeant() || dev) && (
-          <p>
-            {nap.siret
-              ? <>SIRET : {nap.siret}<br /></>
-              : dev && <><em class="todo">SIRET : {Todo}</em><br /></>}
-            {tvaIntracom()
-              ? <>TVA intracommunautaire : {tvaIntracom()}<br /></>
-              : dev && <><em class="todo">Numéro de TVA intracommunautaire : calculé automatiquement dès que le SIRET est renseigné</em><br /></>}
-            {hasDirigeant()
-              ? <>Directeur de la publication : {dirigeantNom()}{nap.dirigeant.fonction && <>, {nap.dirigeant.fonction.toLowerCase()}</>}</>
-              : dev && <em class="todo">Directeur de la publication : {Todo}</em>}
-            {dev && <><br /><em class="todo">Forme juridique et capital social : {Todo}</em></>}
-          </p>
-        )}
+        <p>
+          {nap.legal.formeJuridiqueLongue && (
+            <>{nap.legal.formeJuridiqueLongue}{nap.legal.capitalEuros && <> au capital de {nap.legal.capitalEuros.toLocaleString('fr-FR')}&nbsp;€</>}<br /></>
+          )}
+          {nap.legal.siren && nap.legal.rcsVille && (
+            <>{`RCS ${nap.legal.rcsVille} ${nap.legal.siren.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}`}<br /></>
+          )}
+          {nap.siret && <>SIRET : {nap.siret}<br /></>}
+          {tvaIntracom() && <>TVA intracommunautaire : {tvaIntracom()}<br /></>}
+          {hasDirigeant() && (
+            <>Directeur de la publication : {dirigeantNom()}{nap.dirigeant.fonction && <>, {nap.dirigeant.fonction.toLowerCase()}</>}</>
+          )}
+          {dev && !nap.siret && <><br /><em class="todo">SIRET : lisible sur l'avis de situation INSEE à partir du SIREN. Non obligatoire sur un site, contrairement au RCS.</em></>}
+        </p>
 
         {(hasAssurance() || dev) && (
           <>
