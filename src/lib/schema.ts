@@ -152,8 +152,8 @@ export function organizationSchema(): Json {
     hasMap: google.profileUrl ?? undefined,
     openingHoursSpecification: openingHours(),
     foundingDate: nap.foundingYear ? String(nap.foundingYear) : undefined,
-    // Le gerant nomme. Pas `founder` : la maison date de 1925, il ne l'a pas
-    // fondee — il la dirige. `employee` est la seule relation exacte ici.
+    // Le gerant nomme. Pas `founder` : la societe date de 2026 et il ne l'a
+    // pas fondee au sens du registre — il la dirige. `employee` est exact.
     employee: hasDirigeant()
       ? {
           '@type': 'Person',

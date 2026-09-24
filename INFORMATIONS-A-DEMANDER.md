@@ -123,23 +123,61 @@ site ne mentira pas, mais il ne peut pas non plus compenser une fiche vide.
 
 ## 🟠 Important — crédibilité et taux de transformation
 
-### 4. L'assurance décennale et le RGE — en cours
+### ~~4. L'assurance décennale~~ ✅ attestation fournie le 24 septembre 2026 — **mais couverture incomplète**
+`src/config/site.ts` → `nap.assurance`
 
-`src/config/site.ts` → `nap.assurance` : `assureur`, `contrat`, `zone`, `rge`
+Attestation APRIL pour le compte d'**ERGO**, contrat **26096974794**, effet au
+17/09/2026. Affichée en mentions légales : assureur, numéro de contrat,
+couverture géographique (France métropolitaine et DOM).
 
-Les champs existent et sont vides. Le jour où l'attestation arrive, les
-renseigner suffit : les mentions apparaissent en mentions légales sous la forme
-exigée par la loi du 18 juin 2014, et la version 2 de la description Google
-(prête dans `FICHE-GOOGLE.md`) peut être publiée.
+> ⚠️ **Valable jusqu'au 31/12/2026 seulement.** Une attestation décennale se
+> renouvelle chaque année. Passée cette date, la mention affichée sur le site
+> n'est plus adossée à un document valide — `nap.assurance.validiteFin` le
+> signale en développement.
 
-**Ne rien annoncer avant d'avoir le document.** Le site explique lui-même aux
-visiteurs, sur la page prix et la page démoussage, qu'un devis sans mention
-d'assurance se refuse — nous ne pouvons pas donner ce conseil sans le suivre.
+> 🔒 La référence client **W5305307** est l'identifiant de connexion à
+> `monespaceassure.april.fr`. Elle ne figure ni sur le site, ni dans le dépôt,
+> et ne doit jamais y figurer.
 
-Pour le **RGE**, la prudence est d'un autre ordre : c'est cette qualification
-qui rend le client éligible à MaPrimeRénov' et aux CEE. L'annoncer avant de
-l'avoir expose le client à une perte financière réelle, et l'entreprise à une
-sanction DGCCRF.
+#### 🔴 Le point sérieux : trois listes d'activités qui ne concordent pas
+
+L'attestation ne couvre que **trois codes** de la nomenclature BTP :
+
+- `3.1` Couverture — **à l'exclusion des travaux d'étanchéité** et de la pose de capteurs solaires
+- `2.2.1` Enduits hydrauliques
+- `4.5` Peinture hors imperméabilisation et étanchéité de façades
+
+Croisées avec le Kbis et avec ce que le site vend :
+
+| Prestation | Kbis | Décennale | Site |
+|---|---|---|---|
+| Couverture, rénovation, réparation, fuite | ✅ | ✅ `3.1` | ✅ |
+| Couverture métallique | ✅ | ✅ `3.1` | ✅ |
+| Zinguerie | ✅ | ⚠️ à confirmer dans `3.1` | ✅ |
+| Pose de Velux | ✅ | ⚠️ à confirmer dans `3.1` | ✅ |
+| **Étanchéité toiture-terrasse** | ⛔ | ⛔ **explicitement exclu** | ✅ **page dédiée** |
+| **Charpente** | ✅ | ⛔ absent | ✅ **page dédiée** |
+| **Ossature bois** | ✅ | ⛔ absent | ✅ **page dédiée** |
+| **Bardage** | ⛔ | ⛔ absent | ✅ **page dédiée** |
+| **Agrandissement / réhaussement** | ⛔ | ⛔ absent | ✅ **page dédiée** |
+| Isolation | ✅ | ⛔ absent | ⛔ |
+| Ravalement | ✅ | ✅ `2.2.1` | ⛔ |
+| Peinture | ⛔ | ✅ `4.5` | ⛔ |
+
+**Cinq pages du site vendent des prestations que la décennale ne couvre pas**,
+dont une — l'étanchéité — que l'attestation exclut noir sur blanc de la seule
+activité de couverture garantie.
+
+L'article L.241-1 du code des assurances impose d'être assuré pour **chaque**
+activité exercée. En cas de sinistre sur un de ces lots, l'assureur refuse sa
+garantie et l'artisan répond sur son patrimoine.
+
+**Action : rappeler APRIL et faire étendre le contrat** aux activités
+réellement exercées — charpente, ossature bois, bardage, étanchéité. C'est un
+avenant, pas un nouveau contrat.
+
+Aucune page n'a été retirée du site : arbitrer entre étendre la couverture et
+arrêter de vendre une prestation est une décision commerciale, pas technique.
 
 ### ~~6 bis. L'année de création~~ ✅ fournie le 3 septembre 2026
 

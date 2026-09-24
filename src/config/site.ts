@@ -128,21 +128,26 @@ export const nap = {
   foundingYear: 2026 as number | null,
 
   /**
-   * Annee revendiquee par la maison, affichee sur l'auvent du local :
-   * « VOTRE ARTISAN DEPUIS 1925 », confirmee oralement par le client.
+   * Annee revendiquee par la maison. Corrigee de 1925 a 1995 par le client le
+   * 24 septembre 2026 — l'auvent du local affiche « DEPUIS 1925 », mais c'est
+   * 1995 qui fait foi.
+   *
+   * Consequence editoriale : ce n'est plus un siecle de metier mais une
+   * trentaine d'annees. Tout texte qui parlait de « cent ans » a ete reecrit ;
+   * ne pas le reintroduire si cette valeur rebouge.
    *
    * Sert UNIQUEMENT au texte visible. Ne jamais la renvoyer dans le JSON-LD :
    * la societe immatriculee a ete creee en 2026, et une declaration
    * structuree contraire au registre du commerce se verifie en une requete.
    */
-  familleDepuis: 1925 as number | null,
+  familleDepuis: 1995 as number | null,
 
   /** Entreprise familiale — conditionne la formulation « maison familiale ». */
   familiale: true,
 
   /**
    * Annees de metier du couvreur qui dirige aujourd'hui la maison. A ne pas
-   * confondre avec `familleDepuis` : la maison se reclame de 1925, la
+   * confondre avec `familleDepuis` : la maison se reclame de 1995, la
    * personne qui la dirige exerce depuis 25 ans. Les deux se disent ensemble
    * sans se contredire, mais jamais l'une a la place de l'autre — et aucune
    * des deux ne decrit la societe, immatriculee en 2026 (`foundingYear`).
@@ -211,9 +216,31 @@ export const nap = {
   },
 
   assurance: {
-    assureur: null as string | null,
-    contrat: null as string | null,
-    zone: 'France métropolitaine' as string | null,
+    /**
+     * Porteur du risque, pas le courtier : l'attestation est emise par APRIL
+     * mais c'est ERGO qui atteste (« Nous soussignes ERGO »). La loi impose
+     * de nommer l'assureur.
+     */
+    assureur: 'ERGO' as string | null,
+    contrat: '26096974794' as string | null,
+    zone: "France métropolitaine et départements d'Outre-Mer" as string | null,
+    /**
+     * Fin de validite de l'attestation en cours. Une attestation decennale se
+     * renouvelle chaque annee : passee cette date, la mention affichee sur le
+     * site n'est plus adossee a un document valide. Le bloc de developpement
+     * des mentions legales le signale.
+     */
+    validiteFin: '2026-12-31' as string | null,
+    /**
+     * Activites reellement couvertes, telles que listees sur l'attestation
+     * selon la nomenclature BTP des assureurs. A NE PAS elargir : le site
+     * vend des prestations qui n'y figurent pas, voir INFORMATIONS-A-DEMANDER.
+     */
+    activitesCouvertes: [
+      "3.1 Couverture à l'exclusion des travaux d'étanchéité et de la pose de capteurs solaires",
+      '2.2.1 Enduits hydrauliques',
+      "4.5 Peinture hors imperméabilisation et étanchéité de façades",
+    ] as ReadonlyArray<string>,
     /** Qualification RGE, si et seulement si elle est effectivement obtenue */
     rge: null as string | null,
   },

@@ -66,6 +66,9 @@ const dev = import.meta.env.DEV;
                   Numéro de contrat : {nap.assurance.contrat}<br />
                   Couverture géographique : {nap.assurance.zone}
                   {hasRge() && <><br />Qualification : {nap.assurance.rge}</>}
+                  {dev && nap.assurance.validiteFin && new Date(nap.assurance.validiteFin) < new Date() && (
+                    <><br /><em class="todo">Attestation expirée le {nap.assurance.validiteFin} — en demander une à jour avant de laisser cette mention en ligne.</em></>
+                  )}
                 </>
               ) : (
                 <em class="todo">

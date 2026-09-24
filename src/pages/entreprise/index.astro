@@ -26,6 +26,9 @@ const crumbs = [{ name: "L'entreprise" }];
 
 // Nommer le dirigeant plutot qu'un « nous » sans visage. Degrade proprement
 // si le nom n'est pas renseigne : voir nap.dirigeant.
+// Calcule plutot qu'ecrit : le texte reste vrai si familleDepuis rebouge.
+const anneesMaison = nap.familleDepuis ? new Date().getFullYear() - nap.familleDepuis : null;
+
 const phraseDirigeant = hasDirigeant()
   ? `${dirigeantNom()}, qui dirige aujourd'hui l'entreprise, exerce le métier depuis ${nap.experienceYears} ans`
   : `Le couvreur qui dirige aujourd'hui l'entreprise exerce depuis ${nap.experienceYears} ans`;
@@ -127,14 +130,13 @@ const engagements = [
           <span class="exec__ico"><Icon name="clock" size={22} /></span>
           <h3>Une maison familiale depuis {nap.familleDepuis}</h3>
           <p>
-            L'enseigne le dit depuis l'auvent : votre artisan depuis {nap.familleDepuis}. Un siècle
-            de toitures dans le bassin béthunois, dans la même famille. {phraseDirigeant} — les
-            toitures d'ici, il les connaît pour les avoir faites.
+            {anneesMaison} ans de toitures dans le bassin béthunois, dans la même famille.
+            {phraseDirigeant} — les toitures d'ici, il les connaît pour les avoir faites.
           </p>
           <p>
             Ce n'est pas un argument d'ancienneté pour l'ancienneté. Une couverture posée se juge
-            sur trente ans ; une entreprise qui en a traversé cent a vu revenir ses propres
-            chantiers, et sait ce qui tient.
+            sur trente ans : c'est exactement le recul dont nous disposons aujourd'hui. Nous voyons
+            revenir nos propres chantiers, et nous savons ce qui a tenu.
           </p>
         </article>
 
