@@ -355,13 +355,19 @@ const faqItems = [
     background: var(--clay-50);
     color: var(--accent);
   }
+  /* Trois enfants dans une grille a deux colonnes : sans placement explicite,
+     le placement automatique renvoie le <p> en ligne 2 colonne 1, soit la
+     colonne de l'icone — 45 px de large, un mot coupe par ligne. Le h3 et le
+     paragraphe appartiennent tous deux a la colonne de texte. */
   .rep__card h3 {
+    grid-column: 2;
     font-family: var(--font-display);
     font-size: var(--fs-lg);
     font-weight: 650;
     letter-spacing: -0.022em;
   }
   .rep__card p {
+    grid-column: 2;
     margin-top: var(--sp-2);
     font-size: var(--fs-sm);
     color: var(--zinc-600);
