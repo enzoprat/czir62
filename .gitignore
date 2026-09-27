@@ -10,3 +10,7 @@ dist/
 
 # État interne du crawler SEO — regénérable par npm run crawl
 .seo/
+
+# Extractions Search Console — regénérables par npm/gsc_fetch
+data/
+.gsc/

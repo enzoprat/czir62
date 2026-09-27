@@ -41,6 +41,38 @@ def query(svc, site, start, end, dims, dtype="web", filters=None, state="all"):
         time.sleep(0.2)
     return rows
 
+
+def inspect(svc, site, urls, cache_dir=".gsc/inspect"):
+    """URL Inspection API. Cache journalier, throttle 600/min (quota 2000/j)."""
+    import datetime as _dt
+    cache = pathlib.Path(cache_dir) / _dt.date.today().isoformat()
+    cache.mkdir(parents=True, exist_ok=True)
+    out = []
+    for i, u in enumerate(urls):
+        key = cache / (u.replace("://", "_").replace("/", "_")[:180] + ".json")
+        if key.exists():
+            out.append(json.loads(key.read_text())); continue
+        r = svc.urlInspection().index().inspect(
+            body={"inspectionUrl": u, "siteUrl": site, "languageCode": "fr"}).execute()
+        idx = r.get("inspectionResult", {}).get("indexStatusResult", {})
+        rec = {"url": u,
+               "verdict": idx.get("verdict"),
+               "coverageState": idx.get("coverageState"),
+               "robotsTxtState": idx.get("robotsTxtState"),
+               "indexingState": idx.get("indexingState"),
+               "pageFetchState": idx.get("pageFetchState"),
+               "lastCrawlTime": idx.get("lastCrawlTime"),
+               "userCanonical": idx.get("userCanonical"),
+               "googleCanonical": idx.get("googleCanonical"),
+               "sitemap": ", ".join(idx.get("sitemap", []) or []),
+               "referringUrls": ", ".join((idx.get("referringUrls") or [])[:3])}
+        key.write_text(json.dumps(rec))
+        out.append(rec)
+        time.sleep(0.12)
+        if (i + 1) % 10 == 0:
+            print(f"    {i+1}/{len(urls)}")
+    return out
+
 def window(days_ago_start, days_ago_end, lag=3):
     today = dt.date.today()
     return ((today - dt.timedelta(days=lag + days_ago_start)).isoformat(),
@@ -55,8 +87,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--site"); ap.add_argument("--out", default="data")
     ap.add_argument("--list-sites", action="store_true")
+    ap.add_argument("--inspect", help="fichier texte : une URL par ligne")
     a = ap.parse_args()
     svc = client()
+    if a.inspect:
+        urls = [l.strip() for l in pathlib.Path(a.inspect).read_text().splitlines() if l.strip()]
+        print(f"  inspection de {len(urls)} URLs")
+        dump(inspect(svc, a.site, urls), pathlib.Path(a.out) / "inspection.csv")
+        return
+
     if a.list_sites:
         for s in svc.sites().list().execute().get("siteEntry", []):
             print(s["permissionLevel"], s["siteUrl"])
@@ -68,9 +107,11 @@ def main():
         (query(svc, a.site, *d16m, ["date"]), "daily.csv"),
         (query(svc, a.site, *d28, ["query"]), "query_28.csv"),
         (query(svc, a.site, *dprev, ["query"]), "query_28_prev.csv"),
+        (query(svc, a.site, *dyoy, ["query"]), "query_28_yoy.csv"),
         (query(svc, a.site, *d28, ["page"]), "page_28.csv"),
         (query(svc, a.site, *dprev, ["page"]), "page_28_prev.csv"),
         (query(svc, a.site, *d90, ["query", "page"]), "query_page_90.csv"),
+        (query(svc, a.site, *d16m, ["page", "date"]), "page_month.csv"),
         (query(svc, a.site, *d90, ["query", "device"]), "query_device.csv"),
         (query(svc, a.site, *d90, ["query", "country"]), "query_country.csv"),
         (query(svc, a.site, *d90, ["searchAppearance"]), "appearance.csv"),
