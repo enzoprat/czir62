@@ -10,8 +10,10 @@
  *     Une adresse partielle ou un horaire invente degradent la confiance et
  *     peuvent entrainer une penalite manuelle. `prune()` supprime tout ce qui
  *     est vide avant serialisation.
- *  2. `aggregateRating` n'est emis QUE si les avis reels ont ete saisis et
- *     verifies (avisSource.verifie === true). Jamais de note fabriquee.
+ *  2. `aggregateRating` et `review` ne sont JAMAIS emis. Google ignore les
+ *     avis self-serving depuis 2019 : les baliser n'apporte aucune etoile et
+ *     expose a une action manuelle. La note s'affiche sur le site, elle ne se
+ *     declare pas. Voir le commentaire d'aggregateRating().
  *
  * Le graphe est relie par des @id stables : une seule entite « entreprise »
  * pour tout le site, referencee par chaque page.
@@ -20,7 +22,6 @@
 import { site, nap, google, socials, hasAddress, hasGeo, hasPhone, hasHours, addressOneLine, hasDirigeant, dirigeantNom, tvaIntracom } from '@/config/site';
 import { services, servicesByOrder, type Service } from '@/data/services';
 import { villes, communesDesservies } from '@/data/villes';
-import { avis, avisSource, hasNoteVerifiee } from '@/data/avis';
 
 type Json = Record<string, unknown>;
 
@@ -88,26 +89,27 @@ function openingHours(): Json[] | undefined {
   }));
 }
 
+/**
+ * Renvoie TOUJOURS undefined, et ce n'est pas un oubli.
+ *
+ * Depuis septembre 2019, Google ignore les extraits enrichis d'avis
+ * « self-serving » : une entreprise qui balise ses propres avis sur son
+ * propre site n'obtient aucune etoile dans les resultats. Les etoiles du
+ * pack local viennent de la fiche Google, pas d'ici.
+ *
+ * Emettre quand meme un AggregateRating n'apporte donc rien et expose a une
+ * action manuelle le jour ou le balisage divergerait de la fiche. La note
+ * reste AFFICHEE sur le site — elle est vraie et verifiable sur la fiche —
+ * mais elle n'est pas DECLAREE a Google. Les deux decisions sont distinctes,
+ * c'est pourquoi elles ne partagent plus le meme booleen.
+ */
 function aggregateRating(): Json | undefined {
-  if (!hasNoteVerifiee()) return undefined;
-  return {
-    '@type': 'AggregateRating',
-    ratingValue: avisSource.note,
-    reviewCount: avisSource.total,
-    bestRating: 5,
-    worstRating: 1,
-  };
+  return undefined;
 }
 
+/** Meme raison qu'aggregateRating : les avis s'affichent, ils ne se balisent pas. */
 function reviews(): Json[] | undefined {
-  if (!hasNoteVerifiee() || avis.length === 0) return undefined;
-  return avis.slice(0, 5).map((a) => ({
-    '@type': 'Review',
-    author: { '@type': 'Person', name: a.auteur },
-    reviewRating: { '@type': 'Rating', ratingValue: a.note, bestRating: 5, worstRating: 1 },
-    reviewBody: a.texte,
-    datePublished: /^\d{4}-\d{2}-\d{2}/.test(a.date) ? a.date : undefined,
-  }));
+  return undefined;
 }
 
 /* ----------------------------------------------------------- entreprise */

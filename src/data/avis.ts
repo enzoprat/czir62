@@ -57,11 +57,18 @@ export interface AvisSource {
   misAJour: string | null;
 }
 
+/**
+ * Releve sur la fiche Google le 10 octobre 2026.
+ *
+ * `verifie` ne commande plus que l'AFFICHAGE. Le balisage, lui, est coupe en
+ * dur dans schema.ts : voir le commentaire d'aggregateRating(). Afficher une
+ * note vraie et la declarer a Google sont deux decisions differentes.
+ */
 export const avisSource: AvisSource = {
-  note: null,
-  total: null,
-  verifie: false,
-  misAJour: null,
+  note: 5,
+  total: 8,
+  verifie: true,
+  misAJour: '2026-10-10',
 };
 
 /**
@@ -70,7 +77,35 @@ export const avisSource: AvisSource = {
  * et un bloc de confiance alternatif (local physique, réalisations) prend
  * sa place sur la page d'accueil.
  */
-export const avis: Avis[] = [];
+export const avis: Avis[] = [
+  {
+    auteur: 'Stéphanie GOGUILLON',
+    note: 5,
+    texte:
+      "Très consciencieux ma cheminée n'a jamais été aussi propre je recommande à 200%",
+    date: 'octobre 2026',
+  },
+];
+
+/*
+ * 7 avis sur 8 manquent encore.
+ *
+ * Google Maps n'en expose que trois a la lecture, et tronque deux d'entre eux
+ * derriere un lien « Plus » :
+ *
+ *   Andy Cuvelier — octobre 2026 — « J'ai réalisé mon isolation de comble
+ *   changement de gouttieres et façade part czir62 de Béthune entreprise
+ *   efficace chantier réalisé dans les temps je recommande [tronque] »
+ *
+ *   catherine horen — septembre 2026 — « J'ai fait appel a l entreprise
+ *   czir62 pour le nettoyage des panneaux solaire et nettoyer ma véranda
+ *   personnel très propre je conseil [tronque] »
+ *
+ * Ils ne sont PAS ajoutes au tableau : publier un texte tronque sous le nom
+ * d'un client est une citation inexacte, et la regle du projet est que le
+ * texte est repris fidelement ou pas du tout. Les textes complets se lisent
+ * dans le tableau de bord de la fiche, onglet « Voir les avis ».
+ */
 
 /* ------------------------------------------------------------- accesseurs */
 
