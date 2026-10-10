@@ -226,11 +226,11 @@ Relevé sur l'extrait Kbis du 3 septembre 2026, greffe d'Arras, n° de gestion
 Les mentions légales sont désormais **conformes à l'article R123-237** du code
 de commerce : forme juridique, capital, siège, RCS avec ville du greffe.
 
-> ⚠️ **Le SIRET n'est pas sur le Kbis.** Celui-ci porte le SIREN (9 chiffres) ;
-> le SIRET y ajoute le NIC à 5 chiffres propre à l'établissement. Il se lit sur
-> l'avis de situation INSEE (`avis-situation-sirene.insee.fr`), gratuit et
-> immédiat à partir du SIREN. **Il n'est pas obligatoire sur un site** — c'est
-> le RCS qui l'est, et il y est.
+> ✅ **SIRET obtenu le 10 octobre 2026 : `10952572500015`.** Relevé dans
+> l'annuaire d'entreprises du Figaro, qui republie les données INSEE. Vérifié
+> deux fois plutôt que recopié : le SIREN est identique au Kbis, et les
+> 14 chiffres passent le contrôle de Luhn. NIC 00015 = établissement siège.
+> Affiché en mentions légales, en pied de page et dans `taxID`.
 
 > ⚠️ **« Gérant » était faux.** Une SASU a un *président* ; c'est une SARL qui a
 > un gérant. Corrigé en mentions légales et dans le balisage.
@@ -324,6 +324,17 @@ Si elle ne l'assure pas, ne rien promettre reste la bonne décision.
 ---
 
 ## 🔵 À confirmer — points ouverts
+
+### 17. Horaires : 18 h ou 19 h ?
+`src/config/site.ts` → `nap.openingHours`
+
+Le site ferme à **18 h**, relevé sur la porte du local le 11 septembre. La
+fiche Google affiche **« Ferme à 19:00 »**. Les deux ne peuvent pas être vrais.
+
+Ce n'est pas un détail cosmétique : un client qui appelle à 18 h 30 en se
+fiant à la fiche tombe sur un répondeur, ou se déplace pour rien. Une seule
+ligne à corriger, d'un côté ou de l'autre — dis-moi lequel.
+
 
 ### ~~13. « Ronque » : Roncq ou Ronchin ?~~ ✅ tranché le 12 septembre 2026
 `src/data/villes.ts` → `communesDesservies`

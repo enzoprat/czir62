@@ -194,8 +194,13 @@ export const nap = {
    * l'avis de situation INSEE (avis-situation-sirene.insee.fr, gratuit et
    * immediat a partir du SIREN). Il n'est pas obligatoire sur un site ; le
    * RCS l'est, et il est renseigne ci-dessus.
+   *
+   * Releve le 10 octobre 2026 dans l'annuaire d'entreprises du Figaro, qui
+   * republie les donnees INSEE. Verifie deux fois plutot que recopie : le
+   * SIREN est identique au Kbis, et les 14 chiffres passent le controle de
+   * Luhn. NIC 00015 = etablissement siege.
    */
-  siret: null as string | null,
+  siret: '10952572500015' as string | null,
 
   /**
    * Assurance de responsabilite decennale. La loi du 18 juin 2014 impose de
