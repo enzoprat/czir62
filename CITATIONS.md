@@ -52,19 +52,26 @@ Trois choses à corriger en prenant la main :
 
 ---
 
-## ⚠️ Les horaires : trois sources, trois réponses
+## ✅ Les horaires — tranchés le 11 octobre 2026
 
-| Source | Horaires |
+**7h-19h en continu, du lundi au samedi inclus.** Dimanche fermé.
+
+| Source | État |
 |---|---|
-| Site | Lundi – Vendredi · 9h-12h et 14h-**18h** |
-| Fiche Google | « Ferme à **19:00** » |
-| tous-couvreurs.fr | Lundi – **Samedi** · **07:00-19:00** |
+| Site | ✅ corrigé — affichage et balisage `openingHoursSpecification` |
+| Fiche Google | ⚠️ ferme bien à 19h, **ouverture et samedi à vérifier** |
+| tous-couvreurs.fr | ⚠️ affiche déjà 7h-19h lun-sam — à confirmer en prenant la fiche |
 
-Les trois ne peuvent pas être vraies. Ce n'est pas cosmétique : quelqu'un qui
-appelle à 18h30 en se fiant à la fiche, ou qui se déplace un samedi matin en se
-fiant à l'annuaire, tombe sur une porte fermée.
+Le site portait 9h-12h / 14h-18h du lundi au vendredi, relevés sur la porte du
+local. C'était faux de moitié : **35 heures affichées pour 72 réelles**, pas de
+samedi, et une coupure de midi qui n'existe pas.
 
-**Une seule réponse à donner**, et les trois sources s'alignent dessus.
+La mention « samedi matin sur rendez-vous » est retirée : le samedi est une
+journée pleine, la présenter comme une faveur sous-vend une disponibilité qui
+est totale.
+
+Reste à aligner la fiche Google — c'est elle que Google affiche dans le pack
+local, et c'est là que la divergence coûte le plus cher.
 
 ---
 

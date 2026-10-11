@@ -91,21 +91,34 @@ export const nap = {
   },
 
   /**
-   * Releves sur la porte du local, photo du 11 septembre 2026. Le samedi
-   * matin est sur rendez-vous : il n'est donc pas declare comme une plage
-   * d'ouverture, Google afficherait « ouvert » a tort.
+   * Confirmes par l'entreprise le 11 octobre 2026 : 7h-19h en continu, du
+   * lundi au samedi inclus.
+   *
+   * Portaient jusqu'ici 9h-12h / 14h-18h du lundi au vendredi, releves sur
+   * la porte du local. C'etait faux de moitie : 35 heures affichees pour 72
+   * reelles, pas de samedi, et une coupure de midi qui n'existe pas. Trois
+   * sources divergeaient (site, fiche Google, annuaire tous-couvreurs) —
+   * celle-ci est la bonne.
    */
   openingHours: [
-    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '12:00' },
-    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '14:00', closes: '18:00' },
+    {
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '07:00',
+      closes: '19:00',
+    },
   ] as ReadonlyArray<{
     days: string[];
     opens: string;
     closes: string;
   }>,
 
-  /** Samedi matin sur rendez-vous — mention libre, hors plage declaree. */
-  samediSurRdv: true,
+  /**
+   * Le samedi n'est plus une mention a part : c'est une journee d'ouverture
+   * pleine, declaree dans openingHours ci-dessus. Garde a false pour que la
+   * mention « samedi sur rendez-vous » cesse de s'afficher — elle sous-vend
+   * une disponibilite qui est en realite totale.
+   */
+  samediSurRdv: false,
 
   /** Depannage 7j/7 annonce sur la devanture du local. */
   depannage7j: true,
