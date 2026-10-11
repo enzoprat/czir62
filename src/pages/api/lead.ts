@@ -230,7 +230,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const results = await dispatchLead(lead);
   const delivered = results.some((r) => r.ok);
 
-  if (!delivered) {
+  // Quand la livraison est assuree par le navigateur (Web3Forms gratuit
+  // n'accepte pas les appels serveur), cette route ne livre rien et ce n'est
+  // pas un echec : elle valide, enrichit et journalise. Renvoyer 502 ici
+  // ferait echouer un formulaire qui fonctionne.
+  const livraisonCliente = Boolean(process.env.PUBLIC_WEB3FORMS_KEY);
+
+  if (!delivered && !livraisonCliente) {
     console.error('[lead] Aucune destination n’a accepté le lead', id, results);
     return json(
       { ok: false, error: "L’envoi a échoué. Appelez-nous directement, nous prenons la demande par téléphone." },

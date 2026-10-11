@@ -11,9 +11,17 @@
  * ========================================================================= */
 
 import { getAttribution, track } from './tracking';
+import { envoyerWeb3Forms } from './web3forms';
 import type { LeadOrigin } from '../leads/types';
 
 const ENDPOINT = import.meta.env.PUBLIC_LEAD_ENDPOINT || '/api/lead/';
+
+/**
+ * Quand cette cle est definie, /api/lead/ valide, enrichit et journalise,
+ * mais c'est le navigateur qui livre le mail — Web3Forms refuse les appels
+ * serveur sur le plan gratuit. Voir ./web3forms.ts.
+ */
+const W3F = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
 
 export interface SubmitInput {
   origin: LeadOrigin;
@@ -73,6 +81,43 @@ export async function submitLead(input: SubmitInput, files: File[] = []): Promis
     const data = (await res.json().catch(() => ({}))) as SubmitResult;
 
     if (res.ok && data.ok) {
+      // La validation est passee cote serveur ; la livraison part d'ici.
+      if (W3F) {
+        const env = await envoyerWeb3Forms(
+          W3F,
+          {
+            subject: `[${data.id ?? 'CZIR'}] ${input.prestation ?? 'Demande'} — ${input.nom}${input.commune ? ` (${input.commune})` : ''}`,
+            from_name: 'Site CZIR62',
+            replyto: input.email,
+            champs: {
+              Nom: input.nom,
+              Telephone: input.telephone,
+              Email: input.email ?? '',
+              Commune: [input.codePostal, input.commune].filter(Boolean).join(' '),
+              Prestation: input.prestation ?? '',
+              Message: input.message ?? '',
+              ...Object.fromEntries(
+                Object.entries(input.reponses ?? {}).map(([k, v]) => [k, Array.isArray(v) ? v.join(', ') : String(v)]),
+              ),
+              Origine: input.origin,
+              Provenance: [payload.attribution?.source, payload.attribution?.medium, payload.attribution?.campaign]
+                .filter(Boolean)
+                .join(' / '),
+              'Page de conversion': String(payload.attribution?.conversionPage ?? ''),
+            },
+          },
+          files,
+        );
+        // Afficher « demande envoyee » alors que le mail n'est pas parti
+        // ferait disparaitre un client en silence. On dit la verite.
+        if (!env.ok) {
+          return {
+            ok: false,
+            error: "L'envoi a échoué. Appelez-nous directement, nous prenons la demande par téléphone.",
+          };
+        }
+      }
+
       track('quote_submit', {
         origine: input.origin,
         prestation: input.prestation ?? '',
