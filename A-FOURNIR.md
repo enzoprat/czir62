@@ -214,8 +214,8 @@ est renseignée ; elles sont cumulables.
 | `LEAD_WEBHOOK_URL` | Envoi vers n8n / Make / endpoint maison (signature HMAC possible) |
 | `LEAD_SHEETS_URL` | Une ligne par demande dans Google Sheets (Apps Script) |
 | `LEAD_CRM_URL` + `LEAD_CRM_TOKEN` | Envoi vers un CRM |
-| **`WEB3FORMS_ACCESS_KEY`** | **Notification e-mail immédiate, sans DNS. Le plus rapide à mettre en place.** |
-| `RESEND_API_KEY` + `LEAD_EMAIL_TO/FROM` | Notification e-mail immédiate, après validation DNS de czir62.fr |
+| ~~`WEB3FORMS_ACCESS_KEY`~~ | ⛔ **Inopérant sur le plan gratuit** — l'API refuse tout appel serveur (403). Voir `sinks.ts`. |
+| **`RESEND_API_KEY`** + `LEAD_EMAIL_TO/FROM` | **La solution retenue.** Notification e-mail immédiate. Demande 3 enregistrements DNS chez IONOS. |
 | `PUBLIC_GTM_ID` ou `PUBLIC_GA4_ID` | Analytics (aucun script injecté tant que c'est vide) |
 | `TURNSTILE_SECRET_KEY` | Vérification anti-robot supplémentaire |
 

@@ -231,8 +231,21 @@ async function emailSink(lead: Lead): Promise<SinkResult | null> {
  *    cle n'apparait donc pas dans le HTML, contrairement a l'usage courant ou
  *    elle est lisible par n'importe qui affichant le code source.
  *
- *    Limite du plan gratuit : 250 envois par mois. Au-dela, Web3Forms refuse
- *    l'envoi — d'ou l'interet de garder une seconde destination active.
+ *    ⛔ INOPERANT SUR LE PLAN GRATUIT — mesure le 11 octobre 2026.
+ *
+ *    L'API repond 403 a tout appel serveur, quelle que soit la cle :
+ *      « This method is not allowed. Use our API in client side or contact
+ *        support with server IP address (Pro plan is required) »
+ *
+ *    Verifie avec trois cles dont une inventee : reponse identique. Ce n'est
+ *    donc pas un probleme d'authentification mais une restriction de plan.
+ *    Web3Forms gratuit n'accepte que les soumissions depuis le navigateur,
+ *    ou la cle est exposee dans le HTML.
+ *
+ *    Ce sink ne peut pas fonctionner tel quel. Il est conserve parce qu'il
+ *    redevient valide avec un plan Pro et une IP declaree ; d'ici la, c'est
+ *    emailSink (Resend) ou webhookSink qu'il faut activer. Ne pas perdre de
+ *    temps a re-tester des cles : le blocage est en amont.
  * ------------------------------------------------------------------------ */
 async function web3formsSink(lead: Lead): Promise<SinkResult | null> {
   const key = env('WEB3FORMS_ACCESS_KEY');
