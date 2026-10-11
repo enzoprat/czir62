@@ -213,7 +213,17 @@ async function emailSink(lead: Lead): Promise<SinkResult | null> {
       },
       { authorization: `Bearer ${key}` },
     );
-    return { name: 'email', ok: res.ok, detail: res.ok ? undefined : `HTTP ${res.status}` };
+    // Resend explique toujours son refus dans le corps : « API key is
+    // invalid », « The czir62.fr domain is not verified »… Se contenter du
+    // code HTTP transforme un diagnostic d'une seconde en enquete : un 403
+    // ne dit pas si c'est la cle, le domaine ou le plan. On remonte le texte.
+    const err = res.ok
+      ? undefined
+      : await res
+          .json()
+          .then((d: { message?: string }) => d?.message ?? `HTTP ${res.status}`)
+          .catch(() => `HTTP ${res.status}`);
+    return { name: 'email', ok: res.ok, detail: err };
   } catch (e) {
     return { name: 'email', ok: false, detail: String(e) };
   }
