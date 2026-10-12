@@ -10,7 +10,7 @@ const PRESTATIONS = new RegExp(
       'couverture', 'renovation-toiture', 'reparation-toiture', 'fuite-toiture',
       'demoussage-toiture', 'zinguerie', 'etancheite-toiture-terrasse',
       'couverture-metallique', 'charpente', 'pose-velux', 'bardage',
-      'ossature-bois', 'agrandissement-rehaussement',
+      'ossature-bois', 'agrandissement-rehaussement', 'ravalement-facade',
     ].join('|') +
     ')/$',
 );

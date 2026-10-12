@@ -1,0 +1,319 @@
+---
+/**
+ * PAGE RAVALEMENT DE FAÇADE
+ *
+ * PÉRIMÈTRE — à ne pas élargir sans vérifier la garantie.
+ * L'attestation décennale couvre « 2.2.1 Enduits hydrauliques » et
+ * « 4.5 Peinture hors imperméabilisation et étanchéité de façades ».
+ * Cette page traite donc le nettoyage, la reprise, l'enduit et la peinture,
+ * et dit explicitement que l'imperméabilisation et l'ITE n'en sont pas.
+ * Ce n'est pas de la prudence rédactionnelle : c'est la ligne de la garantie.
+ *
+ * ANGLE ÉDITORIAL — l'échafaudage et la jonction toit/façade. C'est ce qu'un
+ * couvreur peut dire et qu'un façadier seul ne peut pas. On ne fait pas une
+ * page de façadier avec le mot « toiture » ajouté.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import RelatedServices from '@/components/RelatedServices.astro';
+import CityLinks from '@/components/CityLinks.astro';
+import RealisationsBlock from '@/components/RealisationsBlock.astro';
+
+import { getService } from '@/data/services';
+import { telHref, hasPhone, nap } from '@/config/site';
+import { realisationsForService } from '@/lib/realisations';
+import { breadcrumbSchema, serviceSchema, faqSchema, webPageSchema } from '@/lib/schema';
+
+const service = getService('ravalement-facade');
+const tel = telHref();
+const realisations = await realisationsForService('ravalement-facade', 3);
+const crumbs = [{ name: 'Prestations', url: '/prestations/' }, { name: 'Ravalement de façade' }];
+
+/* Pourquoi ce métier-là chez un couvreur — raisons matérielles, pas commerciales */
+const jonction = [
+  {
+    t: "L'échafaudage est le même",
+    d: "C'est le poste le plus lourd d'un ravalement comme d'une réfection de toiture : montage, location, démontage. Le faire servir deux fois dans le même chantier change l'économie du projet, et c'est la seule raison sérieuse de grouper les deux.",
+  },
+  {
+    t: 'La rive et la corniche appartiennent aux deux',
+    d: "Le point où la couverture s'arrête et où la façade commence est précisément celui qui se dégrade en premier. Un ravaleur le traite par le bas, un couvreur par le haut, et c'est souvent là que les deux se renvoient la responsabilité.",
+  },
+  {
+    t: 'Les descentes se déposent de toute façon',
+    d: "On ne peut pas enduire derrière une descente d'eau pluviale. Elles se déposent, puis se reposent — avec les colliers, les dauphins et les raccords. C'est de la zinguerie, au milieu d'un chantier de façade.",
+  },
+  {
+    t: "L'eau qui salit une façade vient presque toujours d'en haut",
+    d: "Une coulure noire sous une corniche, une traînée verte sous un angle de gouttière : la façade porte la trace d'un défaut d'évacuation. Ravaler sans régler la cause revient à repeindre le symptôme.",
+  },
+];
+
+/* Lecture d'une façade — quatre désordres, quatre causes différentes */
+const desordres = [
+  {
+    t: 'Salissures et voiles verts',
+    d: "Dépôts biologiques sur les faces peu exposées au soleil, ou sous un point d'évacuation défaillant. C'est le cas le plus léger : un nettoyage et un traitement suffisent, l'enduit en place est encore bon.",
+  },
+  {
+    t: 'Microfissures en réseau',
+    d: "Un faïençage fin et régulier à la surface de l'enduit. Il ne traverse pas, il marque le vieillissement du revêtement. Un ravalement classique le règle.",
+  },
+  {
+    t: 'Fissure franche, isolée',
+    d: "Une ligne nette, souvent en diagonale depuis un angle d'ouverture. Celle-là se répare avant toute finition, et il faut d'abord savoir si elle a cessé de bouger. Recouvrir une fissure vivante, c'est la retrouver au printemps.",
+  },
+  {
+    t: 'Cloques et enduit qui sonne creux',
+    d: "Le revêtement s'est décollé de son support, souvent parce que l'humidité est passée derrière. Il faut piocher jusqu'au support sain : le métré ne se connaît qu'une fois le mur mis à nu.",
+  },
+];
+
+const etapes = [
+  { t: 'Relevé sur place', d: "On regarde la façade de près, pas depuis le trottoir. Nature du support, état de l'enduit, fissures, points d'eau, menuiseries à protéger, accès pour l'échafaudage." },
+  { t: 'Nettoyage et piochage', d: "Lavage adapté au support, puis retrait de tout ce qui ne tient plus. C'est l'étape qui révèle le vrai métré, et la raison pour laquelle un devis sérieux prévoit une marge sur ce poste." },
+  { t: 'Reprise des fissures et du support', d: "Ouverture, garnissage, pontage selon la nature du désordre. Les appuis, les encadrements et les rives sont traités avant la finition, pas après." },
+  { t: 'Finition', d: "Enduit — gratté, taloché ou projeté — ou mise en peinture si le support le permet. Teinte choisie avec vous, et vérifiée en place : une teinte change d'aspect selon l'exposition." },
+  { t: 'Reprise de zinguerie et dépose', d: "Repose des descentes, des colliers et des dauphins, nettoyage des abords, évacuation des gravats vers une filière adaptée. L'échafaudage part en dernier." },
+];
+
+const faqItems = [
+  {
+    q: "Faut-il une autorisation pour ravaler une façade ?",
+    a: "Une déclaration préalable de travaux est nécessaire dès lors que l'aspect extérieur change — teinte différente, enduit d'une autre finition. Certaines communes l'exigent même pour une remise à l'identique, et les règles sont plus strictes aux abords d'un monument historique. Le passage en mairie prend quelques minutes et l'instruction un mois. Nous vous disons au devis ce que votre projet implique.",
+  },
+  {
+    q: "Le ravalement est-il obligatoire tous les dix ans ?",
+    a: "Pas partout. Le code de la construction permet au maire d'imposer un ravalement périodique, mais uniquement dans les communes figurant sur une liste arrêtée par le préfet. Ailleurs l'obligation ne s'applique pas. Avant de vous engager sur ce motif, vérifiez auprès de votre mairie : c'est une question qui se règle par un appel.",
+  },
+  {
+    q: "Combien de temps dure un chantier de ravalement ?",
+    a: "Pour une maison individuelle de plain-pied ou à un étage, comptez une à deux semaines selon la surface et l'état du support. Le nettoyage et le piochage prennent souvent plus de temps que la finition, et c'est l'étape la moins prévisible : on ne connaît l'ampleur des reprises qu'une fois le mur mis à nu.",
+  },
+  {
+    q: "Peut-on ravaler une façade en hiver ?",
+    a: "Un enduit hydraulique ne se pose pas en dessous de cinq degrés, ni sur un support gelé, ni juste avant une gelée nocturne. La prise se fait mal et le résultat se fissure. En plein été, le problème est inverse : un enduit qui sèche trop vite se fendille. Le printemps et l'automne restent les meilleures périodes dans notre secteur.",
+  },
+  {
+    q: "Faut-il refaire la toiture en même temps ?",
+    a: "Pas nécessairement, mais si les deux chantiers sont à prévoir dans les trois ans, les grouper fait économiser un échafaudage complet — montage, location et démontage. C'est le poste le plus lourd des deux devis. Nous le chiffrons séparément pour que vous puissiez comparer, et vous décidez.",
+  },
+  {
+    q: "Faites-vous l'isolation thermique par l'extérieur ?",
+    a: "Non. L'ITE est un métier à part, avec ses certifications, ses aides et ses règles de pose propres. Nous traitons l'enduit et la peinture de façade ; nous posons aussi du bardage sur ossature, ce qui est autre chose. Si votre projet est d'abord thermique, nous vous le disons et vous orientons plutôt que d'accepter.",
+  },
+  {
+    q: "Et l'imperméabilisation de façade ?",
+    a: "Ce n'est pas dans notre périmètre. Un revêtement d'imperméabilisation relève d'une technique et d'une garantie distinctes de celles de l'enduit. Nous préférons annoncer la limite plutôt que de la franchir : notre couverture d'assurance porte sur les enduits hydrauliques et la peinture, et nous nous y tenons.",
+  },
+  {
+    q: "Quelle TVA s'applique à un ravalement ?",
+    a: "Un ravalement est un travail d'amélioration et d'entretien : le taux réduit de 10 % s'applique dès lors que le logement est achevé depuis plus de deux ans et qu'il est à usage d'habitation. Le taux figure directement sur le devis, sans démarche de votre part. Les fourchettes de prix du métier sont détaillées sur notre page consacrée aux prix.",
+  },
+];
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  path={service.url}
+  pageLabel={service.name}
+  schema={[
+    webPageSchema({ path: service.url, name: service.metaTitle, description: service.metaDescription }),
+    breadcrumbSchema(crumbs),
+    serviceSchema(service),
+    faqSchema(faqItems),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Ravalement de façade"
+    title="Ravalement de façade à Béthune"
+    lede="Nettoyage, reprise des fissures, enduit et finition. Et une raison concrète de confier la façade à un couvreur : c'est le même échafaudage que la toiture, et c'est au point de jonction entre les deux que tout commence à se dégrader."
+    icon="cladding"
+    chips={['Enduit et peinture', 'Reprise des fissures', 'Même échafaudage que la toiture']}
+  >
+    <Fragment slot="actions">
+      <a href="/devis/?prestation=ravalement-facade" class="btn btn--lg btn--go" data-track="quote_start" data-track-label="hero-ravalement">
+        Demander un devis
+      </a>
+      {hasPhone() && tel && (
+        <a href={tel} class="btn btn--phone btn--lg" data-track-zone="hero-ravalement">
+          <Icon name="phone" size={19} /> {nap.phone}
+        </a>
+      )}
+    </Fragment>
+  </PageHero>
+
+  <!-- ============================================== JONCTION ============ -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Pourquoi chez un couvreur</p>
+          <h2>Le toit et la façade partagent plus qu'un mur</h2>
+        </div>
+        <p class="lede">
+          Ce n'est pas une extension de catalogue. Quatre choses relient matériellement les deux
+          chantiers, et chacune coûte de l'argent quand on les traite séparément.
+        </p>
+      </div>
+
+      <ol class="registre">
+        {jonction.map((m, i) => (
+          <li class="registre__item">
+            <span class="registre__num num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="registre__body">
+              <h3>{m.t}</h3>
+              <p>{m.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================== DÉSORDRES =========== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Lire un mur</p>
+        <h2>Quatre désordres qui n'appellent pas le même chantier</h2>
+        <p class="lede lede--wide">
+          « Refaire la façade » recouvre des travaux dont les prix vont du simple au quintuple.
+          Avant de chiffrer, il faut savoir lequel des quatre vous avez.
+        </p>
+      </div>
+
+      <div class="des">
+        {desordres.map((d) => (
+          <article class="des__item reveal">
+            <h3>{d.t}</h3>
+            <p>{d.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== PÉRIMÈTRE =========== -->
+  <section class="section section--deep">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Périmètre</p>
+        <h2>Ce que nous faisons sur une façade, et ce que nous ne faisons pas</h2>
+        <p class="lede lede--wide">
+          Annoncer la limite à l'avance évite un malentendu au moment où il coûte le plus cher.
+        </p>
+      </div>
+
+      <div class="perim">
+        <div class="perim__col perim__col--oui">
+          <h3><Icon name="check" size={19} /> Notre périmètre</h3>
+          <ul class="list-clean perim__list">
+            <li><strong>Nettoyage et traitement</strong><span>Lavage adapté au support, retrait des dépôts biologiques.</span></li>
+            <li><strong>Reprise des fissures et du support</strong><span>Ouverture, garnissage, pontage, piochage des parties décollées.</span></li>
+            <li><strong>Enduit</strong><span>Enduit hydraulique gratté, taloché ou projeté.</span></li>
+            <li><strong>Peinture de façade</strong><span>Mise en teinte sur support sain et préparé.</span></li>
+            <li><strong>Reprise de zinguerie associée</strong><span>Dépose et repose des descentes, colliers, dauphins et raccords.</span></li>
+          </ul>
+        </div>
+
+        <div class="perim__col perim__col--non">
+          <h3><Icon name="alert" size={19} /> Ce qui relève d’autres métiers</h3>
+          <ul class="list-clean perim__non">
+            <li><strong>L’isolation thermique par l’extérieur</strong><span>Certifications, aides et règles de pose propres. Nous posons du bardage sur ossature, ce qui est une autre chose.</span></li>
+            <li><strong>L’imperméabilisation de façade</strong><span>Technique et garantie distinctes de celles de l'enduit. Nous ne la pratiquons pas.</span></li>
+            <li><strong>La reprise de maçonnerie structurelle</strong><span>Fissure évolutive liée à un mouvement du bâtiment : il faut d'abord un diagnostic de structure, pas un enduit.</span></li>
+            <li><strong>Le traitement des remontées capillaires</strong><span>Si l'humidité vient du sol, ravaler ne règle rien. C'est une spécialité à part entière.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== DÉROULÉ ============= -->
+  <section class="section">
+    <div class="container">
+      <div class="head-split">
+        <div>
+          <p class="eyebrow">Déroulement</p>
+          <h2>Comment se passe le chantier</h2>
+        </div>
+        <p class="lede">
+          Cinq étapes, dont une seule est réellement imprévisible : ce que le piochage révèle.
+        </p>
+      </div>
+
+      <ol class="registre">
+        {etapes.map((e, i) => (
+          <li class="registre__item">
+            <span class="registre__num num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="registre__body">
+              <h3>{e.t}</h3>
+              <p>{e.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================== FAQ ================= -->
+  <section class="section">
+    <div class="container">
+      <RealisationsBlock
+        items={realisations}
+        title="Façades reprises dans le secteur"
+        moreHref="/realisations/"
+        hideIfEmpty
+      />
+      <Faq items={faqItems} title="Questions sur le ravalement de façade" />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <CityLinks
+        service="ravalement-facade"
+        text="Un ravalement se planifie plusieurs semaines à l'avance : c'est un chantier que nous regroupons volontiers sur un même secteur, pour mutualiser l'échafaudage et les accès."
+      />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <RelatedServices
+        service="ravalement-facade"
+        title="Ce qui se traite en même temps"
+        intro="L'échafaudage est monté : c'est le moment où les travaux en hauteur coûtent le moins cher."
+      />
+    </div>
+  </section>
+
+  <CtaBand
+    variant="clay"
+    eyebrow="Ravalement de façade"
+    title="Faire regarder votre façade"
+    text="Décrivez ce que vous voyez — salissures, fissures, enduit qui cloque — et l'exposition du mur. Nous passons voir avant de chiffrer : sur une façade, le métré ne se devine pas depuis le trottoir."
+    primaryLabel="Demander un devis"
+    service="ravalement-facade"
+    trackLabel="ravalement-final"
+  />
+</BaseLayout>
+
+<style>
+  /* ----------------------------------------------------------- désordres */
+  .des {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-7) var(--sp-8); margin-top: var(--sp-8);
+  }
+  @media (max-width: 820px) { .des { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); } }
+
+  .des__item { padding-top: var(--sp-5); border-top: 2px solid var(--clay-400); }
+  .des__item h3 { font-size: var(--fs-lg); }
+  .des__item p { margin-top: var(--sp-3); color: var(--text-muted); line-height: var(--lh-relaxed); }
+</style>

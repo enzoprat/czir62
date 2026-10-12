@@ -240,6 +240,39 @@ export const services: Service[] = [
     order: 11,
   },
   {
+    /**
+     * Perimetre volontairement etroit : enduit et peinture, pas
+     * d'impermeabilisation ni d'ITE. Ce n'est pas de la prudence editoriale,
+     * c'est le perimetre exact de l'attestation decennale — codes 2.2.1
+     * (enduits hydrauliques) et 4.5 (peinture hors impermeabilisation et
+     * etancheite de facades). Le ravalement figure aussi au Kbis.
+     * Ne pas elargir cette page sans elargir la garantie.
+     */
+    slug: 'ravalement-facade',
+    url: '/ravalement-facade/',
+    name: 'Ravalement de façade',
+    navLabel: 'Ravalement de façade',
+    metaTitle: 'Ravalement de façade à Béthune — Enduit | CZIR62',
+    metaDescription:
+      "Ravalement de façade à Béthune : nettoyage, reprise des fissures, enduit et peinture. Fait en même temps que la toiture, sur le même échafaudage.",
+    cardText:
+      "Nettoyage, reprise des fissures, enduit et finition — sur le même échafaudage que la toiture quand les deux chantiers se rejoignent.",
+    intent: 'projet',
+    targetQueries: [
+      'ravalement façade béthune',
+      'ravalement de façade pas-de-calais',
+      'enduit façade béthune',
+      'rénovation façade béthune',
+      'nettoyage façade béthune',
+    ],
+    family: 'enveloppe',
+    icon: 'cladding',
+    serviceType: 'Ravalement de façade',
+    related: ['bardage', 'zinguerie', 'couverture', 'renovation-toiture'],
+    cities: ['bethune', 'beuvry', 'bruay-la-buissiere', 'noeux-les-mines', 'lillers'],
+    order: 12,
+  },
+  {
     slug: 'ossature-bois',
     url: '/ossature-bois/',
     name: 'Ossature bois',
@@ -255,7 +288,7 @@ export const services: Service[] = [
     serviceType: 'Construction à ossature bois',
     related: ['agrandissement-rehaussement', 'bardage', 'charpente', 'couverture'],
     cities: ['bethune', 'beuvry', 'lillers', 'bruay-la-buissiere', 'auchel'],
-    order: 12,
+    order: 13,
   },
   {
     slug: 'agrandissement-rehaussement',
@@ -274,7 +307,7 @@ export const services: Service[] = [
     serviceType: 'Agrandissement et surélévation',
     related: ['ossature-bois', 'charpente', 'bardage', 'renovation-toiture'],
     cities: ['bethune', 'beuvry', 'lievin', 'bruay-la-buissiere', 'lens'],
-    order: 13,
+    order: 14,
   },
   {
     slug: 'etancheite-toiture-terrasse',
