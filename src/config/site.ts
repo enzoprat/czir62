@@ -194,6 +194,9 @@ export const nap = {
     siren: '109525725' as string | null,
     /** Ville du greffe — indissociable du numero dans la mention legale. */
     rcsVille: 'Arras' as string | null,
+    /** Code NAF/APE, releve sur l'avis INSEE le 12 octobre 2026. */
+    ape: '43.91A' as string | null,
+    apeLibelle: 'Travaux de charpente' as string | null,
     formeJuridique: 'SASU' as string | null,
     formeJuridiqueLongue: "Société par actions simplifiée à associé unique" as string | null,
     capitalEuros: 1000 as number | null,
